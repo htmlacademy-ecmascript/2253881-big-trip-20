@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
-* Студент: [Nikita Khokhlov](https://up.htmlacademy.ru/ecmascript/20/user/2253881).
-* Наставник: `Неизвестно`.
+- Студент: [Nikita Khokhlov](https://up.htmlacademy.ru/ecmascript/20/user/2253881).
+- Наставник: [Михаил Кислый](https://htmlacademy.ru/profile/smart-grizzly).
 
 ---
 
