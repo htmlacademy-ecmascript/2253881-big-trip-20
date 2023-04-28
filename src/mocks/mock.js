@@ -7,7 +7,7 @@ const FLIGHT_POINTS = [
   'Tokyo',
 ];
 
-const MOVING_ELEMENTS = [
+export const MOVING_ELEMENTS = [
   'Taxi',
   'Bus',
   'Train',
@@ -28,15 +28,13 @@ FLIGHT_POINTS.forEach((elem) => {
   mapCitys.set(elem, {
     cityName: elem,
     description: `${elem}, is a beautiful city, a true asian pearl, with crowded streets.',
-    name: '${elem}'`,
-    pictures: [
-      {
-        src: `https://loremflickr.com/248/152?random=${Math.floor(
-          Math.random() * 10000
-        )}`,
-        description: `${elem} parliament building`,
-      },
-    ],
+    sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus`,
+    pictures: Array.from({ length: Math.floor(Math.random() * 10) }, () => ({
+      src: `https://loremflickr.com/248/152?random=${Math.floor(
+        Math.random() * 10000
+      )}`,
+      description: `${elem} parliament building`,
+    })),
   });
 });
 

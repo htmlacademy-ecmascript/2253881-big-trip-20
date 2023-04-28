@@ -2,9 +2,8 @@ import ListOfFilters from './view/list-filter';
 import ListOfSort from './view/sort-list';
 import TripInfo from './view/trip-info';
 import EventList from './view/trip-event-list';
-import Event from './view/event';
-import EventWithContent from './view/event-with-content';
 import { render, RenderPosition } from './render';
+import UlListRender from './view/ul-list-render';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');
 const sortContainerElem = document.querySelector('.trip-events');
@@ -17,10 +16,13 @@ render(new ListOfSort(), sortContainerElem, RenderPosition.AFTERBEGIN);
 //общий список ul
 render(new EventList(), sortContainerElem, RenderPosition.BEFOREEND);
 
-const tripEventsListElem = document.querySelector('.trip-events__list');
+// const tripEventsListElem = document.querySelector('.trip-events__list');
 
-render(new EventWithContent(), tripEventsListElem, RenderPosition.AFTERBEGIN);
+// render(new EventWithContent(), tripEventsListElem, RenderPosition.AFTERBEGIN);
 
-render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
-render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
-render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
+// render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
+// render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
+// render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
+
+const contentList = new UlListRender();
+contentList.init();
