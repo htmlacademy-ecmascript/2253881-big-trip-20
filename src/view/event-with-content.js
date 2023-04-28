@@ -1,6 +1,14 @@
-import { createElement } from '../render';
+import { RenderPosition, createElement } from '../render';
 
-function createEventHeader() {
+function createEventWithContent() {
+  return '<li class="trip-events__item"></li>';
+}
+
+function createFormForContent() {
+  return '<form class="event event--edit" action="#" method="post"></form>';
+}
+
+function createContentHeader() {
   return `<header class="event__header">
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -94,9 +102,117 @@ function createEventHeader() {
 </header>`;
 }
 
-export default class EventHeader {
+function createEventDetailsWrapper() {
+  return '<section class="event__details"></section>';
+}
+
+function createEventSectionOffers() {
+  return `<section class="event__section  event__section--offers">
+  <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+  <div class="event__available-offers">
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
+      <label class="event__offer-label" for="event-offer-luggage-1">
+        <span class="event__offer-title">Add luggage</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">30</span>
+      </label>
+    </div>
+
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
+      <label class="event__offer-label" for="event-offer-comfort-1">
+        <span class="event__offer-title">Switch to comfort class</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">100</span>
+      </label>
+    </div>
+
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
+      <label class="event__offer-label" for="event-offer-meal-1">
+        <span class="event__offer-title">Add meal</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">15</span>
+      </label>
+    </div>
+
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
+      <label class="event__offer-label" for="event-offer-seats-1">
+        <span class="event__offer-title">Choose seats</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">5</span>
+      </label>
+    </div>
+
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
+      <label class="event__offer-label" for="event-offer-train-1">
+        <span class="event__offer-title">Travel by train</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">40</span>
+      </label>
+    </div>
+  </div>
+</section>`;
+}
+
+function createContentEventSectionDestination() {
+  return `<section class="event__section  event__section--destination">
+  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+  <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
+
+  <div class="event__photos-container">
+    <div class="event__photos-tape">
+      <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
+      <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
+      <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
+      <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
+      <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+    </div>
+  </div>
+</section>`;
+}
+
+export default class EventWithContent {
   getTemplate() {
-    return createEventHeader();
+    const liElem = createElement(createEventWithContent());
+    const formWrapperElem = createElement(createFormForContent());
+    const headerContent = createElement(createContentHeader());
+
+    const sectionWrapperElem = createElement(createEventDetailsWrapper());
+    const eventSectionOffers = createElement(createEventSectionOffers());
+    const eventSectionDestination = createElement(
+      createContentEventSectionDestination()
+    );
+
+    sectionWrapperElem.insertAdjacentElement(
+      RenderPosition.AFTERBEGIN,
+      eventSectionOffers
+    );
+    sectionWrapperElem.insertAdjacentElement(
+      RenderPosition.BEFOREEND,
+      eventSectionDestination
+    );
+
+    formWrapperElem.insertAdjacentElement(
+      RenderPosition.AFTERBEGIN,
+      headerContent
+    );
+
+    formWrapperElem.insertAdjacentElement(
+      RenderPosition.BEFOREEND,
+      sectionWrapperElem
+    );
+    //обертка ли с контентом
+    liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
+
+    const wrapperElem = document.createElement('div');
+    wrapperElem.append(liElem);
+    const stringedLiElem = wrapperElem.innerHTML;
+    return stringedLiElem;
   }
 
   getElement() {
