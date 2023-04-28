@@ -42,7 +42,7 @@ MOVING_ELEMENTS.forEach((elem) => {
   mapOffers.set(elem, {
     type: elem,
     offers: Array.from({ length: Math.floor(Math.random() * 10) }, () => ({
-      title: 'Upgrsdfsdfss class',
+      title: 'Upgrade class',
       price: Math.floor(Math.random() * 10000),
     })),
   });

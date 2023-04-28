@@ -15,8 +15,8 @@ export default class UlListRender {
       RenderPosition.AFTERBEGIN
     );
 
-    for (let i = 1; i < 5; i++) {
-      render(new Event(), ulList, RenderPosition.BEFOREEND);
+    for (let i = 1; i < 4; i++) {
+      render(new Event(this.content[i]), ulList, RenderPosition.BEFOREEND);
     }
   }
 }

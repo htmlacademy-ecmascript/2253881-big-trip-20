@@ -16,13 +16,5 @@ render(new ListOfSort(), sortContainerElem, RenderPosition.AFTERBEGIN);
 //общий список ul
 render(new EventList(), sortContainerElem, RenderPosition.BEFOREEND);
 
-// const tripEventsListElem = document.querySelector('.trip-events__list');
-
-// render(new EventWithContent(), tripEventsListElem, RenderPosition.AFTERBEGIN);
-
-// render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
-// render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
-// render(new Event(), tripEventsListElem, RenderPosition.BEFOREEND);
-
 const contentList = new UlListRender();
 contentList.init();
