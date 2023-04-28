@@ -2,7 +2,6 @@ import { createElement } from '../render';
 import dayjs from 'dayjs';
 /* eslint-disable */
 function createEvent(data) {
-  console.log(data);
   return `<li class="trip-events__item"><div class="event">
   <time class="event__date" datetime="2019-03-18">${dayjs(data.dateFrom).format(
     'MMM DD'
