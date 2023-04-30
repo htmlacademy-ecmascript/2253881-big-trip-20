@@ -24,7 +24,6 @@ function createNewListOfElems() {
 /* eslint-enable */
 
 export default class ListOfFilters extends AbstractView {
-  #element = null;
   get template() {
     return createNewListOfElems();
   }

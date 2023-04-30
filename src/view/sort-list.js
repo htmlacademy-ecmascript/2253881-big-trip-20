@@ -31,7 +31,6 @@ function createSortList() {
 }
 
 export default class ListOfSort extends AbstractView {
-  #element = null;
   get template() {
     return createSortList();
   }

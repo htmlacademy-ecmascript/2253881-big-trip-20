@@ -5,7 +5,6 @@ function createEventList() {
 }
 
 export default class EventList extends AbstractView {
-  #elements = null;
   get template() {
     return createEventList();
   }

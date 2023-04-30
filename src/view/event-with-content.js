@@ -67,6 +67,9 @@ function createContentHeader(data) {
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
   <button class="event__reset-btn" type="reset">Cancel</button>
+  <button class="event__rollup-btn" type="button">
+                  <span class="visually-hidden">Open event</span>
+                </button>
 </header>`;
 }
 
@@ -127,12 +130,20 @@ function createContentEventSectionDestination(data) {
 /* eslint-enable */
 export default class EventWithContent extends AbstractView {
   #data;
-  #element = null;
-
-  constructor(data) {
+  #onClick;
+  constructor(data, onClick) {
     super();
     this.#data = data;
+    this.#onClick = onClick;
+    this.element
+      .querySelector('.event--edit')
+      .addEventListener('submit', this.#onClickEvent);
   }
+
+  #onClickEvent = (evt) => {
+    evt.preventDefault();
+    this.#onClick();
+  };
 
   get template() {
     const liElem = createElement(createEventWithContent());

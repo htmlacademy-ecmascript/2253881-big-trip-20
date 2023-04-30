@@ -1,6 +1,6 @@
 import EventWithContent from './event-with-content';
 import Event from './event';
-import { render, RenderPosition } from '../framework/render';
+import { render, RenderPosition, replace } from '../framework/render';
 import AbstractView from '../framework/view/abstract-view';
 import { generateObj } from '../mocks/mock';
 
@@ -12,14 +12,24 @@ export default class UlListRender extends AbstractView {
   init() {
     const ulList = document.querySelector('.trip-events__list');
 
-    render(
-      new EventWithContent(this.#content[0]),
-      ulList,
-      RenderPosition.AFTERBEGIN
-    );
+    for (let i = 0; i < COUNT; i++) {
+      /* eslint-disable */
+      function replaceFromNoContentToWithContent() {
+        replace(listWithContentElem, eventWithoutContentElem);
+      }
 
-    for (let i = 1; i < COUNT; i++) {
-      render(new Event(this.#content[i]), ulList, RenderPosition.BEFOREEND);
+      function replaceFromWithContentToNoContent() {
+        replace(eventWithoutContentElem, listWithContentElem);
+      }
+      /* eslint-enable */
+      const listWithContentElem = new EventWithContent(this.#content[i], () => {
+        replaceFromWithContentToNoContent();
+      });
+      const eventWithoutContentElem = new Event(this.#content[i], () => {
+        replaceFromNoContentToWithContent();
+      });
+
+      render(eventWithoutContentElem, ulList, RenderPosition.BEFOREEND);
     }
   }
 }
