@@ -2,7 +2,7 @@ import ListOfFilters from './view/list-filter';
 import ListOfSort from './view/sort-list';
 import TripInfo from './view/trip-info';
 import EventList from './view/trip-event-list';
-import { render, RenderPosition } from './render';
+import { render, RenderPosition } from './framework/render';
 import UlListRender from './view/ul-list-render';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');

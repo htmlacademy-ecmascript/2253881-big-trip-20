@@ -1,5 +1,5 @@
-import { createElement } from '../render';
 import dayjs from 'dayjs';
+import AbstractView from '../framework/view/abstract-view';
 /* eslint-disable */
 function createEvent(data) {
   return `<li class="trip-events__item"><div class="event">
@@ -58,25 +58,16 @@ function createEvent(data) {
   </button>
 </div></li>`;
 }
-
-export default class Event {
+/* eslint-enable */
+export default class Event extends AbstractView {
+  #data;
+  #element = null;
   constructor(data) {
-    this.data = data;
+    super();
+    this.#data = data;
   }
 
-  getTemplate() {
-    return createEvent(this.data);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createEvent(this.#data);
   }
 }

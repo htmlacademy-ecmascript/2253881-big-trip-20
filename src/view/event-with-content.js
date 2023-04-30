@@ -1,5 +1,6 @@
-import { RenderPosition, createElement } from '../render';
+import { RenderPosition, createElement } from '../framework/render';
 import { MOVING_ELEMENTS } from '../mocks/mock';
+import AbstractView from '../framework/view/abstract-view';
 /* eslint-disable */
 function createEventWithContent() {
   return '<li class="trip-events__item"></li>';
@@ -123,23 +124,27 @@ function createContentEventSectionDestination(data) {
 
 </section>`;
 }
+/* eslint-enable */
+export default class EventWithContent extends AbstractView {
+  #data;
+  #element = null;
 
-export default class EventWithContent {
   constructor(data) {
-    this.data = data;
+    super();
+    this.#data = data;
   }
 
-  getTemplate() {
+  get template() {
     const liElem = createElement(createEventWithContent());
     const formWrapperElem = createElement(createFormForContent());
-    const headerContent = createElement(createContentHeader(this.data));
+    const headerContent = createElement(createContentHeader(this.#data));
 
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
-      createEventSectionOffers(this.data)
+      createEventSectionOffers(this.#data)
     );
     const eventSectionDestination = createElement(
-      createContentEventSectionDestination(this.data)
+      createContentEventSectionDestination(this.#data)
     );
 
     sectionWrapperElem.insertAdjacentElement(
@@ -167,16 +172,5 @@ export default class EventWithContent {
     wrapperElem.append(liElem);
     const stringedLiElem = wrapperElem.innerHTML;
     return stringedLiElem;
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
