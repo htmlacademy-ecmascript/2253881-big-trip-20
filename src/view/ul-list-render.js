@@ -4,14 +4,16 @@ import { render, replace } from '../framework/render';
 import AbstractView from '../framework/view/abstract-view';
 import { generateObj } from '../mocks/mock';
 
+const ESC = 'Escape';
+
 export default class UlListRender extends AbstractView {
-  #content = generateObj(7);
+  #content = generateObj(Math.floor(Math.random() * 10));
   #placeToRender = document.querySelector('.trip-events__list');
 
   #renderOneElem(elem) {
     const escKeyDownHandler = (evt) => {
       evt.preventDefault();
-      if (evt.key === 'Escape' && document.querySelector('.event--edit')) {
+      if (evt.key === ESC && document.querySelector('.event--edit')) {
         replaceWithContentToNoContent();
         document.removeEventListener('keydown', escKeyDownHandler);
       }
