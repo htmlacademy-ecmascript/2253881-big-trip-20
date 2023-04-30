@@ -62,7 +62,7 @@ function createEvent(data) {
 export default class Event extends AbstractView {
   #data;
   #onClick;
-  constructor(data, onClick) {
+  constructor({ data, onClick }) {
     super();
     this.#data = data;
     this.#onClick = onClick;

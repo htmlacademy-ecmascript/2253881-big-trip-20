@@ -1,6 +1,7 @@
 import { RenderPosition, createElement } from '../framework/render';
 import { MOVING_ELEMENTS } from '../mocks/mock';
 import AbstractView from '../framework/view/abstract-view';
+
 /* eslint-disable */
 function createEventWithContent() {
   return '<li class="trip-events__item"></li>';
@@ -130,19 +131,30 @@ function createContentEventSectionDestination(data) {
 /* eslint-enable */
 export default class EventWithContent extends AbstractView {
   #data;
-  #onClick;
-  constructor(data, onClick) {
+  #onClickSubmit;
+  #onClickArrow;
+  constructor({ data, onClickSubmit, onClickArrow }) {
     super();
     this.#data = data;
-    this.#onClick = onClick;
+    this.#onClickSubmit = onClickSubmit;
+    this.#onClickArrow = onClickArrow;
+
     this.element
       .querySelector('.event--edit')
-      .addEventListener('submit', this.#onClickEvent);
+      .addEventListener('submit', this.#onClickEventSubmit);
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#onClickEventArrow);
   }
 
-  #onClickEvent = (evt) => {
+  #onClickEventSubmit = (evt) => {
     evt.preventDefault();
-    this.#onClick();
+    this.#onClickSubmit();
+  };
+
+  #onClickEventArrow = (evt) => {
+    evt.preventDefault();
+    this.#onClickArrow();
   };
 
   get template() {
