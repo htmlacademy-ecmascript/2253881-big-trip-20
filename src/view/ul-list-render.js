@@ -28,9 +28,11 @@ export default class UlListRender extends AbstractView {
       data: elem,
       onClickSubmit: () => {
         replaceWithContentToNoContent();
+        document.removeEventListener('keydown', escKeyDownHandler);
       },
       onClickArrow: () => {
         replaceWithContentToNoContent();
+        document.removeEventListener('keydown', escKeyDownHandler);
       },
     });
 
