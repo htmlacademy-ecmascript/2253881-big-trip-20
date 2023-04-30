@@ -59,7 +59,7 @@ function createEvent(data) {
 </div></li>`;
 }
 /* eslint-enable */
-export default class Event extends AbstractView {
+export default class EventWithoutContent extends AbstractView {
   #data;
   #onClick;
   constructor({ data, onClick }) {

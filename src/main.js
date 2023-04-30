@@ -1,9 +1,9 @@
-import ListOfFilters from './view/list-filter';
-import ListOfSort from './view/sort-list';
-import TripInfo from './view/trip-info';
-import EventList from './view/trip-event-list';
+import ListOfFilters from './view/ListOfFilters';
+import ListOfSort from './view/ListOfSort';
+import TripInfo from './view/TripInfo';
+import EventList from './view/EventList';
 import { render, RenderPosition } from './framework/render';
-import UlListRender from './view/ul-list-render';
+import UlListRender from './view/UlListRender';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');
 const sortContainerElem = document.querySelector('.trip-events');

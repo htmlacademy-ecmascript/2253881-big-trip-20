@@ -1,5 +1,5 @@
-import EventWithContent from './event-with-content';
-import Event from './event';
+import EventWithContent from './EventWithContent';
+import Event from './EventWithoutContent';
 import { render, replace } from '../framework/render';
 import AbstractView from '../framework/view/abstract-view';
 import { generateObj } from '../mocks/mock';
@@ -26,6 +26,7 @@ export default class UlListRender extends AbstractView {
         document.addEventListener('keydown', escKeyDownHandler);
       },
     });
+
     const listWithContentElem = new EventWithContent({
       data: elem,
       onClickSubmit: () => {
