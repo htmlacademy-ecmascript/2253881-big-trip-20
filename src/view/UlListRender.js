@@ -1,5 +1,5 @@
 import EventWithContent from './EventWithContent';
-import Event from './EventWithoutContent';
+import EventWithoutContent from './EventWithoutContent';
 import { render, replace } from '../framework/render';
 import AbstractView from '../framework/view/abstract-view';
 import { generateObj } from '../mocks/mock';
@@ -19,7 +19,7 @@ export default class UlListRender extends AbstractView {
       }
     };
 
-    const listWithoutContentElem = new Event({
+    const listWithoutContentElem = new EventWithoutContent({
       data: elem,
       onClick: () => {
         replaceNoContentToWithContent();
