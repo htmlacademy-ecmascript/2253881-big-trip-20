@@ -32,7 +32,8 @@ function render(component, container, place = RenderPosition.BEFOREEND) {
   }
 
   if (container === null) {
-    throw new Error('Container element doesn\'t exist');
+    // eslint-disable-next-line
+    throw new Error("Container element doesn't exist");
   }
 
   container.insertAdjacentElement(place, component.element);
@@ -44,7 +45,12 @@ function render(component, container, place = RenderPosition.BEFOREEND) {
  * @param {AbstractView} oldComponent Компонент, который нужно скрыть
  */
 function replace(newComponent, oldComponent) {
-  if (!(newComponent instanceof AbstractView && oldComponent instanceof AbstractView)) {
+  if (
+    !(
+      newComponent instanceof AbstractView &&
+      oldComponent instanceof AbstractView
+    )
+  ) {
     throw new Error('Can replace only components');
   }
 
@@ -54,7 +60,8 @@ function replace(newComponent, oldComponent) {
   const parent = oldElement.parentElement;
 
   if (parent === null) {
-    throw new Error('Parent element doesn\'t exist');
+    // eslint-disable-next-line
+    throw new Error("Parent element doesn't exist");
   }
 
   parent.replaceChild(newElement, oldElement);
@@ -77,4 +84,4 @@ function remove(component) {
   component.removeElement();
 }
 
-export {RenderPosition, createElement, render, replace, remove};
+export { RenderPosition, createElement, render, replace, remove };

@@ -1,5 +1,5 @@
-import { createElement } from '../render';
 import dayjs from 'dayjs';
+import AbstractView from '../framework/view/abstract-view';
 /* eslint-disable */
 function createEvent(data) {
   return `<li class="trip-events__item"><div class="event">
@@ -58,25 +58,26 @@ function createEvent(data) {
   </button>
 </div></li>`;
 }
+/* eslint-enable */
+export default class EventWithoutContent extends AbstractView {
+  #data;
+  #onClick;
+  constructor({ data, onClick }) {
+    super();
+    this.#data = data;
+    this.#onClick = onClick;
 
-export default class Event {
-  constructor(data) {
-    this.data = data;
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#onClickEvent);
   }
 
-  getTemplate() {
-    return createEvent(this.data);
-  }
+  #onClickEvent = (evt) => {
+    evt.preventDefault();
+    this.#onClick();
+  };
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createEvent(this.#data);
   }
 }

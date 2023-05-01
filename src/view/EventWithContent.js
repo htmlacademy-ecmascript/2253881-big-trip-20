@@ -1,5 +1,7 @@
-import { RenderPosition, createElement } from '../render';
+import { RenderPosition, createElement } from '../framework/render';
 import { MOVING_ELEMENTS } from '../mocks/mock';
+import AbstractView from '../framework/view/abstract-view';
+
 /* eslint-disable */
 function createEventWithContent() {
   return '<li class="trip-events__item"></li>';
@@ -66,6 +68,9 @@ function createContentHeader(data) {
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
   <button class="event__reset-btn" type="reset">Cancel</button>
+  <button class="event__rollup-btn" type="button">
+                  <span class="visually-hidden">Open event</span>
+                </button>
 </header>`;
 }
 
@@ -123,23 +128,46 @@ function createContentEventSectionDestination(data) {
 
 </section>`;
 }
+/* eslint-enable */
+export default class EventWithContent extends AbstractView {
+  #data;
+  #onClickSubmit;
+  #onClickArrow;
+  constructor({ data, onClickSubmit, onClickArrow }) {
+    super();
+    this.#data = data;
+    this.#onClickSubmit = onClickSubmit;
+    this.#onClickArrow = onClickArrow;
 
-export default class EventWithContent {
-  constructor(data) {
-    this.data = data;
+    this.element
+      .querySelector('.event--edit')
+      .addEventListener('submit', this.#onClickEventSubmit);
+    this.element
+      .querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#onClickEventArrow);
   }
 
-  getTemplate() {
+  #onClickEventSubmit = (evt) => {
+    evt.preventDefault();
+    this.#onClickSubmit();
+  };
+
+  #onClickEventArrow = (evt) => {
+    evt.preventDefault();
+    this.#onClickArrow();
+  };
+
+  get template() {
     const liElem = createElement(createEventWithContent());
     const formWrapperElem = createElement(createFormForContent());
-    const headerContent = createElement(createContentHeader(this.data));
+    const headerContent = createElement(createContentHeader(this.#data));
 
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
-      createEventSectionOffers(this.data)
+      createEventSectionOffers(this.#data)
     );
     const eventSectionDestination = createElement(
-      createContentEventSectionDestination(this.data)
+      createContentEventSectionDestination(this.#data)
     );
 
     sectionWrapperElem.insertAdjacentElement(
@@ -167,16 +195,5 @@ export default class EventWithContent {
     wrapperElem.append(liElem);
     const stringedLiElem = wrapperElem.innerHTML;
     return stringedLiElem;
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
