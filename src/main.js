@@ -9,7 +9,9 @@ const infosContent = generateObj(Math.floor(Math.random() * 10));
 const sortContainerElem = document.querySelector('.trip-events');
 
 //общий список ul
-render(new EventList(), sortContainerElem, RenderPosition.BEFOREEND);
+if (infosContent.length > 0) {
+  render(new EventList(), sortContainerElem, RenderPosition.BEFOREEND);
+}
 
 const mainBoard = new MainRenderPresenter(infosContent);
 
