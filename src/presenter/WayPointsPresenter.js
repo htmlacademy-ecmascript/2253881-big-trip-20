@@ -1,17 +1,16 @@
-import EventWithContent from './EventWithContent';
-import EventWithoutContent from './EventWithoutContent';
-import { render, replace } from '../framework/render';
+import EventWithContent from '../view/EventWithContent';
+import EventWithoutContent from '../view/EventWithoutContent';
+import { replace, render } from '../framework/render';
 import AbstractView from '../framework/view/abstract-view';
 
 const ESC = 'Escape';
 
-export default class UlListRender extends AbstractView {
-  #infosContent = null;
+export default class WayPointPresenter extends AbstractView {
+  #content = null;
   #placeToRender = document.querySelector('.trip-events__list');
-
-  constructor(infosContent) {
+  constructor(data) {
     super();
-    this.#infosContent = infosContent;
+    this.#content = data;
   }
 
   #renderOneElem(elem) {
@@ -55,8 +54,8 @@ export default class UlListRender extends AbstractView {
   }
 
   init() {
-    for (let i = 0; i < this.#infosContent.length; i++) {
-      this.#renderOneElem(this.#infosContent[i]);
+    for (let i = 0; i < this.#content.length; i++) {
+      this.#renderOneElem(this.#content[i]);
     }
   }
 }
