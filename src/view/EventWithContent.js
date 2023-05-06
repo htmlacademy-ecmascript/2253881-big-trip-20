@@ -153,7 +153,6 @@ export default class EventWithContent extends AbstractView {
     const liElem = createElement(createEventWithContent());
     const formWrapperElem = createElement(createFormForContent());
     const headerContent = createElement(createContentHeader(this.#data));
-
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
       createEventSectionOffers(this.#data)
@@ -161,7 +160,6 @@ export default class EventWithContent extends AbstractView {
     const eventSectionDestination = createElement(
       createContentEventSectionDestination(this.#data)
     );
-
     sectionWrapperElem.insertAdjacentElement(
       RenderPosition.AFTERBEGIN,
       eventSectionOffers
@@ -170,19 +168,16 @@ export default class EventWithContent extends AbstractView {
       RenderPosition.BEFOREEND,
       eventSectionDestination
     );
-
     formWrapperElem.insertAdjacentElement(
       RenderPosition.AFTERBEGIN,
       headerContent
     );
-
     formWrapperElem.insertAdjacentElement(
       RenderPosition.BEFOREEND,
       sectionWrapperElem
     );
     //обертка ли с контентом
     liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
-
     const wrapperElem = document.createElement('div');
     wrapperElem.append(liElem);
     const stringedLiElem = wrapperElem.innerHTML;

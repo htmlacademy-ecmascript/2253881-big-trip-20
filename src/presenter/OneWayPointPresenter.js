@@ -5,37 +5,39 @@ import { replace, render } from '../framework/render';
 const ESC = 'Escape';
 
 export default class OneWayPointPresenter {
-  #evtWithContent = null;
-  #evtWithOutContent = null;
   #placeToRenderElem = document.querySelector('.trip-events__list');
+  #elem = null;
+  #evtWithOutContent = null;
+  #evtWithContent = null;
 
-  constructor(data) {
+  constructor(elem) {
+    this.#elem = elem;
+
+    const escKeyDownHandlerWithContent = (evt) => {
+      evt.preventDefault();
+      if (evt.key === ESC && document.querySelector('.event--edit')) {
+        this.replaceWithContentToNoContent();
+        document.removeEventListener('keydown', escKeyDownHandlerWithContent);
+      }
+    };
+
     this.#evtWithContent = new EventWithContent({
-      data,
+      data: elem,
       onClickSubmit: () => {
         this.replaceWithContentToNoContent();
-        document.removeEventListener(
-          'keydown',
-          this.#escKeyDownHandlerWithContent
-        );
+        document.removeEventListener('keydown', escKeyDownHandlerWithContent);
       },
       onClickArrow: () => {
         this.replaceWithContentToNoContent();
-        document.removeEventListener(
-          'keydown',
-          this.#escKeyDownHandlerWithContent
-        );
+        document.removeEventListener('keydown', escKeyDownHandlerWithContent);
       },
     });
 
     this.#evtWithOutContent = new EventWithoutContent({
-      data,
+      data: elem,
       onClickArrow: () => {
         this.replaceNoContentToWithContent();
-        document.addEventListener(
-          'keydown',
-          this.#escKeyDownHandlerWithContent
-        );
+        document.addEventListener('keydown', escKeyDownHandlerWithContent);
       },
     });
   }
@@ -46,32 +48,6 @@ export default class OneWayPointPresenter {
 
   replaceNoContentToWithContent() {
     replace(this.#evtWithContent, this.#evtWithOutContent);
-  }
-
-  #escKeyDownHandlerWithContent(evt) {
-    evt.preventDefault();
-    if (evt.key === ESC && document.querySelector('.event--edit')) {
-      this.replaceWithContentToNoContent();
-      document.removeEventListener(
-        'keydown',
-        this.#escKeyDownHandlerWithContent
-      );
-    }
-  }
-
-  #onClickSubmitWithContent() {
-    this.replaceWithContentToNoContent();
-    document.removeEventListener('keydown', this.#escKeyDownHandlerWithContent);
-  }
-
-  #onClickArrowWithContent() {
-    this.replaceWithContentToNoContent();
-    document.removeEventListener('keydown', this.#escKeyDownHandlerWithContent);
-  }
-
-  #onClickWithOutContent() {
-    this.replaceNoContentToWithContent();
-    document.addEventListener('keydown', this.#escKeyDownHandlerWithContent);
   }
 
   init() {

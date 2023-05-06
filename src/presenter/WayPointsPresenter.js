@@ -11,6 +11,7 @@ export default class WayPointsPresenter extends AbstractView {
 
   #renderOneElem(elem) {
     const newWayPoint = new OneWayPointPresenter(elem);
+
     newWayPoint.init();
   }
 
