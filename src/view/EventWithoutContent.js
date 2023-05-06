@@ -60,22 +60,19 @@ function createEvent(data) {
 }
 /* eslint-enable */
 export default class EventWithoutContent extends AbstractView {
-  #data;
-  #onClick;
-  constructor({ data, onClick }) {
+  #data = null;
+  #onClickArrow = null;
+
+  constructor({ data, onClickArrow }) {
     super();
     this.#data = data;
-    this.#onClick = onClick;
+    this.#onClickArrow = onClickArrow;
 
-    this.element
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#onClickEvent);
+    this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
+      evt.preventDefault();
+      this.#onClickArrow();
+    };
   }
-
-  #onClickEvent = (evt) => {
-    evt.preventDefault();
-    this.#onClick();
-  };
 
   get template() {
     return createEvent(this.#data);
