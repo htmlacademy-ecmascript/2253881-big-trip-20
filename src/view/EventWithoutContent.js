@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import AbstractView from '../framework/view/abstract-view';
+import { getDiffDates } from '../framework/utils';
 /* eslint-disable */
 function createEvent(data) {
   return `<li class="trip-events__item"><div class="event">
@@ -22,9 +23,7 @@ function createEvent(data) {
         data.dateTo
       ).format('HH:mm')}</time>
     </p>
-    <p class="event__duration">${dayjs(
-      new Date(data.dateTo) - new Date(data.dateFrom)
-    ).format('mm')}M</p>
+    <p class="event__duration">${getDiffDates(data.dateFrom, data.dateTo)}</p>
   </div>
   <p class="event__price">
     &euro;&nbsp;<span class="event__price-value">${data.offers.offers.reduce(
