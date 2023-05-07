@@ -133,6 +133,7 @@ export default class EventWithContent extends AbstractView {
   #data = null;
   #onClickSubmit = null;
   #onClickArrow = null;
+
   constructor({ data, onClickSubmit, onClickArrow }) {
     super();
     this.#data = data;

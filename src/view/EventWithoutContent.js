@@ -45,7 +45,7 @@ function createEvent(data) {
       .join('')}
   </ul>
   <button class="event__favorite-btn ${
-    data.isFavorite ? 'event__favorite-btn--active' : ''
+    data.isFavourite ? 'event__favorite-btn--active' : ''
   }" type="button">
     <span class="visually-hidden">Add to favorite</span>
     <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

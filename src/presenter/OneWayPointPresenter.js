@@ -1,6 +1,6 @@
 import EventWithContent from '../view/EventWithContent';
 import EventWithoutContent from '../view/EventWithoutContent';
-import { replace, render } from '../framework/render';
+import { replace, render, remove } from '../framework/render';
 
 const ESC = 'Escape';
 
@@ -10,8 +10,9 @@ export default class OneWayPointPresenter {
   #evtWithOutContent = null;
   #evtWithContent = null;
 
-  constructor(elem) {
+  constructor(elem, changingIsFavourite) {
     this.elem = elem;
+    this.changingIsFavourite = changingIsFavourite;
 
     const escKeyDownHandlerWithContent = (evt) => {
       evt.preventDefault();
@@ -39,8 +40,15 @@ export default class OneWayPointPresenter {
         this.replaceNoContentToWithContent();
         document.addEventListener('keydown', escKeyDownHandlerWithContent);
       },
-      onClickStar: () => {},
+      onClickStar: () => {
+        this.changingIsFavourite(this.elem.id);
+      },
     });
+  }
+
+  destroy() {
+    remove(this.#evtWithOutContent);
+    remove(this.#evtWithContent);
   }
 
   replaceWithContentToNoContent() {
