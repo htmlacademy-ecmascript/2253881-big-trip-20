@@ -1,4 +1,3 @@
-import { replace } from '../framework/render';
 import OneWayPointPresenter from './OneWayPointPresenter';
 
 export default class WayPointsPresenter {
@@ -21,14 +20,20 @@ export default class WayPointsPresenter {
     this.arrayOfInst.forEach((elem) => {
       elem.destroy();
     });
-
     this.init();
+  };
+
+  resetToClose = () => {
+    this.arrayOfInst.forEach((elem) => {
+      elem.resetView();
+    });
   };
 
   #renderOneElem(elem) {
     const newWayPoint = new OneWayPointPresenter(
       elem,
-      this.changingIsFavourite
+      this.changingIsFavourite,
+      this.resetToClose
     );
     this.arrayOfInst.push(newWayPoint);
     newWayPoint.init();
