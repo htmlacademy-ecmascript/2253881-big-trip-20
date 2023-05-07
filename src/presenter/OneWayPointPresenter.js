@@ -49,7 +49,7 @@ export default class OneWayPointPresenter {
     this.#evtWithOutContent = new EventWithoutContent({
       data: this.elem,
       onClickArrow: () => {
-        this.resetToClose(this.elem.id);
+        this.resetToClose();
         this.replaceNoContentToWithContent();
         document.addEventListener('keydown', escKeyDownHandlerWithContent);
       },
