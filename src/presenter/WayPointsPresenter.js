@@ -1,23 +1,28 @@
-import AbstractView from '../framework/view/abstract-view';
 import OneWayPointPresenter from './OneWayPointPresenter';
 
-export default class WayPointsPresenter extends AbstractView {
-  #content = null;
+export default class WayPointsPresenter {
+  content = null;
 
-  constructor(data) {
-    super();
-    this.#content = data;
+  constructor(content) {
+    this.content = content;
+  }
+
+  isFavouriteChanging() {
+    console.log(this.content);
   }
 
   #renderOneElem(elem) {
-    const newWayPoint = new OneWayPointPresenter(elem);
+    const newWayPoint = new OneWayPointPresenter(
+      elem,
+      this.isFavouriteChanging
+    );
 
     newWayPoint.init();
   }
 
   init() {
-    for (let i = 0; i < this.#content.length; i++) {
-      this.#renderOneElem(this.#content[i]);
+    for (let i = 0; i < this.content.length; i++) {
+      this.#renderOneElem(this.content[i]);
     }
   }
 }

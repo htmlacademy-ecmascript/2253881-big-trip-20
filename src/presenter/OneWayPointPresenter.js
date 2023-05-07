@@ -11,7 +11,7 @@ export default class OneWayPointPresenter {
   #evtWithContent = null;
 
   constructor(elem) {
-    this.#elem = elem;
+    this.elem = elem;
 
     const escKeyDownHandlerWithContent = (evt) => {
       evt.preventDefault();
@@ -39,6 +39,7 @@ export default class OneWayPointPresenter {
         this.replaceNoContentToWithContent();
         document.addEventListener('keydown', escKeyDownHandlerWithContent);
       },
+      onClickStar: () => {},
     });
   }
 

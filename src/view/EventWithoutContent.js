@@ -62,19 +62,26 @@ function createEvent(data) {
 export default class EventWithoutContent extends AbstractView {
   #data = null;
   #onClickArrow = null;
+  #onClickStar = null;
 
-  constructor({ data, onClickArrow }) {
+  constructor({ data, onClickArrow, onClickStar }) {
     super();
-    this.#data = data;
+    this.data = data;
     this.#onClickArrow = onClickArrow;
+    this.#onClickStar = onClickStar;
 
     this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
       evt.preventDefault();
       this.#onClickArrow();
     };
+
+    this.element.querySelector('.event__favorite-btn').onclick = (evt) => {
+      evt.preventDefault();
+      this.#onClickStar();
+    };
   }
 
   get template() {
-    return createEvent(this.#data);
+    return createEvent(this.data);
   }
 }
