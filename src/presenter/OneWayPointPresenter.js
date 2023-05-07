@@ -23,8 +23,13 @@ export default class OneWayPointPresenter {
 
     const escKeyDownHandlerWithContent = (evt) => {
       evt.preventDefault();
-      if (evt.key === ESC && document.querySelector('.event--edit')) {
+      if (
+        evt.key === ESC &&
+        document.querySelector('.event--edit') &&
+        this.#status === MODE.openened
+      ) {
         this.replaceWithContentToNoContent();
+        this.#status = MODE.closed;
         document.removeEventListener('keydown', escKeyDownHandlerWithContent);
       }
     };
