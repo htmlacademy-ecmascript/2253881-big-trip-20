@@ -4,7 +4,7 @@ import ErrorDwnl from '../view/ErrorDwnl';
 import ListOfFilters from '../view/ListOfFilters';
 import WayPointsPresenter from './WayPointsPresenter';
 import HeaderPresenter from './HeaderPresenter';
-import { sortTaskUp, getDiffDates } from '../framework/utils';
+import { sortTaskUp } from '../framework/utils';
 import dayjs from 'dayjs';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');
@@ -71,16 +71,8 @@ export default class MainRender {
     }
     this.#sortType = type;
     this.#WayPointPresenter.resetList();
-    this.initOnlyListWaypoint();
+    this.#WayPointPresenter.init(this.content);
   };
-
-  initOnlyListWaypoint() {
-    if (this.content.length) {
-      this.#WayPointPresenter.init(this.content);
-    } else {
-      render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
-    }
-  }
 
   init() {
     if (this.#WayPointPresenter !== null) {

@@ -27,6 +27,7 @@ export default class WayPointsPresenter {
     this.arrayOfInst.forEach((elem) => {
       elem.destroy();
     });
+    this.arrayOfInst = [];
   }
 
   resetToClose = () => {
