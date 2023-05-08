@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import AbstractView from '../framework/view/abstract-view';
+import { getDiffDates } from '../framework/utils';
 /* eslint-disable */
 function createEvent(data) {
   return `<li class="trip-events__item"><div class="event">
@@ -22,9 +23,7 @@ function createEvent(data) {
         data.dateTo
       ).format('HH:mm')}</time>
     </p>
-    <p class="event__duration">${dayjs(
-      new Date(data.dateTo) - new Date(data.dateFrom)
-    ).format('mm')}M</p>
+    <p class="event__duration">${getDiffDates(data.dateFrom, data.dateTo)}</p>
   </div>
   <p class="event__price">
     &euro;&nbsp;<span class="event__price-value">${data.offers.offers.reduce(
@@ -46,7 +45,7 @@ function createEvent(data) {
       .join('')}
   </ul>
   <button class="event__favorite-btn ${
-    data.isFavorite ? 'event__favorite-btn--active' : ''
+    data.isFavourite ? 'event__favorite-btn--active' : ''
   }" type="button">
     <span class="visually-hidden">Add to favorite</span>
     <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -60,24 +59,28 @@ function createEvent(data) {
 }
 /* eslint-enable */
 export default class EventWithoutContent extends AbstractView {
-  #data;
-  #onClick;
-  constructor({ data, onClick }) {
-    super();
-    this.#data = data;
-    this.#onClick = onClick;
+  #data = null;
+  #onClickArrow = null;
+  #onClickStar = null;
 
-    this.element
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#onClickEvent);
+  constructor({ data, onClickArrow, onClickStar }) {
+    super();
+    this.data = data;
+    this.#onClickArrow = onClickArrow;
+    this.#onClickStar = onClickStar;
+
+    this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
+      evt.preventDefault();
+      this.#onClickArrow();
+    };
+
+    this.element.querySelector('.event__favorite-btn').onclick = (evt) => {
+      evt.preventDefault();
+      this.#onClickStar();
+    };
   }
 
-  #onClickEvent = (evt) => {
-    evt.preventDefault();
-    this.#onClick();
-  };
-
   get template() {
-    return createEvent(this.#data);
+    return createEvent(this.data);
   }
 }

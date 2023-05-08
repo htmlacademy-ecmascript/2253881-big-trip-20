@@ -130,38 +130,30 @@ function createContentEventSectionDestination(data) {
 }
 /* eslint-enable */
 export default class EventWithContent extends AbstractView {
-  #data;
-  #onClickSubmit;
-  #onClickArrow;
+  #data = null;
+  #onClickSubmit = null;
+  #onClickArrow = null;
+
   constructor({ data, onClickSubmit, onClickArrow }) {
     super();
     this.#data = data;
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
 
-    this.element
-      .querySelector('.event--edit')
-      .addEventListener('submit', this.#onClickEventSubmit);
-    this.element
-      .querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#onClickEventArrow);
+    this.element.querySelector('.event--edit').onsubmit = (evt) => {
+      evt.preventDefault();
+      this.#onClickSubmit();
+    };
+    this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
+      evt.preventDefault();
+      this.#onClickArrow();
+    };
   }
-
-  #onClickEventSubmit = (evt) => {
-    evt.preventDefault();
-    this.#onClickSubmit();
-  };
-
-  #onClickEventArrow = (evt) => {
-    evt.preventDefault();
-    this.#onClickArrow();
-  };
 
   get template() {
     const liElem = createElement(createEventWithContent());
     const formWrapperElem = createElement(createFormForContent());
     const headerContent = createElement(createContentHeader(this.#data));
-
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
       createEventSectionOffers(this.#data)
@@ -169,7 +161,6 @@ export default class EventWithContent extends AbstractView {
     const eventSectionDestination = createElement(
       createContentEventSectionDestination(this.#data)
     );
-
     sectionWrapperElem.insertAdjacentElement(
       RenderPosition.AFTERBEGIN,
       eventSectionOffers
@@ -178,19 +169,16 @@ export default class EventWithContent extends AbstractView {
       RenderPosition.BEFOREEND,
       eventSectionDestination
     );
-
     formWrapperElem.insertAdjacentElement(
       RenderPosition.AFTERBEGIN,
       headerContent
     );
-
     formWrapperElem.insertAdjacentElement(
       RenderPosition.BEFOREEND,
       sectionWrapperElem
     );
     //обертка ли с контентом
     liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
-
     const wrapperElem = document.createElement('div');
     wrapperElem.append(liElem);
     const stringedLiElem = wrapperElem.innerHTML;
