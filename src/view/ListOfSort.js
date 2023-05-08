@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { SORT_TYPES } from '../framework/conts';
+import { SORT_TYPES, LABEL } from '../framework/conts';
 
 /* eslint-disable */
 function createSortList() {
@@ -32,6 +32,22 @@ function createSortList() {
 }
 
 export default class ListOfSort extends AbstractView {
+  #handleSort = null;
+
+  constructor({ handleSort }) {
+    super();
+    this.#handleSort = handleSort;
+
+    this.element.onclick = (evt) => {
+      if (evt.target.tagName !== LABEL) {
+        return;
+      }
+      this.#handleSort();
+      //this.#handleSort(evt.target.dataset.sortType);
+      console.log(evt.target);
+    };
+  }
+
   get template() {
     return createSortList();
   }

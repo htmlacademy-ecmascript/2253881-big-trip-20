@@ -30,3 +30,19 @@ export function getDiffDates(dateFrom, dateTo) {
 
   return pointDur;
 }
+
+export function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+export function sortTaskUp(taskA, taskB) {
+  const weight = getWeightForNullDate(taskA.dateFrom, taskB.dateFrom);
+
+  return weight ?? dayjs(taskA.dateFrom).diff(dayjs(taskB.dateFrom));
+}
+
+export function sortTaskDown(taskA, taskB) {
+  const weight = getWeightForNullDate(taskA.dateFrom, taskB.dateFrom);
+
+  return weight ?? dayjs(taskB.dateFrom).diff(dayjs(taskA.dateFrom));
+}

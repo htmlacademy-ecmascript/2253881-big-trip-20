@@ -20,7 +20,7 @@ export default class WayPointsPresenter {
     this.arrayOfInst.forEach((elem) => {
       elem.destroy();
     });
-    this.init();
+    this.init(this.content);
   };
 
   resetToClose = () => {
@@ -36,12 +36,12 @@ export default class WayPointsPresenter {
       this.resetToClose
     );
     this.arrayOfInst.push(newWayPoint);
-    newWayPoint.init();
+    newWayPoint.init(this.content);
   }
 
-  init() {
-    for (let i = 0; i < this.content.length; i++) {
-      this.#renderOneElem(this.content[i]);
+  init(data) {
+    for (let i = 0; i < data.length; i++) {
+      this.#renderOneElem(data[i]);
     }
   }
 }

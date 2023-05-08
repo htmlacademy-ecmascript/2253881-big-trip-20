@@ -10,3 +10,5 @@ export const MODE = {
   closed: 'closed',
   openened: 'opened',
 };
+
+export const LABEL = 'LABEL';
