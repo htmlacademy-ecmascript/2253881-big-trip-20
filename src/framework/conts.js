@@ -12,3 +12,8 @@ export const MODE = {
 };
 
 export const LABEL = 'LABEL';
+
+export const ESC = 'Escape';
+
+export const placeToRenderForOneElemPresenterElem =
+  document.querySelector('.trip-events__list');

@@ -1,4 +1,4 @@
-import OneWayPointPresenter from './OneWayPointPresenter';
+import oneWayPointPresenter from './oneWayPointPresenter';
 
 export default class WayPointsPresenter {
   content = null;
@@ -37,7 +37,7 @@ export default class WayPointsPresenter {
   };
 
   #renderOneElem(elem) {
-    const newWayPoint = new OneWayPointPresenter(
+    const newWayPoint = new oneWayPointPresenter(
       elem,
       this.changingIsFavourite,
       this.resetToClose

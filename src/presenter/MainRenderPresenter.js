@@ -1,9 +1,9 @@
 import { render, RenderPosition } from '../framework/render';
 import { SORT_TYPES } from '../framework/conts';
-import ErrorDwnl from '../view/ErrorDwnl';
+import ErrorDwnl from '../view/errorDwnl';
 import ListOfFilters from '../view/ListOfFilters';
-import WayPointsPresenter from './WayPointsPresenter';
-import HeaderPresenter from './HeaderPresenter';
+import wayPointsPresenter from './wayPointsPresenter';
+import headerPresenter from './headerPresenter';
 import { sortTaskUp } from '../framework/utils';
 import dayjs from 'dayjs';
 
@@ -14,7 +14,7 @@ export default class MainRender {
   content = null;
   #backupContent;
   #WayPointPresenter = null;
-  #HeaderPresenter = null;
+  #headerPresenter = null;
   #sortType = SORT_TYPES.day;
 
   constructor(content) {
@@ -79,11 +79,11 @@ export default class MainRender {
       this.#backupContent = [...this.#WayPointPresenter.content];
     }
 
-    this.#HeaderPresenter = new HeaderPresenter(this.content, this.#sortList);
-    this.#WayPointPresenter = new WayPointsPresenter(this.content);
+    this.#headerPresenter = new headerPresenter(this.content, this.#sortList);
+    this.#WayPointPresenter = new wayPointsPresenter(this.content);
 
     if (this.content.length) {
-      this.#HeaderPresenter.init();
+      this.#headerPresenter.init();
       this.#WayPointPresenter.init(this.content);
     } else {
       render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
