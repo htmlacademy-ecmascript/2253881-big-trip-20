@@ -1,13 +1,9 @@
 import EventWithContent from '../view/EventWithContent';
 import EventWithoutContent from '../view/EventWithoutContent';
 import { replace, render, remove } from '../framework/render';
+import { MODE } from '../framework/conts';
 
 const ESC = 'Escape';
-
-const MODE = {
-  closed: 'closed',
-  openened: 'opened',
-};
 
 export default class OneWayPointPresenter {
   #placeToRenderElem = document.querySelector('.trip-events__list');
