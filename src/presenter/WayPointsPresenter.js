@@ -23,6 +23,12 @@ export default class WayPointsPresenter {
     this.init(this.content);
   };
 
+  resetList() {
+    this.arrayOfInst.forEach((elem) => {
+      elem.destroy();
+    });
+  }
+
   resetToClose = () => {
     this.arrayOfInst.forEach((elem) => {
       elem.resetView();

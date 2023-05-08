@@ -42,9 +42,8 @@ export default class ListOfSort extends AbstractView {
       if (evt.target.tagName !== LABEL) {
         return;
       }
-      this.#handleSort();
-      //this.#handleSort(evt.target.dataset.sortType);
-      console.log(evt.target);
+
+      this.#handleSort(evt.target.dataset.sortType);
     };
   }
 

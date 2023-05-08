@@ -67,7 +67,7 @@ export const generateObj = (count) => {
       basePrice: Math.floor(Math.random() * 100000),
       dateFrom: dayjs(
         new Date(
-          getRandomArbitrary(2019, 2020),
+          2020,
           getRandomArbitrary(0, 11),
           getRandomArbitrary(1, 31),
           getRandomArbitrary(0, 24),
@@ -76,7 +76,7 @@ export const generateObj = (count) => {
       ),
       dateTo: dayjs(
         new Date(
-          getRandomArbitrary(2021, 2023),
+          2021,
           getRandomArbitrary(0, 11),
           getRandomArbitrary(1, 31),
           getRandomArbitrary(0, 24),
