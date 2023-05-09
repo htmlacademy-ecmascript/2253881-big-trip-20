@@ -1,7 +1,7 @@
 import { render, RenderPosition } from '../framework/render';
-import TripInfo from '../view/TripInfo';
+import TripInfo from '../view/tripInfo';
 import ListOfSort from '../view/listOfSort';
-import ErrorDwnl from '../view/ErrorDwnl';
+import ErrorDwnl from '../view/errorDwnl';
 
 const sortContainerElem = document.querySelector('.trip-events');
 const tripMainContElem = document.querySelector('.trip-main');
