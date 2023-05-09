@@ -1,6 +1,6 @@
-import oneWayPointPresenter from './oneWayPointPresenter';
+import OneWayPointPresenter from './oneWayPointPresenter';
 
-export default class wayPointsPresenter {
+export default class WayPointsPresenter {
   content = null;
   changingIsFavourite = null;
   constructor(content, changingIsFavourite) {
@@ -23,7 +23,7 @@ export default class wayPointsPresenter {
   };
 
   #renderOneElem(elem) {
-    const newWayPoint = new oneWayPointPresenter(
+    const newWayPoint = new OneWayPointPresenter(
       elem,
       this.changingIsFavourite,
       this.resetToClose

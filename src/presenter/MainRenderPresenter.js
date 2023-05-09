@@ -2,8 +2,8 @@ import { render, RenderPosition } from '../framework/render';
 import { SORT_TYPES } from '../framework/conts';
 import ErrorDwnl from '../view/errorDwnl';
 import ListOfFilters from '../view/listOfFilters';
-import wayPointsPresenter from './wayPointsPresenter';
-import headerPresenter from './headerPresenter';
+import WayPointsPresenter from './wayPointsPresenter';
+import HeaderPresenter from './headerPresenter';
 import dayjs from 'dayjs';
 
 import { getWeightForNullDate } from '../framework/utils';
@@ -76,8 +76,8 @@ export default class MainRender {
   };
 
   init() {
-    this.#headerPresenter = new headerPresenter(this.content, this.#sortList);
-    this.#WayPointPresenter = new wayPointsPresenter(
+    this.#headerPresenter = new HeaderPresenter(this.content, this.#sortList);
+    this.#WayPointPresenter = new WayPointsPresenter(
       this.content,
       this.changingIsFavourite
     );

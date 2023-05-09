@@ -6,7 +6,7 @@ import ErrorDwnl from '../view/errorDwnl';
 const sortContainerElem = document.querySelector('.trip-events');
 const tripMainContElem = document.querySelector('.trip-main');
 
-export default class headerPresenter {
+export default class HeaderPresenter {
   #data = null;
   #sortList = null;
 
