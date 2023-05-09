@@ -1,27 +1,20 @@
-import OneWayPointPresenter from './OneWayPointPresenter';
+import OneWayPointPresenter from './oneWayPointPresenter';
 
 export default class WayPointsPresenter {
   content = null;
-
-  constructor(content) {
+  changingIsFavourite = null;
+  constructor(content, changingIsFavourite) {
     this.content = content;
     this.arrayOfInst = [];
+    this.changingIsFavourite = changingIsFavourite;
   }
 
-  changingIsFavourite = (id) => {
-    this.content = this.content.map((elem) => {
-      if (elem.id === id) {
-        elem.isFavourite = !elem.isFavourite;
-        return elem;
-      }
-      return elem;
-    });
-
+  resetList() {
     this.arrayOfInst.forEach((elem) => {
       elem.destroy();
     });
-    this.init();
-  };
+    this.arrayOfInst = [];
+  }
 
   resetToClose = () => {
     this.arrayOfInst.forEach((elem) => {
@@ -36,12 +29,12 @@ export default class WayPointsPresenter {
       this.resetToClose
     );
     this.arrayOfInst.push(newWayPoint);
-    newWayPoint.init();
+    newWayPoint.init(this.content);
   }
 
-  init() {
-    for (let i = 0; i < this.content.length; i++) {
-      this.#renderOneElem(this.content[i]);
+  init(data) {
+    for (let i = 0; i < data.length; i++) {
+      this.#renderOneElem(data[i]);
     }
   }
 }

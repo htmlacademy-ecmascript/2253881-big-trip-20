@@ -30,3 +30,23 @@ export function getDiffDates(dateFrom, dateTo) {
 
   return pointDur;
 }
+
+export function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+export function getWeightForNullDate(dateA, dateB) {
+  if (dateA === null && dateB === null) {
+    return 0;
+  }
+
+  if (dateA === null) {
+    return 1;
+  }
+
+  if (dateB === null) {
+    return -1;
+  }
+
+  return null;
+}

@@ -1,4 +1,5 @@
 import { nanoid } from 'nanoid';
+import { getRandomArbitrary } from '../framework/utils';
 
 const FLIGHT_POINTS = [
   'Amsterdam',
@@ -63,8 +64,20 @@ export const generateObj = (count) => {
     data.push({
       id: nanoid(),
       basePrice: Math.floor(Math.random() * 100000),
-      dateFrom: '2019-07-10T22:55:56.845Z',
-      dateTo: '2019-07-11T11:22:13.375Z',
+      dateFrom: new Date(
+        2020,
+        5,
+        getRandomArbitrary(2, 3),
+        getRandomArbitrary(2, 15),
+        getRandomArbitrary(5, 50)
+      ),
+      dateTo: new Date(
+        2020,
+        5,
+        getRandomArbitrary(4, 5),
+        getRandomArbitrary(2, 15),
+        getRandomArbitrary(2, 50)
+      ),
       destination: mapCitys.get(getRandomElem(FLIGHT_POINTS)),
       isFavourite: [true, false][Math.floor(Math.random() * 2)],
       offers: mapOffers.get(typeOfMoving),
