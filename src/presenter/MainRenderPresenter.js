@@ -5,6 +5,7 @@ import ListOfFilters from '../view/listOfFilters';
 import wayPointsPresenter from './wayPointsPresenter';
 import headerPresenter from './headerPresenter';
 import dayjs from 'dayjs';
+
 import { getWeightForNullDate } from '../framework/utils';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');
@@ -37,9 +38,6 @@ export default class MainRender {
           const secondDate = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
           return isNull ?? secondDate - firstDate;
         });
-        // this.content.forEach((elem) => {
-        //   console.log(dayjs(elem.dateTo).diff(dayjs(elem.dateFrom)));
-        // });
         break;
       case SORT_TYPES.price:
         this.content.sort((a, b) => {

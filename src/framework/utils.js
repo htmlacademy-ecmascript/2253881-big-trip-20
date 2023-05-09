@@ -19,7 +19,6 @@ export function getDiffDates(dateFrom, dateTo) {
   switch (true) {
     case diff >= MSEC_IN_DAY:
       pointDur = dayjs.duration(diff).format('DD[D] HH[H] mm[M]');
-      // pointDur = dayjs.duration(diff).format('YYYY DD[D] HH[H] mm[M]');
       break;
     case diff >= MIN_IN_HOUR:
       pointDur = dayjs.duration(diff).format('HH[H] mm[M]');

@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 import { getRandomArbitrary } from '../framework/utils';
 
@@ -65,23 +64,19 @@ export const generateObj = (count) => {
     data.push({
       id: nanoid(),
       basePrice: Math.floor(Math.random() * 100000),
-      dateFrom: dayjs(
-        new Date(
-          2020,
-          getRandomArbitrary(0, 11),
-          getRandomArbitrary(1, 31),
-          getRandomArbitrary(0, 24),
-          getRandomArbitrary(0, 60)
-        )
+      dateFrom: new Date(
+        2020,
+        5,
+        getRandomArbitrary(2, 3),
+        getRandomArbitrary(2, 15),
+        getRandomArbitrary(5, 50)
       ),
-      dateTo: dayjs(
-        new Date(
-          2021,
-          getRandomArbitrary(0, 11),
-          getRandomArbitrary(1, 31),
-          getRandomArbitrary(0, 24),
-          getRandomArbitrary(0, 60)
-        )
+      dateTo: new Date(
+        2020,
+        5,
+        getRandomArbitrary(4, 5),
+        getRandomArbitrary(2, 15),
+        getRandomArbitrary(2, 50)
       ),
       destination: mapCitys.get(getRandomElem(FLIGHT_POINTS)),
       isFavourite: [true, false][Math.floor(Math.random() * 2)],
