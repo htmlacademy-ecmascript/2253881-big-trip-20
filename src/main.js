@@ -1,4 +1,4 @@
-import EventList from './view/EventList';
+import EventList from './view/eventList';
 import { render, RenderPosition } from './framework/render';
 import { generateObj } from './mocks/mock';
 import mainRenderPresenter from './presenter/mainRenderPresenter';

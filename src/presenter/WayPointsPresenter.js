@@ -1,27 +1,13 @@
 import oneWayPointPresenter from './oneWayPointPresenter';
 
-export default class WayPointsPresenter {
+export default class wayPointsPresenter {
   content = null;
-
-  constructor(content) {
+  changingIsFavourite = null;
+  constructor(content, changingIsFavourite) {
     this.content = content;
     this.arrayOfInst = [];
+    this.changingIsFavourite = changingIsFavourite;
   }
-
-  changingIsFavourite = (id) => {
-    this.content = this.content.map((elem) => {
-      if (elem.id === id) {
-        elem.isFavourite = !elem.isFavourite;
-        return elem;
-      }
-      return elem;
-    });
-
-    this.arrayOfInst.forEach((elem) => {
-      elem.destroy();
-    });
-    this.init(this.content);
-  };
 
   resetList() {
     this.arrayOfInst.forEach((elem) => {

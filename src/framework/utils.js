@@ -19,6 +19,7 @@ export function getDiffDates(dateFrom, dateTo) {
   switch (true) {
     case diff >= MSEC_IN_DAY:
       pointDur = dayjs.duration(diff).format('DD[D] HH[H] mm[M]');
+      // pointDur = dayjs.duration(diff).format('YYYY DD[D] HH[H] mm[M]');
       break;
     case diff >= MIN_IN_HOUR:
       pointDur = dayjs.duration(diff).format('HH[H] mm[M]');
@@ -49,15 +50,4 @@ export function getWeightForNullDate(dateA, dateB) {
   }
 
   return null;
-}
-
-export function sortTaskUp(taskA, taskB) {
-  const weight = getWeightForNullDate(taskA.dateFrom, taskB.dateFrom);
-  return weight ?? dayjs(taskA.dateFrom).diff(dayjs(taskB.dateFrom));
-}
-
-export function sortTaskDown(taskA, taskB) {
-  const weight = getWeightForNullDate(taskA.dateFrom, taskB.dateFrom);
-
-  return weight ?? dayjs(taskB.dateFrom).diff(dayjs(taskA.dateFrom));
 }

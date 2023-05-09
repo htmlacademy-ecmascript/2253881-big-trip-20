@@ -3,7 +3,7 @@ import EventWithoutContent from '../view/EventWithoutContent';
 import { replace, render, remove } from '../framework/render';
 import { MODE, ESC } from '../framework/conts';
 
-export default class OneWayPointPresenter {
+export default class oneWayPointPresenter {
   #placeToRenderElem = document.querySelector('.trip-events__list');
   elem = null;
   #evtWithOutContent = null;

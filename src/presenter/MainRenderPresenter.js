@@ -1,11 +1,11 @@
 import { render, RenderPosition } from '../framework/render';
 import { SORT_TYPES } from '../framework/conts';
 import ErrorDwnl from '../view/errorDwnl';
-import ListOfFilters from '../view/ListOfFilters';
+import ListOfFilters from '../view/listOfFilters';
 import wayPointsPresenter from './wayPointsPresenter';
 import headerPresenter from './headerPresenter';
-import { sortTaskUp } from '../framework/utils';
 import dayjs from 'dayjs';
+import { getWeightForNullDate } from '../framework/utils';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');
 const sortContainerElem = document.querySelector('.trip-events');
@@ -28,25 +28,18 @@ export default class MainRender {
 
     switch (type) {
       case SORT_TYPES.day:
-        this.content.sort(sortTaskUp);
-        break;
-      case SORT_TYPES.event:
-        this.content.sort((a, b) => {
-          if (a.type.toLowerCase() < b.type.toLowerCase()) {
-            return -1;
-          }
-          if (a.type.toLowerCase() > b.type.toLowerCase()) {
-            return 1;
-          }
-          return 0;
-        });
+        this.content = [...this.#backupContent];
         break;
       case SORT_TYPES.time:
         this.content.sort((a, b) => {
+          const isNull = getWeightForNullDate(a.dateTo, b.dateTo);
           const firstDate = dayjs(a.dateTo).diff(dayjs(a.dateFrom));
           const secondDate = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
-          return firstDate - secondDate;
+          return isNull ?? secondDate - firstDate;
         });
+        // this.content.forEach((elem) => {
+        //   console.log(dayjs(elem.dateTo).diff(dayjs(elem.dateFrom)));
+        // });
         break;
       case SORT_TYPES.price:
         this.content.sort((a, b) => {
@@ -58,29 +51,39 @@ export default class MainRender {
             (acc, elem) => (acc += elem.price),
             0
           );
-          return first - second;
+          return second - first;
         });
         break;
-      case SORT_TYPES.offers:
-        this.content.sort(
-          (a, b) => a.offers.offers.length - b.offers.offers.length
-        );
-        break;
       default:
-        break;
+        return;
     }
     this.#sortType = type;
     this.#WayPointPresenter.resetList();
     this.#WayPointPresenter.init(this.content);
   };
 
-  init() {
-    if (this.#WayPointPresenter !== null) {
-      this.#backupContent = [...this.#WayPointPresenter.content];
-    }
+  changingIsFavourite = (id) => {
+    this.content = this.content.map((elem) => {
+      if (elem.id === id) {
+        elem.isFavourite = !elem.isFavourite;
+        return elem;
+      }
+      return elem;
+    });
 
+    this.#WayPointPresenter.arrayOfInst.forEach((elem) => {
+      elem.destroy();
+    });
+    this.#WayPointPresenter.init(this.content);
+  };
+
+  init() {
     this.#headerPresenter = new headerPresenter(this.content, this.#sortList);
-    this.#WayPointPresenter = new wayPointsPresenter(this.content);
+    this.#WayPointPresenter = new wayPointsPresenter(
+      this.content,
+      this.changingIsFavourite
+    );
+    this.#backupContent = [...this.#WayPointPresenter.content];
 
     if (this.content.length) {
       this.#headerPresenter.init();
