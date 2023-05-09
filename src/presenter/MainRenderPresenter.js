@@ -1,7 +1,7 @@
 import { render, RenderPosition } from '../framework/render';
 import { SORT_TYPES } from '../framework/conts';
-import ErrorDwnl from '../view/errorDwnl';
-import ListOfFilters from '../view/listOfFilters';
+import ErrorDwnl from '../view/ErrorDwnl';
+import ListOfFilters from '../view/ListOfFilters';
 import wayPointsPresenter from './wayPointsPresenter';
 import headerPresenter from './headerPresenter';
 import dayjs from 'dayjs';
