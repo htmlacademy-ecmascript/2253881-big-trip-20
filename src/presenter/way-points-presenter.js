@@ -1,4 +1,4 @@
-import OneWayPointPresenter from './oneWayPointPresenter';
+import OneWayPointPresenter from './one-way-point-presenter';
 
 export default class WayPointsPresenter {
   content = null;

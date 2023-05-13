@@ -1,10 +1,10 @@
 import { render, RenderPosition } from '../framework/render';
 import { SORT_TYPES } from '../framework/conts';
-import ErrorDwnl from '../view/errorDwnl';
-import ListOfFilters from '../view/listOfFilters';
-import WayPointsPresenter from './wayPointsPresenter';
-import TripInfo from '../view/tripInfo';
-import ListOfSort from '../view/listOfSort';
+import ErrorDwnl from '../view/ErrorDwnl';
+import ListOfFilters from '../view/ListOfFilters';
+import WayPointsPresenter from './way-points-presenter';
+import TripInfo from '../view/TripInfo';
+import ListOfSort from '../view/ListOfSort';
 import dayjs from 'dayjs';
 
 import { getWeightForNullDate } from '../framework/utils';

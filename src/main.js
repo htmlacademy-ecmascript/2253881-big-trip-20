@@ -1,7 +1,7 @@
-import EventList from './view/eventList';
+import EventList from './view/EventList';
 import { render, RenderPosition } from './framework/render';
 import { generateObj } from './mocks/mock';
-import MainRender from './presenter/mainRenderPresenter';
+import MainRender from './presenter/main-render-presenter';
 
 const infosContent = generateObj(Math.floor(Math.random() * 10));
 // const infosContent = [];
