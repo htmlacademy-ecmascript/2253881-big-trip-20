@@ -22,8 +22,10 @@ export default class OneWayPointPresenter {
         document.querySelector('.event--edit') &&
         this.#status === MODE.openened
       ) {
+        this.#evtWithContent.reset(this.elem);
         this.replaceWithContentToNoContent();
         this.#status = MODE.closed;
+
         document.removeEventListener('keydown', escKeyDownHandlerWithContent);
       }
     };
@@ -32,9 +34,14 @@ export default class OneWayPointPresenter {
       data: this.elem,
       onClickSubmit: () => {
         this.replaceWithContentToNoContent();
+
+        this.elem = { ...this.#evtWithContent._state };
+        this.#evtWithOutContent.updateElement(this.#evtWithContent._state);
+
         document.removeEventListener('keydown', escKeyDownHandlerWithContent);
       },
       onClickArrow: () => {
+        this.#evtWithContent.reset(this.elem);
         this.replaceWithContentToNoContent();
         document.removeEventListener('keydown', escKeyDownHandlerWithContent);
       },

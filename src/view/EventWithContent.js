@@ -164,15 +164,23 @@ export default class EventWithContent extends AbstractStatefulView {
         });
       }
     };
+
+    this.element.querySelector('#event-destination-1').onchange = (evt) => {
+      this.updateElement({ destination: mapCitys.get(evt.target.value) });
+    };
   }
 
-  static parseTaskToState(task) {
-    return { ...task };
+  reset(data) {
+    this.updateElement(data);
   }
 
-  static parseStateToTask(state) {
-    const data = { ...state };
-    return data;
+  static parseTaskToState(data) {
+    return { ...data };
+  }
+
+  static parseStateToTask(data) {
+    const parsedData = { ...data };
+    return parsedData;
   }
 
   get template() {

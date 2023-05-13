@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import AbstractView from '../framework/view/abstract-view';
+
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { getDiffDates } from '../framework/utils';
 /* eslint-disable */
 function createEvent(data) {
@@ -58,17 +59,22 @@ function createEvent(data) {
 </div></li>`;
 }
 /* eslint-enable */
-export default class EventWithoutContent extends AbstractView {
+export default class EventWithoutContent extends AbstractStatefulView {
   #data = null;
   #onClickArrow = null;
   #onClickStar = null;
 
   constructor({ data, onClickArrow, onClickStar }) {
     super();
-    this.data = data;
+
+    this._setState(data);
     this.#onClickArrow = onClickArrow;
     this.#onClickStar = onClickStar;
 
+    this._restoreHandlers();
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
       evt.preventDefault();
       this.#onClickArrow();
@@ -81,6 +87,6 @@ export default class EventWithoutContent extends AbstractView {
   }
 
   get template() {
-    return createEvent(this.data);
+    return createEvent(this._state);
   }
 }
