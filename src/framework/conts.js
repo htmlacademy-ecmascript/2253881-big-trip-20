@@ -12,7 +12,7 @@ export const MODE = {
 };
 
 export const LABEL = 'LABEL';
-
+export const INPUT = 'INPUT';
 export const ESC = 'Escape';
 
 export const placeToRenderForOneElemPresenterElem =

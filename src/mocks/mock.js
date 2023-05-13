@@ -24,8 +24,8 @@ export const MOVING_ELEMENTS = [
 
 const getRandomElem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-const mapCitys = new Map();
-const mapOffers = new Map();
+export const mapCitys = new Map();
+export const mapOffers = new Map();
 
 FLIGHT_POINTS.forEach((elem) => {
   mapCitys.set(elem, {

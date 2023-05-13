@@ -1,6 +1,7 @@
 import { RenderPosition, createElement } from '../framework/render';
-import { MOVING_ELEMENTS } from '../mocks/mock';
-import AbstractView from '../framework/view/abstract-view';
+import { MOVING_ELEMENTS, mapCitys, mapOffers } from '../mocks/mock';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import { INPUT } from '../framework/conts';
 
 /* eslint-disable */
 function createEventWithContent() {
@@ -129,17 +130,20 @@ function createContentEventSectionDestination(data) {
 </section>`;
 }
 /* eslint-enable */
-export default class EventWithContent extends AbstractView {
-  #data = null;
+export default class EventWithContent extends AbstractStatefulView {
   #onClickSubmit = null;
   #onClickArrow = null;
 
   constructor({ data, onClickSubmit, onClickArrow }) {
     super();
-    this.#data = data;
+    this._setState(EventWithContent.parseTaskToState(data));
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
 
+    this._restoreHandlers();
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('.event--edit').onsubmit = (evt) => {
       evt.preventDefault();
       this.#onClickSubmit();
@@ -148,18 +152,39 @@ export default class EventWithContent extends AbstractView {
       evt.preventDefault();
       this.#onClickArrow();
     };
+
+    this.element.querySelector('.event__type-group').onchange = (evt) => {
+      if (evt.target.tagName === INPUT) {
+        const typeEvent =
+          evt.target.value[0].toUpperCase() + evt.target.value.slice(1);
+
+        this.updateElement({
+          type: typeEvent,
+          offers: mapOffers.get(typeEvent),
+        });
+      }
+    };
+  }
+
+  static parseTaskToState(task) {
+    return { ...task };
+  }
+
+  static parseStateToTask(state) {
+    const data = { ...state };
+    return data;
   }
 
   get template() {
     const liElem = createElement(createEventWithContent());
     const formWrapperElem = createElement(createFormForContent());
-    const headerContent = createElement(createContentHeader(this.#data));
+    const headerContent = createElement(createContentHeader(this._state));
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
-      createEventSectionOffers(this.#data)
+      createEventSectionOffers(this._state)
     );
     const eventSectionDestination = createElement(
-      createContentEventSectionDestination(this.#data)
+      createContentEventSectionDestination(this._state)
     );
     sectionWrapperElem.insertAdjacentElement(
       RenderPosition.AFTERBEGIN,

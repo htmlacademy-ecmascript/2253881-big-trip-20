@@ -3,19 +3,20 @@ import { SORT_TYPES } from '../framework/conts';
 import ErrorDwnl from '../view/errorDwnl';
 import ListOfFilters from '../view/listOfFilters';
 import WayPointsPresenter from './wayPointsPresenter';
-import HeaderPresenter from './headerPresenter';
+import TripInfo from '../view/tripInfo';
+import ListOfSort from '../view/listOfSort';
 import dayjs from 'dayjs';
 
 import { getWeightForNullDate } from '../framework/utils';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');
 const sortContainerElem = document.querySelector('.trip-events');
+const tripMainContElem = document.querySelector('.trip-main');
 
 export default class MainRender {
   content = null;
   #backupContent;
   #WayPointPresenter = null;
-  #headerPresenter = null;
   #sortType = SORT_TYPES.day;
 
   constructor(content) {
@@ -76,7 +77,6 @@ export default class MainRender {
   };
 
   init() {
-    this.#headerPresenter = new HeaderPresenter(this.content, this.#sortList);
     this.#WayPointPresenter = new WayPointsPresenter(
       this.content,
       this.changingIsFavourite
@@ -84,7 +84,13 @@ export default class MainRender {
     this.#backupContent = [...this.#WayPointPresenter.content];
 
     if (this.content.length) {
-      this.#headerPresenter.init();
+      render(new TripInfo(), tripMainContElem, RenderPosition.AFTERBEGIN);
+      render(
+        new ListOfSort({ handleSort: this.#sortList }),
+        sortContainerElem,
+        RenderPosition.AFTERBEGIN
+      );
+
       this.#WayPointPresenter.init(this.content);
     } else {
       render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
