@@ -2,9 +2,9 @@ import { render, RenderPosition } from '../framework/render';
 import { SORT_TYPES } from '../framework/conts';
 import ErrorDwnl from '../view/ErrorDwnl';
 import ListOfFilters from '../view/ListOfFilters';
-import WayPointsPresenter from './way-points-presenter';
 import TripInfo from '../view/TripInfo';
 import ListOfSort from '../view/ListOfSort';
+import OneWayPointPresenter from './one-way-point-presenter';
 import dayjs from 'dayjs';
 
 import { getWeightForNullDate } from '../framework/utils';
@@ -16,8 +16,8 @@ const tripMainContElem = document.querySelector('.trip-main');
 export default class MainRender {
   content = null;
   #backupContent;
-  #WayPointPresenter = null;
   #sortType = SORT_TYPES.day;
+  #arrayOfInst = new Map();
 
   constructor(content) {
     this.content = content;
@@ -57,8 +57,8 @@ export default class MainRender {
         return;
     }
     this.#sortType = type;
-    this.#WayPointPresenter.resetList();
-    this.#WayPointPresenter.init(this.content);
+    this.resetList();
+    this.#renderAllElems(this.content);
   };
 
   changingIsFavourite = (id) => {
@@ -70,18 +70,14 @@ export default class MainRender {
       return elem;
     });
 
-    this.#WayPointPresenter.arrayOfInst.forEach((elem) => {
+    this.#arrayOfInst.forEach((elem) => {
       elem.destroy();
     });
-    this.#WayPointPresenter.init(this.content);
+    this.#renderAllElems(this.content);
   };
 
   init() {
-    this.#WayPointPresenter = new WayPointsPresenter(
-      this.content,
-      this.changingIsFavourite
-    );
-    this.#backupContent = [...this.#WayPointPresenter.content];
+    this.#backupContent = [...this.content];
 
     if (this.content.length) {
       render(new TripInfo(), tripMainContElem, RenderPosition.AFTERBEGIN);
@@ -91,7 +87,7 @@ export default class MainRender {
         RenderPosition.AFTERBEGIN
       );
 
-      this.#WayPointPresenter.init(this.content);
+      this.#renderAllElems(this.content);
     } else {
       render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
     }
@@ -100,5 +96,34 @@ export default class MainRender {
       filterContainerElem,
       RenderPosition.BEFOREEND
     );
+  }
+
+  resetList() {
+    this.#arrayOfInst.forEach((elem) => {
+      elem.destroy();
+    });
+    this.#arrayOfInst.clear();
+  }
+
+  resetToClose = () => {
+    this.#arrayOfInst.forEach((elem) => {
+      elem.resetView();
+    });
+  };
+
+  #renderOneElem(elem) {
+    const newWayPoint = new OneWayPointPresenter(
+      elem,
+      this.changingIsFavourite,
+      this.resetToClose
+    );
+    this.#arrayOfInst.set(elem.id, newWayPoint);
+    newWayPoint.init();
+  }
+
+  #renderAllElems() {
+    for (let i = 0; i < this.content.length; i++) {
+      this.#renderOneElem(this.content[i]);
+    }
   }
 }
