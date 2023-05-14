@@ -60,7 +60,6 @@ function createEvent(data) {
 }
 /* eslint-enable */
 export default class EventWithoutContent extends AbstractStatefulView {
-  #data = null;
   #onClickArrow = null;
   #onClickStar = null;
 

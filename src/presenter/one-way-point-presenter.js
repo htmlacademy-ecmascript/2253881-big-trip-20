@@ -10,9 +10,8 @@ export default class OneWayPointPresenter {
   #evtWithContent = null;
   #status = MODE.closed;
 
-  constructor(elem, changingIsFavourite, resetToClose) {
+  constructor(elem, resetToClose) {
     this.elem = elem;
-    this.changingIsFavourite = changingIsFavourite;
     this.resetToClose = resetToClose;
 
     const escKeyDownHandlerWithContent = (evt) => {
@@ -35,9 +34,6 @@ export default class OneWayPointPresenter {
       onClickSubmit: () => {
         this.replaceWithContentToNoContent();
 
-        this.elem = { ...this.#evtWithContent._state };
-        this.#evtWithOutContent.updateElement(this.#evtWithContent._state);
-
         document.removeEventListener('keydown', escKeyDownHandlerWithContent);
       },
       onClickArrow: () => {
@@ -55,7 +51,10 @@ export default class OneWayPointPresenter {
         document.addEventListener('keydown', escKeyDownHandlerWithContent);
       },
       onClickStar: () => {
-        this.changingIsFavourite(this.elem.id);
+        this.#evtWithOutContent.updateElement({
+          ...this.#evtWithOutContent._state,
+          isFavourite: !this.#evtWithOutContent._state.isFavourite,
+        });
       },
     });
   }

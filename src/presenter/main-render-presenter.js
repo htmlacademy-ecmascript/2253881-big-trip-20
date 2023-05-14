@@ -61,21 +61,6 @@ export default class MainRender {
     this.#renderAllElems(this.content);
   };
 
-  changingIsFavourite = (id) => {
-    this.content = this.content.map((elem) => {
-      if (elem.id === id) {
-        elem.isFavourite = !elem.isFavourite;
-        return elem;
-      }
-      return elem;
-    });
-
-    this.#arrayOfInst.forEach((elem) => {
-      elem.destroy();
-    });
-    this.#renderAllElems(this.content);
-  };
-
   init() {
     this.#backupContent = [...this.content];
 
@@ -112,11 +97,7 @@ export default class MainRender {
   };
 
   #renderOneElem(elem) {
-    const newWayPoint = new OneWayPointPresenter(
-      elem,
-      this.changingIsFavourite,
-      this.resetToClose
-    );
+    const newWayPoint = new OneWayPointPresenter(elem, this.resetToClose);
     this.#arrayOfInst.set(elem.id, newWayPoint);
     newWayPoint.init();
   }
