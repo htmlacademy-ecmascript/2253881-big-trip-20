@@ -73,6 +73,10 @@ export default class EventWithoutContent extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  reset(data) {
+    this.updateElement(data);
+  }
+
   _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
       evt.preventDefault();

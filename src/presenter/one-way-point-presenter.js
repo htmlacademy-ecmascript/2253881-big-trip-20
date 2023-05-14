@@ -14,32 +14,26 @@ export default class OneWayPointPresenter {
     this.elem = elem;
     this.resetToClose = resetToClose;
 
-    const escKeyDownHandlerWithContent = (evt) => {
-      evt.preventDefault();
-      if (
-        evt.key === ESC &&
-        document.querySelector('.event--edit') &&
-        this.#status === MODE.openened
-      ) {
-        this.#evtWithContent.reset(this.elem);
-        this.replaceWithContentToNoContent();
-        this.#status = MODE.closed;
-
-        document.removeEventListener('keydown', escKeyDownHandlerWithContent);
-      }
-    };
-
     this.#evtWithContent = new EventWithContent({
       data: this.elem,
       onClickSubmit: () => {
         this.replaceWithContentToNoContent();
 
-        document.removeEventListener('keydown', escKeyDownHandlerWithContent);
+        this.#evtWithOutContent.updateElement(this.#evtWithContent._state);
+        this.elem = this.#evtWithOutContent._state;
+
+        document.removeEventListener(
+          'keydown',
+          this.escKeyDownHandlerWithContent
+        );
       },
       onClickArrow: () => {
         this.#evtWithContent.reset(this.elem);
         this.replaceWithContentToNoContent();
-        document.removeEventListener('keydown', escKeyDownHandlerWithContent);
+        document.removeEventListener(
+          'keydown',
+          this.escKeyDownHandlerWithContent
+        );
       },
     });
 
@@ -48,16 +42,39 @@ export default class OneWayPointPresenter {
       onClickArrow: () => {
         this.resetToClose();
         this.replaceNoContentToWithContent();
-        document.addEventListener('keydown', escKeyDownHandlerWithContent);
+        document.addEventListener('keydown', this.escKeyDownHandlerWithContent);
       },
       onClickStar: () => {
-        this.#evtWithOutContent.updateElement({
-          ...this.#evtWithOutContent._state,
-          isFavourite: !this.#evtWithOutContent._state.isFavourite,
-        });
+        this.isFavouriteChanging();
       },
     });
   }
+
+  isFavouriteChanging() {
+    this.#evtWithOutContent.updateElement({
+      ...this.#evtWithOutContent._state,
+      isFavourite: !this.#evtWithOutContent._state.isFavourite,
+    });
+    this.elem.isFavourite = !this.elem.isFavourite;
+  }
+
+  escKeyDownHandlerWithContent = (evt) => {
+    evt.preventDefault();
+    if (
+      evt.key === ESC &&
+      document.querySelector('.event--edit') &&
+      this.#status === MODE.openened
+    ) {
+      this.#evtWithContent.reset(this.elem);
+      this.replaceWithContentToNoContent();
+      this.#status = MODE.closed;
+
+      document.removeEventListener(
+        'keydown',
+        this.escKeyDownHandlerWithContent
+      );
+    }
+  };
 
   destroy() {
     remove(this.#evtWithOutContent);

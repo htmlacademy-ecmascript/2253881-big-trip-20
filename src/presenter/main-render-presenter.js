@@ -83,6 +83,14 @@ export default class MainRender {
     );
   }
 
+  #handlePointChange = (updatedPoint) => {
+    this.content = this.content.map((el) =>
+      el.id === updatedPoint.id ? updatedPoint : el
+    );
+
+    // this.#arrayOfInst.get(updatedPoint.id).init(updatedPoint);
+  };
+
   resetList() {
     this.#arrayOfInst.forEach((elem) => {
       elem.destroy();
