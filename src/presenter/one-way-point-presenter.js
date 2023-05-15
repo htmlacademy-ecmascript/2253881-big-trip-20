@@ -12,47 +12,25 @@ export default class OneWayPointPresenter {
 
   #handleEventChange = null;
   #handleModeChange = null;
+  #updateBackup = null;
 
-  constructor({ data, handleModeChange, handleEventChange }) {
+  constructor({ data, handleModeChange, handleEventChange, updateBackup }) {
     this.#elem = data;
     this.#handleModeChange = handleModeChange;
     this.#handleEventChange = handleEventChange;
-
-    this.#evtWithContent = new EventWithContent({
-      data: this.#elem,
-      onClickSubmit: () => {
-        this.replaceWithContentToNoContent();
-
-        this.#elem = [...this.#evtWithOutContent._state];
-
-        this.#evtWithOutContent.updateElement(this.#evtWithContent._state);
-
-        this.#handleEventChange(this.#evtWithContent._state);
-      },
-      onClickArrow: () => {
-        this.#evtWithContent.reset(this.#elem);
-        this.replaceWithContentToNoContent();
-      },
-    });
-
-    this.#evtWithOutContent = new EventWithOutContent({
-      data: this.#elem,
-      onClickArrow: () => {
-        this.#handleModeChange();
-        this.replaceNoContentToWithContent();
-      },
-      onClickStar: () => {
-        this.isFavouriteChanging();
-      },
-    });
+    this.#updateBackup = updateBackup;
   }
+
+  #onClickSubmit = (newElem) => {
+    this.#elem = { ...newElem };
+    this.#updateBackup(newElem);
+    this.#handleEventChange(this.#elem);
+    this.replaceWithContentToNoContent();
+  };
 
   isFavouriteChanging() {
     this.#elem.isFavourite = !this.#elem.isFavourite;
-
     this.#handleEventChange(this.#elem);
-
-    this.#evtWithOutContent.updateElement(this.#elem);
   }
 
   #escKeyDownHandlerWithContent = (evt) => {
@@ -62,7 +40,7 @@ export default class OneWayPointPresenter {
       this.#status === MODE.openened
     ) {
       evt.preventDefault();
-      this.#evtWithContent.reset(this.elem);
+      this.#evtWithContent.reset(this.#elem);
       this.replaceWithContentToNoContent();
       this.#status = MODE.closed;
     }
@@ -114,17 +92,7 @@ export default class OneWayPointPresenter {
 
     this.#evtWithContent = new EventWithContent({
       data: this.#elem,
-      onClickSubmit: () => {
-        this.replaceWithContentToNoContent();
-
-        this.#evtWithOutContent.updateElement(this.#evtWithContent._state);
-        this.elem = this.#evtWithOutContent._state;
-
-        document.removeEventListener(
-          'keydown',
-          this.#escKeyDownHandlerWithContent
-        );
-      },
+      onClickSubmit: this.#onClickSubmit,
       onClickArrow: () => {
         this.#evtWithContent.reset(this.#elem);
         this.replaceWithContentToNoContent();

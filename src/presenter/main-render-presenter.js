@@ -59,7 +59,7 @@ export default class MainRender {
     }
     this.#sortType = type;
     this.#resetList();
-    this.#renderAllElems(this.#eventsList);
+    this.#renderAllElems();
   };
 
   init() {
@@ -85,14 +85,23 @@ export default class MainRender {
       sortContainerElem,
       RenderPosition.AFTERBEGIN
     );
-    this.#renderAllElems(this.#eventsList);
+    this.#renderAllElems();
   }
 
   #handleEventChange = (newEvent) => {
     this.#eventsList = this.#eventsList.map((el) =>
       el.id === newEvent.id ? newEvent : el
     );
+
+    this.#resetList();
+    this.#renderAllElems();
     // this.#arrayOfInst.get(newEvent.id).init(newEvent);
+  };
+
+  #updateBackup = (newEvent) => {
+    this.#backupContent = this.#backupContent.map((el) =>
+      el.id === newEvent.id ? newEvent : el
+    );
   };
 
   #resetList() {
@@ -113,6 +122,7 @@ export default class MainRender {
       data: elem,
       handleModeChange: this.#handleModeChange,
       handleEventChange: this.#handleEventChange,
+      updateBackup: this.#updateBackup,
     });
     this.#arrayOfInst.set(elem.id, newWayPoint);
     newWayPoint.init(elem);
