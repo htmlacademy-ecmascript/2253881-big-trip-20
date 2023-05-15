@@ -1,6 +1,7 @@
 import { RenderPosition, createElement } from '../framework/render';
-import { MOVING_ELEMENTS } from '../mocks/mock';
-import AbstractView from '../framework/view/abstract-view';
+import { MOVING_ELEMENTS, mapCitys, mapOffers } from '../mocks/mock';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import { INPUT } from '../framework/conts';
 
 /* eslint-disable */
 function createEventWithContent() {
@@ -12,28 +13,25 @@ function createFormForContent() {
 }
 
 function createContentHeader(data) {
+  const eventTypesList = MOVING_ELEMENTS.map(
+    (elem) => `<div class="event__type-item">
+  <input id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
+  <label class="event__type-label  event__type-label--${elem.toLocaleLowerCase()}" for="event-type-${elem.toLocaleLowerCase()}-1">${elem}</label>
+</div>`
+  ).join('');
+
   return `<header class="event__header">
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
-      <img class="event__type-icon" width="17" height="17" src="img/icons/${
-        data.type
-      }.png" alt="Event type icon">
+      <img class="event__type-icon" width="17" height="17" src="img/icons/${data.type}.png" alt="Event type icon">
     </label>
     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
     <div class="event__type-list">
       <fieldset class="event__type-group">
         <legend class="visually-hidden">Event type</legend>
-
-
-          ${MOVING_ELEMENTS.map(
-            (elem) => `<div class="event__type-item">
-          <input id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
-          <label class="event__type-label  event__type-label--${elem.toLocaleLowerCase()}" for="event-type-${elem.toLocaleLowerCase()}-1">${elem}</label>
-        </div>`
-          ).join('')}
-
+          ${eventTypesList}
       </fieldset>
     </div>
   </div>
@@ -79,6 +77,21 @@ function createEventDetailsWrapper() {
 }
 
 function createEventSectionOffers(data) {
+  const offersList =
+    data.offers.offers &&
+    `<div class="event__available-offers">${data.offers.offers
+      .map(
+        (elem) => `<div class="event__offer-selector">
+<input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
+<label class="event__offer-label" for="event-offer-luggage-1">
+  <span class="event__offer-title">${elem.title}</span>
+  &plus;&euro;&nbsp;
+  <span class="event__offer-price">${elem.price}</span>
+</label>
+</div>`
+      )
+      .join('')}</div>`;
+
   return `<section class="event__section  event__section--offers">
 
 
@@ -87,24 +100,7 @@ function createEventSectionOffers(data) {
       ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>'
       : ''
   }
-
-
-  ${
-    data.offers.offers &&
-    `<div class="event__available-offers">${data.offers.offers
-      .map(
-        (elem) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-  <label class="event__offer-label" for="event-offer-luggage-1">
-    <span class="event__offer-title">${elem.title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${elem.price}</span>
-  </label>
-</div>`
-      )
-      .join('')}</div>`
-  }
-
+  ${offersList}
 </section>`;
 }
 
@@ -129,37 +125,71 @@ function createContentEventSectionDestination(data) {
 </section>`;
 }
 /* eslint-enable */
-export default class EventWithContent extends AbstractView {
-  #data = null;
+export default class EventWithContent extends AbstractStatefulView {
   #onClickSubmit = null;
   #onClickArrow = null;
 
   constructor({ data, onClickSubmit, onClickArrow }) {
     super();
-    this.#data = data;
+    this._setState(EventWithContent.parseTaskToState(data));
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
+    this._restoreHandlers();
+  }
 
-    this.element.querySelector('.event--edit').onsubmit = (evt) => {
+  _restoreHandlers() {
+    // this.element.querySelector('.event--edit').onsubmit = (evt) => {
+    this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
-      this.#onClickSubmit();
+
+      this.#onClickSubmit(this._state);
     };
+
     this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
       evt.preventDefault();
       this.#onClickArrow();
     };
+
+    this.element.querySelector('.event__type-group').onchange = (evt) => {
+      if (evt.target.tagName === INPUT) {
+        const typeEvent =
+          evt.target.value[0].toUpperCase() + evt.target.value.slice(1);
+
+        this.updateElement({
+          type: typeEvent,
+          offers: mapOffers.get(typeEvent),
+        });
+      }
+    };
+
+    this.element.querySelector('#event-destination-1').onchange = (evt) => {
+      this.updateElement({ destination: mapCitys.get(evt.target.value) });
+    };
+  }
+
+  reset(data) {
+    this.updateElement(data);
+  }
+
+  static parseTaskToState(data) {
+    return { ...data };
+  }
+
+  static parseStateToTask(data) {
+    const parsedData = { ...data };
+    return parsedData;
   }
 
   get template() {
     const liElem = createElement(createEventWithContent());
     const formWrapperElem = createElement(createFormForContent());
-    const headerContent = createElement(createContentHeader(this.#data));
+    const headerContent = createElement(createContentHeader(this._state));
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
-      createEventSectionOffers(this.#data)
+      createEventSectionOffers(this._state)
     );
     const eventSectionDestination = createElement(
-      createContentEventSectionDestination(this.#data)
+      createContentEventSectionDestination(this._state)
     );
     sectionWrapperElem.insertAdjacentElement(
       RenderPosition.AFTERBEGIN,
