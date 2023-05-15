@@ -1,5 +1,5 @@
 import EventWithContent from '../view/event-with-content-view';
-import EventWithoutContent from '../view/event-with-out-content-view';
+import EventWithOutContent from '../view/event-with-out-content-view';
 import { replace, render, remove } from '../framework/render';
 import { MODE, ESC } from '../framework/conts';
 
@@ -37,7 +37,7 @@ export default class OneWayPointPresenter {
       },
     });
 
-    this.#evtWithOutContent = new EventWithoutContent({
+    this.#evtWithOutContent = new EventWithOutContent({
       data: this.elem,
       onClickArrow: () => {
         this.resetToClose();
@@ -97,7 +97,9 @@ export default class OneWayPointPresenter {
     this.#status = MODE.openened;
   }
 
-  init() {
+  init(newElem) {
+    this.elem = newElem;
+
     render(this.#evtWithOutContent, this.#placeToRenderElem);
   }
 }

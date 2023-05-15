@@ -111,7 +111,7 @@ export default class MainRender {
   #renderOneElem(elem) {
     const newWayPoint = new OneWayPointPresenter(elem, this.#resetToClose);
     this.#arrayOfInst.set(elem.id, newWayPoint);
-    newWayPoint.init();
+    newWayPoint.init(elem);
   }
 
   #renderAllElems() {
