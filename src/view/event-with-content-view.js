@@ -13,28 +13,25 @@ function createFormForContent() {
 }
 
 function createContentHeader(data) {
+  const eventTypesList = MOVING_ELEMENTS.map(
+    (elem) => `<div class="event__type-item">
+  <input id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
+  <label class="event__type-label  event__type-label--${elem.toLocaleLowerCase()}" for="event-type-${elem.toLocaleLowerCase()}-1">${elem}</label>
+</div>`
+  ).join('');
+
   return `<header class="event__header">
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
-      <img class="event__type-icon" width="17" height="17" src="img/icons/${
-        data.type
-      }.png" alt="Event type icon">
+      <img class="event__type-icon" width="17" height="17" src="img/icons/${data.type}.png" alt="Event type icon">
     </label>
     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
     <div class="event__type-list">
       <fieldset class="event__type-group">
         <legend class="visually-hidden">Event type</legend>
-
-
-          ${MOVING_ELEMENTS.map(
-            (elem) => `<div class="event__type-item">
-          <input id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
-          <label class="event__type-label  event__type-label--${elem.toLocaleLowerCase()}" for="event-type-${elem.toLocaleLowerCase()}-1">${elem}</label>
-        </div>`
-          ).join('')}
-
+          ${eventTypesList}
       </fieldset>
     </div>
   </div>
@@ -80,6 +77,21 @@ function createEventDetailsWrapper() {
 }
 
 function createEventSectionOffers(data) {
+  const offersList =
+    data.offers.offers &&
+    `<div class="event__available-offers">${data.offers.offers
+      .map(
+        (elem) => `<div class="event__offer-selector">
+<input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
+<label class="event__offer-label" for="event-offer-luggage-1">
+  <span class="event__offer-title">${elem.title}</span>
+  &plus;&euro;&nbsp;
+  <span class="event__offer-price">${elem.price}</span>
+</label>
+</div>`
+      )
+      .join('')}</div>`;
+
   return `<section class="event__section  event__section--offers">
 
 
@@ -88,24 +100,7 @@ function createEventSectionOffers(data) {
       ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>'
       : ''
   }
-
-
-  ${
-    data.offers.offers &&
-    `<div class="event__available-offers">${data.offers.offers
-      .map(
-        (elem) => `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-  <label class="event__offer-label" for="event-offer-luggage-1">
-    <span class="event__offer-title">${elem.title}</span>
-    &plus;&euro;&nbsp;
-    <span class="event__offer-price">${elem.price}</span>
-  </label>
-</div>`
-      )
-      .join('')}</div>`
-  }
-
+  ${offersList}
 </section>`;
 }
 

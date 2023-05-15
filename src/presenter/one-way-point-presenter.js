@@ -1,5 +1,5 @@
-import EventWithContent from '../view/EventWithContent';
-import EventWithoutContent from '../view/EventWithoutContent';
+import EventWithContent from '../view/event-with-content-view';
+import EventWithoutContent from '../view/event-with-out-content-view';
 import { replace, render, remove } from '../framework/render';
 import { MODE, ESC } from '../framework/conts';
 

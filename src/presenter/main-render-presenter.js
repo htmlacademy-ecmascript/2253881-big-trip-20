@@ -1,13 +1,12 @@
 import { render, RenderPosition } from '../framework/render';
 import { SORT_TYPES } from '../framework/conts';
-import ErrorDwnl from '../view/ErrorDwnl';
-import ListOfFilters from '../view/ListOfFilters';
-import TripInfo from '../view/TripInfo';
-import ListOfSort from '../view/ListOfSort';
+import ErrorDwnl from '../view/error-on-download-view';
+import ListOfFilters from '../view/list-of-filters-view';
+import TripInfo from '../view/trip-info-view';
+import ListOfSort from '../view/list-of-sort-view';
 import OneWayPointPresenter from './one-way-point-presenter';
-import dayjs from 'dayjs';
-
 import { getWeightForNullDate } from '../framework/utils';
+import dayjs from 'dayjs';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');
 const sortContainerElem = document.querySelector('.trip-events');
