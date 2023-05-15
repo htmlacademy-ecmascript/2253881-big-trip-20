@@ -65,11 +65,6 @@ export default class OneWayPointPresenter {
       this.#evtWithContent.reset(this.elem);
       this.replaceWithContentToNoContent();
       this.#status = MODE.closed;
-
-      document.removeEventListener(
-        'keydown',
-        this.#escKeyDownHandlerWithContent
-      );
     }
   };
 
