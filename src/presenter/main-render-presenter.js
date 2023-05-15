@@ -4,6 +4,7 @@ import ErrorDwnl from '../view/error-on-download-view';
 import ListOfFilters from '../view/list-of-filters-view';
 import TripInfo from '../view/trip-info-view';
 import ListOfSort from '../view/list-of-sort-view';
+import EventList from '../view/event-list-view';
 import OneWayPointPresenter from './one-way-point-presenter';
 import { getWeightForNullDate } from '../framework/utils';
 import dayjs from 'dayjs';
@@ -13,13 +14,14 @@ const sortContainerElem = document.querySelector('.trip-events');
 const tripMainContElem = document.querySelector('.trip-main');
 
 export default class MainRender {
-  content = null;
-  #backupContent;
+  #eventsList = null;
+  #eventsModel = null;
+  #backupContent = [];
   #sortType = SORT_TYPES.day;
   #arrayOfInst = new Map();
 
-  constructor(content) {
-    this.content = content;
+  constructor({ eventsModel }) {
+    this.#eventsModel = eventsModel;
   }
 
   #sortList = (type) => {
@@ -29,10 +31,10 @@ export default class MainRender {
 
     switch (type) {
       case SORT_TYPES.day:
-        this.content = [...this.#backupContent];
+        this.#eventsList = [...this.#backupContent];
         break;
       case SORT_TYPES.time:
-        this.content.sort((a, b) => {
+        this.#eventsList.sort((a, b) => {
           const isNull = getWeightForNullDate(a.dateTo, b.dateTo);
           const firstDate = dayjs(a.dateTo).diff(dayjs(a.dateFrom));
           const secondDate = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
@@ -40,7 +42,7 @@ export default class MainRender {
         });
         break;
       case SORT_TYPES.price:
-        this.content.sort((a, b) => {
+        this.#eventsList.sort((a, b) => {
           const first = a.offers.offers.reduce(
             (acc, elem) => (acc += elem.price),
             0
@@ -56,62 +58,65 @@ export default class MainRender {
         return;
     }
     this.#sortType = type;
-    this.resetList();
-    this.#renderAllElems(this.content);
+    this.#resetList();
+    this.#renderAllElems(this.#eventsList);
   };
 
   init() {
-    this.#backupContent = [...this.content];
+    this.#eventsList = [...this.#eventsModel.points];
+    // this.#eventsList = [];
+    this.#backupContent = [...this.#eventsList];
 
-    if (this.content.length) {
-      render(new TripInfo(), tripMainContElem, RenderPosition.AFTERBEGIN);
-      render(
-        new ListOfSort({ handleSort: this.#sortList }),
-        sortContainerElem,
-        RenderPosition.AFTERBEGIN
-      );
-
-      this.#renderAllElems(this.content);
-    } else {
-      render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
-    }
     render(
-      new ListOfFilters(this.content),
+      new ListOfFilters(this.#eventsList),
       filterContainerElem,
       RenderPosition.BEFOREEND
     );
+
+    if (!this.#eventsList.length) {
+      render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
+      return;
+    }
+    //ul list
+    render(new EventList(), sortContainerElem, RenderPosition.BEFOREEND);
+    render(new TripInfo(), tripMainContElem, RenderPosition.AFTERBEGIN);
+    render(
+      new ListOfSort({ handleSort: this.#sortList }),
+      sortContainerElem,
+      RenderPosition.AFTERBEGIN
+    );
+    this.#renderAllElems(this.#eventsList);
   }
 
   #handlePointChange = (updatedPoint) => {
-    this.content = this.content.map((el) =>
+    this.#eventsList = this.#eventsList.map((el) =>
       el.id === updatedPoint.id ? updatedPoint : el
     );
-
-    // this.#arrayOfInst.get(updatedPoint.id).init(updatedPoint);
+    //this.#arrayOfInst.get(updatedPoint.id).init(updatedPoint);
   };
 
-  resetList() {
+  #resetList() {
     this.#arrayOfInst.forEach((elem) => {
       elem.destroy();
     });
     this.#arrayOfInst.clear();
   }
 
-  resetToClose = () => {
+  #resetToClose = () => {
     this.#arrayOfInst.forEach((elem) => {
       elem.resetView();
     });
   };
 
   #renderOneElem(elem) {
-    const newWayPoint = new OneWayPointPresenter(elem, this.resetToClose);
+    const newWayPoint = new OneWayPointPresenter(elem, this.#resetToClose);
     this.#arrayOfInst.set(elem.id, newWayPoint);
     newWayPoint.init();
   }
 
   #renderAllElems() {
-    for (let i = 0; i < this.content.length; i++) {
-      this.#renderOneElem(this.content[i]);
+    for (let i = 0; i < this.#eventsList.length; i++) {
+      this.#renderOneElem(this.#eventsList[i]);
     }
   }
 }

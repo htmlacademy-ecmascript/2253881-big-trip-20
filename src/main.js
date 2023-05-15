@@ -1,18 +1,9 @@
-import EventList from './view/event-list-view';
-import { render, RenderPosition } from './framework/render';
-import { generateObj } from './mocks/mock';
 import MainRender from './presenter/main-render-presenter';
+import EventModel from './models/event-model';
 
-const infosContent = generateObj(Math.floor(Math.random() * 10));
+const eventsModel = new EventModel();
 // const infosContent = [];
 
-const sortContainerElem = document.querySelector('.trip-events');
-
-//общий список ul
-if (infosContent.length > 0) {
-  render(new EventList(), sortContainerElem, RenderPosition.BEFOREEND);
-}
-
-const mainBoard = new MainRender(infosContent);
+const mainBoard = new MainRender({ eventsModel });
 
 mainBoard.init();
