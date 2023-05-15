@@ -88,11 +88,11 @@ export default class MainRender {
     this.#renderAllElems(this.#eventsList);
   }
 
-  #handlePointChange = (updatedPoint) => {
+  #handleEventChange = (newEvent) => {
     this.#eventsList = this.#eventsList.map((el) =>
-      el.id === updatedPoint.id ? updatedPoint : el
+      el.id === newEvent.id ? newEvent : el
     );
-    //this.#arrayOfInst.get(updatedPoint.id).init(updatedPoint);
+    // this.#arrayOfInst.get(newEvent.id).init(newEvent);
   };
 
   #resetList() {
@@ -102,14 +102,18 @@ export default class MainRender {
     this.#arrayOfInst.clear();
   }
 
-  #resetToClose = () => {
+  #handleModeChange = () => {
     this.#arrayOfInst.forEach((elem) => {
       elem.resetView();
     });
   };
 
   #renderOneElem(elem) {
-    const newWayPoint = new OneWayPointPresenter(elem, this.#resetToClose);
+    const newWayPoint = new OneWayPointPresenter({
+      data: elem,
+      handleModeChange: this.#handleModeChange,
+      handleEventChange: this.#handleEventChange,
+    });
     this.#arrayOfInst.set(elem.id, newWayPoint);
     newWayPoint.init(elem);
   }

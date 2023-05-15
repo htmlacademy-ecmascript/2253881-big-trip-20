@@ -5,44 +5,41 @@ import { MODE, ESC } from '../framework/conts';
 
 export default class OneWayPointPresenter {
   #placeToRenderElem = document.querySelector('.trip-events__list');
-  elem = null;
+  #elem = null;
   #evtWithOutContent = null;
   #evtWithContent = null;
   #status = MODE.closed;
 
-  constructor(elem, resetToClose) {
-    this.elem = elem;
-    this.resetToClose = resetToClose;
+  #handleEventChange = null;
+  #handleModeChange = null;
+
+  constructor({ data, handleModeChange, handleEventChange }) {
+    this.#elem = data;
+    this.#handleModeChange = handleModeChange;
+    this.#handleEventChange = handleEventChange;
 
     this.#evtWithContent = new EventWithContent({
-      data: this.elem,
+      data: this.#elem,
       onClickSubmit: () => {
         this.replaceWithContentToNoContent();
 
-        this.#evtWithOutContent.updateElement(this.#evtWithContent._state);
-        this.elem = this.#evtWithOutContent._state;
+        this.#elem = [...this.#evtWithOutContent._state];
 
-        document.removeEventListener(
-          'keydown',
-          this.escKeyDownHandlerWithContent
-        );
+        this.#evtWithOutContent.updateElement(this.#evtWithContent._state);
+
+        this.#handleEventChange(this.#evtWithContent._state);
       },
       onClickArrow: () => {
-        this.#evtWithContent.reset(this.elem);
+        this.#evtWithContent.reset(this.#elem);
         this.replaceWithContentToNoContent();
-        document.removeEventListener(
-          'keydown',
-          this.escKeyDownHandlerWithContent
-        );
       },
     });
 
     this.#evtWithOutContent = new EventWithOutContent({
-      data: this.elem,
+      data: this.#elem,
       onClickArrow: () => {
-        this.resetToClose();
+        this.#handleModeChange();
         this.replaceNoContentToWithContent();
-        document.addEventListener('keydown', this.escKeyDownHandlerWithContent);
       },
       onClickStar: () => {
         this.isFavouriteChanging();
@@ -51,27 +48,27 @@ export default class OneWayPointPresenter {
   }
 
   isFavouriteChanging() {
-    this.#evtWithOutContent.updateElement({
-      ...this.#evtWithOutContent._state,
-      isFavourite: !this.#evtWithOutContent._state.isFavourite,
-    });
-    this.elem.isFavourite = !this.elem.isFavourite;
+    this.#elem.isFavourite = !this.#elem.isFavourite;
+
+    this.#handleEventChange(this.#elem);
+
+    this.#evtWithOutContent.updateElement(this.#elem);
   }
 
-  escKeyDownHandlerWithContent = (evt) => {
-    evt.preventDefault();
+  #escKeyDownHandlerWithContent = (evt) => {
     if (
       evt.key === ESC &&
       document.querySelector('.event--edit') &&
       this.#status === MODE.openened
     ) {
+      evt.preventDefault();
       this.#evtWithContent.reset(this.elem);
       this.replaceWithContentToNoContent();
       this.#status = MODE.closed;
 
       document.removeEventListener(
         'keydown',
-        this.escKeyDownHandlerWithContent
+        this.#escKeyDownHandlerWithContent
       );
     }
   };
@@ -88,17 +85,79 @@ export default class OneWayPointPresenter {
   }
 
   replaceWithContentToNoContent() {
+    document.removeEventListener('keydown', this.#escKeyDownHandlerWithContent);
     replace(this.#evtWithOutContent, this.#evtWithContent);
     this.#status = MODE.closed;
   }
 
   replaceNoContentToWithContent() {
+    document.addEventListener('keydown', this.#escKeyDownHandlerWithContent);
     replace(this.#evtWithContent, this.#evtWithOutContent);
     this.#status = MODE.openened;
   }
 
   init(newElem) {
-    this.elem = newElem;
+    this.#elem = newElem;
+
+    const prevEventWithOutContentComponent = this.#evtWithOutContent;
+    const prevEventWithContent = this.#evtWithContent;
+
+    this.#evtWithOutContent = new EventWithOutContent({
+      data: this.#elem,
+      onClickArrow: () => {
+        this.#handleModeChange();
+        this.replaceNoContentToWithContent();
+        document.addEventListener(
+          'keydown',
+          this.#escKeyDownHandlerWithContent
+        );
+      },
+      onClickStar: () => {
+        this.isFavouriteChanging();
+      },
+    });
+
+    this.#evtWithContent = new EventWithContent({
+      data: this.#elem,
+      onClickSubmit: () => {
+        this.replaceWithContentToNoContent();
+
+        this.#evtWithOutContent.updateElement(this.#evtWithContent._state);
+        this.elem = this.#evtWithOutContent._state;
+
+        document.removeEventListener(
+          'keydown',
+          this.#escKeyDownHandlerWithContent
+        );
+      },
+      onClickArrow: () => {
+        this.#evtWithContent.reset(this.#elem);
+        this.replaceWithContentToNoContent();
+        document.removeEventListener(
+          'keydown',
+          this.#escKeyDownHandlerWithContent
+        );
+      },
+    });
+
+    if (
+      prevEventWithOutContentComponent === null ||
+      prevEventWithContent === null
+    ) {
+      render(this.#evtWithOutContent, this.#placeToRenderElem);
+      return;
+    }
+
+    if (this.#status === MODE.closed) {
+      replace(this.#evtWithOutContent, prevEventWithOutContentComponent);
+    }
+
+    if (this.#status === MODE.openened) {
+      replace(this.#evtWithContent, prevEventWithContent);
+    }
+
+    remove(prevEventWithContent);
+    remove(prevEventWithOutContentComponent);
 
     render(this.#evtWithOutContent, this.#placeToRenderElem);
   }
