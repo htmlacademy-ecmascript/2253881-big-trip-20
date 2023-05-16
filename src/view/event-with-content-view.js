@@ -2,6 +2,7 @@ import { RenderPosition, createElement } from '../framework/render';
 import { MOVING_ELEMENTS, mapCitys, mapOffers } from '../mocks/mock';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { INPUT } from '../framework/conts';
+import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -140,7 +141,6 @@ export default class EventWithContent extends AbstractStatefulView {
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
     this._restoreHandlers();
-    this.#setDatepickers();
   }
 
   _restoreHandlers() {
@@ -170,6 +170,8 @@ export default class EventWithContent extends AbstractStatefulView {
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
       this.updateElement({ destination: mapCitys.get(evt.target.value) });
     };
+
+    this.#setDatepickers();
   }
 
   #dueDateChangeHandlerFrom = ([userDateFrom]) => {
@@ -191,6 +193,8 @@ export default class EventWithContent extends AbstractStatefulView {
         {
           enableTime: true,
           dateFormat: 'd/m/y H:i',
+          // eslint-disable-next-line
+          time_24hr: true,
           defaultDate: this._state.dateFrom,
           onChange: this.#dueDateChangeHandlerFrom,
         }
@@ -203,6 +207,8 @@ export default class EventWithContent extends AbstractStatefulView {
         {
           enableTime: true,
           dateFormat: 'd/m/y H:i',
+          // eslint-disable-next-line
+          time_24hr: true,
           defaultDate: this._state.dateTo,
           onChange: this.#dueDateChangeHandlerTo,
         }
