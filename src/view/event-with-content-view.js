@@ -143,7 +143,6 @@ export default class EventWithContent extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    // this.element.querySelector('.event--edit').onsubmit = (evt) => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
       this.#onClickSubmit(this._state);
