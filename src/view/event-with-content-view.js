@@ -2,6 +2,8 @@ import { RenderPosition, createElement } from '../framework/render';
 import { MOVING_ELEMENTS, mapCitys, mapOffers } from '../mocks/mock';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { INPUT } from '../framework/conts';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 /* eslint-disable */
 function createEventWithContent() {
@@ -128,20 +130,23 @@ function createContentEventSectionDestination(data) {
 export default class EventWithContent extends AbstractStatefulView {
   #onClickSubmit = null;
   #onClickArrow = null;
+  #datePickerFrom = null;
+  #datePickerTo = null;
 
   constructor({ data, onClickSubmit, onClickArrow }) {
     super();
+
     this._setState(EventWithContent.parseTaskToState(data));
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
     this._restoreHandlers();
+    this.#setDatepickers();
   }
 
   _restoreHandlers() {
     // this.element.querySelector('.event--edit').onsubmit = (evt) => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
-
       this.#onClickSubmit(this._state);
     };
 
@@ -165,6 +170,58 @@ export default class EventWithContent extends AbstractStatefulView {
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
       this.updateElement({ destination: mapCitys.get(evt.target.value) });
     };
+  }
+
+  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
+    this.updateElement({
+      dateFrom: userDateFrom,
+    });
+  };
+
+  #dueDateChangeHandlerTo = ([userDataTo]) => {
+    this.updateElement({
+      dateTo: userDataTo,
+    });
+  };
+
+  #setDatepickers() {
+    if (this._state.dateFrom) {
+      this.#datePickerFrom = flatpickr(
+        this.element.querySelector('#event-start-time-1'),
+        {
+          enableTime: true,
+          dateFormat: 'd/m/y H:i',
+          defaultDate: this._state.dateFrom,
+          onChange: this.#dueDateChangeHandlerFrom,
+        }
+      );
+    }
+
+    if (this._state.dateTo) {
+      this.#datePickerTo = flatpickr(
+        this.element.querySelector('#event-end-time-1'),
+        {
+          enableTime: true,
+          dateFormat: 'd/m/y H:i',
+          defaultDate: this._state.dateTo,
+          onChange: this.#dueDateChangeHandlerTo,
+        }
+      );
+    }
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
+
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
   }
 
   reset(data) {
