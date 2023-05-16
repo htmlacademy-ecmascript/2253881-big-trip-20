@@ -16,7 +16,7 @@ function createFormForContent() {
 
 function createContentHeader(data) {
   const eventTypesList = MOVING_ELEMENTS.map(
-    (elem) => `<div class="event__type-item">
+    (elem) => /*html*/ `<div class="event__type-item">
   <input id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
   <label class="event__type-label  event__type-label--${elem.toLocaleLowerCase()}" for="event-type-${elem.toLocaleLowerCase()}-1">${elem}</label>
 </div>`
@@ -206,6 +206,7 @@ export default class EventWithContent extends AbstractStatefulView {
         {
           enableTime: true,
           dateFormat: 'd/m/y H:i',
+          minDate: this._state.dateFrom,
           // eslint-disable-next-line
           time_24hr: true,
           defaultDate: this._state.dateTo,
