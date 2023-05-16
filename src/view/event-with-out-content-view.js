@@ -1,7 +1,7 @@
-import dayjs from 'dayjs';
-
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { getDiffDates } from '../framework/utils';
+import dayjs from 'dayjs';
+
 /* eslint-disable */
 function createEvent(data) {
   const isFavourite = data.isFavourite ? 'event__favorite-btn--active' : '';
