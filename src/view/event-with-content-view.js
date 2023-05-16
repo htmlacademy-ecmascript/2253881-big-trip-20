@@ -2,7 +2,6 @@ import { RenderPosition, createElement } from '../framework/render';
 import { MOVING_ELEMENTS, mapCitys, mapOffers } from '../mocks/mock';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { INPUT } from '../framework/conts';
-import dayjs from 'dayjs';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
