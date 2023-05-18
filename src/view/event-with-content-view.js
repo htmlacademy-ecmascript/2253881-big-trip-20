@@ -42,7 +42,7 @@ function createContentHeader(data) {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${data.type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="" list="destination-list-1">
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${data.valueDestination}" list="destination-list-1">
     <datalist id="destination-list-1">
       <option value="Amsterdam"></option>
       <option value="Geneva"></option>
@@ -166,7 +166,10 @@ export default class EventWithContent extends AbstractStatefulView {
     };
 
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
-      this.updateElement({ destination: mapCitys.get(evt.target.value) });
+      this.updateElement({
+        destination: mapCitys.get(evt.target.value),
+        valueDestination: mapCitys.get(evt.target.value).cityName,
+      });
     };
 
     this.#setDatepickers();
@@ -234,12 +237,15 @@ export default class EventWithContent extends AbstractStatefulView {
   }
 
   static parseTaskToState(data) {
-    return { ...data };
+    return { ...data, valueDestination: data.destination.cityName };
   }
 
-  static parseStateToTask(data) {
-    const parsedData = { ...data };
-    return parsedData;
+  static parseStateToTask(state) {
+    const eventDestination = { ...state };
+
+    delete eventDestination.valueDestination;
+
+    return eventDestination;
   }
 
   get template() {
