@@ -28,7 +28,7 @@ export default class OneWayPointPresenter {
     this.replaceWithContentToNoContent();
   };
 
-  isFavouriteChanging() {
+  #isFavouriteChanging() {
     this.#elem.isFavourite = !this.#elem.isFavourite;
     this.#handleEventChange(this.#elem);
   }
@@ -86,7 +86,7 @@ export default class OneWayPointPresenter {
         );
       },
       onClickStar: () => {
-        this.isFavouriteChanging();
+        this.#isFavouriteChanging();
       },
     });
 
