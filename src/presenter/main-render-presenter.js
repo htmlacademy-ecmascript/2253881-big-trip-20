@@ -22,6 +22,8 @@ export default class MainRender {
 
   constructor({ eventsModel }) {
     this.#eventsModel = eventsModel;
+
+    this.#eventsModel.addObserver();
   }
 
   #sortList = (type) => {
@@ -63,7 +65,7 @@ export default class MainRender {
   };
 
   init() {
-    this.#eventsList = [...this.#eventsModel.points];
+    this.#eventsList = this.#eventsModel.events;
     // this.#eventsList = [];
     this.#backupContent = [...this.#eventsList];
 
