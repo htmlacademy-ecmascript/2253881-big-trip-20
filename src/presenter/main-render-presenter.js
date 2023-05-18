@@ -93,8 +93,9 @@ export default class MainRender {
       el.id === newEvent.id ? newEvent : el
     );
 
-    this.#resetList();
-    this.#renderAllElems();
+    // this.#resetList();
+    // this.#renderAllElems();
+    this.#arrayOfInst.get(newEvent.id).init(newEvent);
   };
 
   #updateBackup = (newEvent) => {

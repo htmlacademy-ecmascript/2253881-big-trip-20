@@ -121,7 +121,5 @@ export default class OneWayPointPresenter {
 
     remove(prevEventWithContent);
     remove(prevEventWithOutContentComponent);
-
-    render(this.#evtWithOutContent, this.#placeToRenderElem);
   }
 }
