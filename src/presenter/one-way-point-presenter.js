@@ -42,7 +42,6 @@ export default class OneWayPointPresenter {
       evt.preventDefault();
       this.#evtWithContent.reset(this.#elem);
       this.replaceWithContentToNoContent();
-      this.#status = MODE.closed;
     }
   };
 
@@ -93,13 +92,10 @@ export default class OneWayPointPresenter {
     this.#evtWithContent = new EventWithContent({
       data: this.#elem,
       onClickSubmit: this.#onClickSubmit,
+      onEscClick: this.#escKeyDownHandlerWithContent,
       onClickArrow: () => {
         this.#evtWithContent.reset(this.#elem);
         this.replaceWithContentToNoContent();
-        document.removeEventListener(
-          'keydown',
-          this.#escKeyDownHandlerWithContent
-        );
       },
     });
 

@@ -22,7 +22,7 @@ function createContentHeader(data) {
 </div>`
   ).join('');
 
-  return `<header class="event__header">
+  return /*html*/ `<header class="event__header">
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
@@ -42,7 +42,7 @@ function createContentHeader(data) {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${data.type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${data.valueDestination}" list="destination-list-1">
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${data.destination.cityName}" list="destination-list-1">
     <datalist id="destination-list-1">
       <option value="Amsterdam"></option>
       <option value="Geneva"></option>
@@ -132,20 +132,22 @@ export default class EventWithContent extends AbstractStatefulView {
   #onClickArrow = null;
   #datePickerFrom = null;
   #datePickerTo = null;
+  #onEscClick = null;
 
-  constructor({ data, onClickSubmit, onClickArrow }) {
+  constructor({ data, onClickSubmit, onClickArrow, onEscClick }) {
     super();
 
     this._setState(EventWithContent.parseTaskToState(data));
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
+    this.#onEscClick = onEscClick;
     this._restoreHandlers();
   }
 
   _restoreHandlers() {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
-      this.#onClickSubmit(this._state);
+      this.#onClickSubmit(EventWithContent.parseStateToTask(this._state));
     };
 
     this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
@@ -166,10 +168,21 @@ export default class EventWithContent extends AbstractStatefulView {
     };
 
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
+      const prevDestination = this._state.destination.cityName;
+
       this.updateElement({
-        destination: mapCitys.get(evt.target.value),
-        valueDestination: mapCitys.get(evt.target.value).cityName,
+        destination: mapCitys.get(evt.target.value)
+          ? mapCitys.get(evt.target.value)
+          : mapCitys.get(prevDestination),
       });
+    };
+
+    this.element.querySelector('#event-destination-1').onfocus = () => {
+      document.removeEventListener('keydown', this.#onEscClick);
+    };
+
+    this.element.querySelector('#event-destination-1').onblur = () => {
+      document.addEventListener('keydown', this.#onEscClick);
     };
 
     this.#setDatepickers();
@@ -233,17 +246,15 @@ export default class EventWithContent extends AbstractStatefulView {
   }
 
   reset(data) {
-    this.updateElement(data);
+    this.updateElement(EventWithContent.parseTaskToState(data));
   }
 
   static parseTaskToState(data) {
-    return { ...data, valueDestination: data.destination.cityName };
+    return { ...data };
   }
 
   static parseStateToTask(state) {
     const eventDestination = { ...state };
-
-    delete eventDestination.valueDestination;
 
     return eventDestination;
   }

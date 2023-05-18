@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { getRandomArbitrary } from '../framework/utils';
 
-const FLIGHT_POINTS = [
+export const FLIGHT_POINTS = [
   'Amsterdam',
   'Chamonix',
   'Geneva',
