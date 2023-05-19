@@ -11,24 +11,26 @@ export const MODE = {
   openened: 'opened',
 };
 
-export const UserAction = {
-  UPDATE_TASK: 'UPDATE_TASK',
-  ADD_TASK: 'ADD_TASK',
-  DELETE_TASK: 'DELETE_TASK',
+export const USER_ACTION = {
+  UPDATE_EVENT: 'UPDATE_EVENT',
+  ADD_EVENT: 'ADD_EVENT',
+  DELETE_EVENT: 'DELETE_EVENT',
 };
 
-export const UpdateType = {
+export const UPDATE_TYPE = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
 };
 
 export const FILTER_TYPE = {
-  EVERYTHING: 'everything',
+  EVERYTHINK: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
   PAST: 'past',
 };
+
+export const ELEMENTS_LIST = ['everything', 'future', 'present', 'past'];
 
 export const LABEL = 'LABEL';
 export const INPUT = 'INPUT';

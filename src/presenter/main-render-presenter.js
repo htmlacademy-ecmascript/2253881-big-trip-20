@@ -3,9 +3,9 @@ import TripInfo from '../view/trip-info-view';
 import ListOfSort from '../view/list-of-sort-view';
 import EventList from '../view/event-list-view';
 import OneWayPointPresenter from './one-way-point-presenter';
-import { getWeightForNullDate } from '../framework/utils';
+import { getWeightForNullDate, filter } from '../framework/utils';
 import { render, RenderPosition, remove } from '../framework/render';
-import { SORT_TYPES, UPDATE_TYPE, USER_ACTION } from '../framework/conts';
+import { SORT_TYPES, UPDATE_TYPE, USER_ACTION } from '../framework/consts';
 import dayjs from 'dayjs';
 
 const sortContainerElem = document.querySelector('.trip-events');
@@ -13,6 +13,7 @@ const tripMainContElem = document.querySelector('.trip-main');
 
 export default class MainRender {
   #eventsModel = null;
+  #filterModel = null;
   #sortType = SORT_TYPES.day;
   #instsOfPresenters = new Map();
 
@@ -21,17 +22,23 @@ export default class MainRender {
   #tripInfoComponent = null;
   #ulListComponent = null;
 
-  constructor({ eventsModel }) {
+  constructor({ eventsModel, filterModel }) {
     this.#eventsModel = eventsModel;
+    this.#filterModel = filterModel;
     this.#eventsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get events() {
+    const filterType = this.#filterModel.filter;
+    const events = this.#eventsModel.events;
+    const filteredEvents = filter[filterType](events);
+
     switch (this.#sortType) {
       case SORT_TYPES.day:
-        return this.#eventsModel.events;
+        return filteredEvents;
       case SORT_TYPES.time:
-        return [...this.#eventsModel.events].sort((a, b) => {
+        return filteredEvents.sort((a, b) => {
           const isNull = getWeightForNullDate(a.dateTo, b.dateTo);
           const firstDate = dayjs(a.dateTo).diff(dayjs(a.dateFrom));
           const secondDate = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
@@ -39,7 +46,7 @@ export default class MainRender {
         });
 
       case SORT_TYPES.price:
-        return [...this.#eventsModel.events].sort((a, b) => {
+        return filteredEvents.sort((a, b) => {
           const first = a.offers.offers.reduce(
             (acc, elem) => (acc += elem.price),
             0
@@ -51,7 +58,7 @@ export default class MainRender {
           return second - first;
         });
       default:
-        return this.#eventsModel.events;
+        return filteredEvents;
     }
   }
 
@@ -165,16 +172,16 @@ export default class MainRender {
     this.#instsOfPresenters.clear();
   }
 
-  #resetAllComponents({ resetSort = false }) {
+  #resetAllComponents(resetSort = false) {
     this.#resetEventsList();
 
     if (this.#renderNoEvents) {
-      remove(this.#renderNoEvents);
+      remove(this.#noEventsComponent);
     }
 
     remove(this.#ulListComponent);
-    remove(this.#renderTrip);
-    remove(this.#renderSort);
+    remove(this.#tripInfoComponent);
+    remove(this.#sortComponent);
 
     if (resetSort) {
       this.#sortType = SORT_TYPES.day;

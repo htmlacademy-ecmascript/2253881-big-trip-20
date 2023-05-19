@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { INPUT, ELEMENTS_LIST } from '../framework/conts';
+import { INPUT, ELEMENTS_LIST } from '../framework/consts';
 
 function createNewListOfElems({ currentFilter }) {
   const ourFilters = ELEMENTS_LIST.map(

@@ -5,7 +5,7 @@ import FilterModel from './models/filter-model';
 
 const eventsModel = new EventModel();
 const filterModel = new FilterModel();
-const mainPresenter = new MainRender({ eventsModel });
+const mainPresenter = new MainRender({ eventsModel, filterModel });
 const filterPresenter = new FilterPresenter({ filterModel, eventsModel });
 
 filterPresenter.mainRender();

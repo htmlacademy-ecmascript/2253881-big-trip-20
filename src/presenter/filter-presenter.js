@@ -1,7 +1,7 @@
 import ListOfFilters from '../view/list-of-filters-view';
 import { render, replace, remove, RenderPosition } from '../framework/render';
 import { filter } from '../framework/utils';
-import { FILTER_TYPE, UPDATE_TYPE } from '../framework/conts';
+import { FILTER_TYPE, UPDATE_TYPE } from '../framework/consts';
 
 export default class FilterPresenter {
   #containerForFiltersElem = document.querySelector('.trip-controls__filters');

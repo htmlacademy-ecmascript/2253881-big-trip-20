@@ -1,8 +1,8 @@
 import EventWithContent from '../view/event-with-content-view';
 import EventWithOutContent from '../view/event-with-out-content-view';
 import { replace, render, remove } from '../framework/render';
-import { MODE, ESC } from '../framework/conts';
-import { USER_ACTION, UPDATE_TYPE } from '../framework/conts';
+import { MODE, ESC } from '../framework/consts';
+import { USER_ACTION, UPDATE_TYPE } from '../framework/consts';
 
 export default class OneWayPointPresenter {
   #placeToRenderElem = document.querySelector('.trip-events__list');

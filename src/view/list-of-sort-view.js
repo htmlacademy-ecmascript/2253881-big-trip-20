@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { SORT_TYPES, LABEL } from '../framework/conts';
+import { SORT_TYPES, LABEL } from '../framework/consts';
 
 /* eslint-disable */
 function createSortList() {

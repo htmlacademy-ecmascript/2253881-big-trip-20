@@ -1,4 +1,4 @@
-import { FILTER_TYPE } from './conts';
+import { FILTER_TYPE } from './consts';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
