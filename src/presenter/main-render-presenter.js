@@ -1,5 +1,3 @@
-import { render, RenderPosition, remove } from '../framework/render';
-import { SORT_TYPES, UPDATE_TYPE, USER_ACTION } from '../framework/conts';
 import ErrorDwnl from '../view/error-on-download-view';
 import ListOfFilters from '../view/list-of-filters-view';
 import TripInfo from '../view/trip-info-view';
@@ -7,6 +5,8 @@ import ListOfSort from '../view/list-of-sort-view';
 import EventList from '../view/event-list-view';
 import OneWayPointPresenter from './one-way-point-presenter';
 import { getWeightForNullDate } from '../framework/utils';
+import { render, RenderPosition, remove } from '../framework/render';
+import { SORT_TYPES, UPDATE_TYPE, USER_ACTION } from '../framework/conts';
 import dayjs from 'dayjs';
 
 const filterContainerElem = document.querySelector('.trip-controls__filters');
@@ -61,7 +61,7 @@ export default class MainRender {
   #handleModelDataChange = (actionType, updateType, update) => {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
-        this.#eventsModel.updateEvents(updateType, update);
+        this.#eventsModel.updateEvent(updateType, update);
         break;
       case USER_ACTION.ADD_EVENT:
         this.#eventsModel.addEvent(updateType, update);

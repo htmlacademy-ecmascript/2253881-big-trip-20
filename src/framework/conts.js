@@ -23,6 +23,13 @@ export const UPDATE_TYPE = {
   MAJOR: 'MAJOR',
 };
 
+export const FILTER_TYPE = {
+  EVERYTHINK: 'EVERYTHINK',
+  FUTURE: 'FUTURE',
+  PRESENT: 'PRESENT',
+  PAST: 'PAST',
+};
+
 export const LABEL = 'LABEL';
 export const INPUT = 'INPUT';
 export const ESC = 'Escape';

@@ -8,7 +8,7 @@ export default class EventModel extends Observable {
     return this.#events;
   }
 
-  updateEvents(updateType, newEvent) {
+  updateEvent(updateType, newEvent) {
     const index = this.#events.findIndex(
       (oneEvent) => oneEvent.id === newEvent.id
     );
