@@ -20,7 +20,6 @@ export default class MainRender {
 
   #sortComponent = null;
   #noEventsComponent = null;
-  #listFiltersComponent = null;
   #tripInfoComponent = null;
   #ulListComponent = null;
 
@@ -111,15 +110,6 @@ export default class MainRender {
     );
   }
 
-  #renderFilters() {
-    this.#listFiltersComponent = new ListOfFilters(this.events);
-    render(
-      this.#listFiltersComponent,
-      filterContainerElem,
-      RenderPosition.BEFOREEND
-    );
-  }
-
   #renderSort() {
     this.#sortComponent = new ListOfSort({
       handleSort: this.#handleSortTypeChange,
@@ -159,7 +149,6 @@ export default class MainRender {
   }
 
   renderMain() {
-    this.#renderFilters();
     if (!this.events.length) {
       this.#renderNoEvents();
       return;
@@ -180,7 +169,6 @@ export default class MainRender {
 
   #resetAllComponents({ resetSort = false }) {
     this.#resetEventsList();
-    remove(this.#renderFilters);
 
     if (this.#renderNoEvents) {
       remove(this.#renderNoEvents);
