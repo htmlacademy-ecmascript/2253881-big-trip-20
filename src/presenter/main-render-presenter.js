@@ -74,16 +74,17 @@ export default class MainRender {
   };
 
   #handleModelEvent = (undateType, update) => {
-    console.log(undateType, update);
-
     switch (undateType) {
       case UPDATE_TYPE.PATCH:
         this.#instsOfPresenters.get(update.id).init(update);
         break;
       case UPDATE_TYPE.MINOR:
+        this.#resetEventsList();
+        this.#renderAllEvents(this.events);
         break;
-
       case UPDATE_TYPE.MAJOR:
+        this.#resetAllComponents();
+        this.renderMain();
         break;
     }
   };
@@ -99,17 +100,8 @@ export default class MainRender {
       return;
     }
     this.#sortType = sortType;
-    this.#resetList();
-
-    this.#renderAllEvents(this.events);
+    this.#handleModelEvent(UPDATE_TYPE.MINOR);
   };
-
-  #resetList() {
-    this.#instsOfPresenters.forEach((elem) => {
-      elem.destroy();
-    });
-    this.#instsOfPresenters.clear();
-  }
 
   #renderTrip() {
     this.#tripInfoComponent = new TripInfo();
@@ -168,10 +160,33 @@ export default class MainRender {
       this.#renderNoEvents();
       return;
     }
-
     render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
     this.#renderTrip();
     this.#renderSort();
     this.#renderAllEvents(this.events);
+  }
+
+  #resetEventsList() {
+    this.#instsOfPresenters.forEach((elem) => {
+      elem.destroy();
+    });
+    this.#instsOfPresenters.clear();
+  }
+
+  #resetAllComponents({ resetSort = false }) {
+    this.#resetEventsList();
+    remove(this.#renderFilters);
+
+    if (this.#renderNoEvents) {
+      remove(this.#renderNoEvents);
+    }
+
+    remove(this.#ulListComponent);
+    remove(this.#renderTrip);
+    remove(this.#renderSort);
+
+    if (resetSort) {
+      this.#sortType = SORT_TYPES.day;
+    }
   }
 }
