@@ -1,4 +1,4 @@
-import { render, RenderPosition } from '../framework/render';
+import { render, RenderPosition, remove } from '../framework/render';
 import { SORT_TYPES } from '../framework/conts';
 import ErrorDwnl from '../view/error-on-download-view';
 import ListOfFilters from '../view/list-of-filters-view';
@@ -14,37 +14,36 @@ const sortContainerElem = document.querySelector('.trip-events');
 const tripMainContElem = document.querySelector('.trip-main');
 
 export default class MainRender {
-  #eventsList = null;
   #eventsModel = null;
-  #backupContent = [];
   #sortType = SORT_TYPES.day;
   #arrayOfInst = new Map();
+
+  #sortComponent = null;
+  #noEventsComponent = new ErrorDwnl();
+  #listFiltersComponent = null;
+  #tripInfoComponent = null;
+  #ulListComponent = new EventList();
 
   constructor({ eventsModel }) {
     this.#eventsModel = eventsModel;
 
-    this.#eventsModel.addObserver();
+    this.#eventsModel.addObserver(this.#handleModelEvent);
   }
 
-  #sortList = (type) => {
-    if (this.#sortType === type) {
-      return;
-    }
-
-    switch (type) {
+  get events() {
+    switch (this.#sortType) {
       case SORT_TYPES.day:
-        this.#eventsList = [...this.#backupContent];
-        break;
+        return this.#eventsModel.events;
       case SORT_TYPES.time:
-        this.#eventsList.sort((a, b) => {
+        return [...this.#eventsModel.events].sort((a, b) => {
           const isNull = getWeightForNullDate(a.dateTo, b.dateTo);
           const firstDate = dayjs(a.dateTo).diff(dayjs(a.dateFrom));
           const secondDate = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
           return isNull ?? secondDate - firstDate;
         });
-        break;
+
       case SORT_TYPES.price:
-        this.#eventsList.sort((a, b) => {
+        return [...this.#eventsModel.events].sort((a, b) => {
           const first = a.offers.offers.reduce(
             (acc, elem) => (acc += elem.price),
             0
@@ -55,53 +54,31 @@ export default class MainRender {
           );
           return second - first;
         });
-        break;
       default:
-        return;
+        return this.#eventsModel.events;
     }
-    this.#sortType = type;
-    this.#resetList();
-    this.#renderAllElems();
+  }
+
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
   };
 
-  init() {
-    this.#eventsList = this.#eventsModel.events;
-    // this.#eventsList = [];
-    this.#backupContent = [...this.#eventsList];
+  #handleModelEvent = (undateType, update) => {
+    console.log(undateType, update);
+  };
 
-    render(
-      new ListOfFilters(this.#eventsList),
-      filterContainerElem,
-      RenderPosition.BEFOREEND
-    );
-
-    if (!this.#eventsList.length) {
-      render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
+  #handleSortTypeChange(sortType) {
+    if (this.#sortType === sortType) {
       return;
     }
-    //ul list
-    render(new EventList(), sortContainerElem, RenderPosition.BEFOREEND);
-    render(new TripInfo(), tripMainContElem, RenderPosition.AFTERBEGIN);
-    render(
-      new ListOfSort({ handleSort: this.#sortList }),
-      sortContainerElem,
-      RenderPosition.AFTERBEGIN
-    );
-    this.#renderAllElems();
+
+    this.#sortType = sortType;
+    this.#resetList();
+    this.#renderAllEvents(this.events);
   }
 
   #handleEventChange = (newEvent) => {
-    this.#eventsList = this.#eventsList.map((el) =>
-      el.id === newEvent.id ? newEvent : el
-    );
-
     this.#arrayOfInst.get(newEvent.id).init(newEvent);
-  };
-
-  #updateBackup = (newEvent) => {
-    this.#backupContent = this.#backupContent.map((el) =>
-      el.id === newEvent.id ? newEvent : el
-    );
   };
 
   #resetList() {
@@ -117,20 +94,37 @@ export default class MainRender {
     });
   };
 
-  #renderOneElem(elem) {
+  #renderSort() {
+    this.#sortComponent = new ListOfSort({
+      handleSort: this.#handleSortTypeChange,
+    });
+
+    render(this.#sortComponent, sortContainerElem, RenderPosition.AFTERBEGIN);
+  }
+
+  #noEventsRender() {
+    render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
+  }
+
+  #renderOneEvent(elem) {
     const newWayPoint = new OneWayPointPresenter({
       data: elem,
       handleModeChange: this.#handleModeChange,
-      handleEventChange: this.#handleEventChange,
-      updateBackup: this.#updateBackup,
+      handleEventChange: this.#handleViewAction,
     });
     this.#arrayOfInst.set(elem.id, newWayPoint);
     newWayPoint.init(elem);
   }
 
-  #renderAllElems() {
-    for (let i = 0; i < this.#eventsList.length; i++) {
-      this.#renderOneElem(this.#eventsList[i]);
+  #renderAllEvents(events) {
+    for (let i = 0; i < events.length; i++) {
+      this.#renderOneEvent(events[i]);
+    }
+  }
+
+  #mainRender() {
+    if (!this.events.length) {
+      this.#noEventsRender();
     }
   }
 }

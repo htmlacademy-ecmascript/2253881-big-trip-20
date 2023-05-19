@@ -12,18 +12,15 @@ export default class OneWayPointPresenter {
 
   #handleEventChange = null;
   #handleModeChange = null;
-  #updateBackup = null;
 
-  constructor({ data, handleModeChange, handleEventChange, updateBackup }) {
+  constructor({ data, handleModeChange, handleEventChange }) {
     this.#elem = data;
     this.#handleModeChange = handleModeChange;
     this.#handleEventChange = handleEventChange;
-    this.#updateBackup = updateBackup;
   }
 
   #onClickSubmit = (newElem) => {
     this.#elem = { ...newElem };
-    this.#updateBackup(newElem);
     this.#handleEventChange(this.#elem);
     this.replaceWithContentToNoContent();
   };

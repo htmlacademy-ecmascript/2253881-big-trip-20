@@ -29,7 +29,7 @@ export default class EventModel extends Observable {
     this._notify(updateType, newEvent);
   }
 
-  deleteEvent(updteType, deletebleEvent) {
+  deleteEvent(updateType, deletebleEvent) {
     const index = this.#events.findIndex(
       (oneEvent) => oneEvent.id === deletebleEvent.id
     );
@@ -42,6 +42,6 @@ export default class EventModel extends Observable {
       (oneEvent) => oneEvent.id !== deletebleEvent.id
     );
 
-    this._notify(updteType);
+    this._notify(updateType);
   }
 }
