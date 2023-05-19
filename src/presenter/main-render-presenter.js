@@ -71,13 +71,6 @@ export default class MainRender {
     this.#arrayOfInst.get(newEvent.id).init(newEvent);
   };
 
-  #resetList() {
-    this.#arrayOfInst.forEach((elem) => {
-      elem.destroy();
-    });
-    this.#arrayOfInst.clear();
-  }
-
   #handleModeChange = () => {
     this.#arrayOfInst.forEach((elem) => {
       elem.resetView();
@@ -93,6 +86,13 @@ export default class MainRender {
 
     this.#renderAllEvents(this.events);
   };
+
+  #resetList() {
+    this.#arrayOfInst.forEach((elem) => {
+      elem.destroy();
+    });
+    this.#arrayOfInst.clear();
+  }
 
   #renderTrip() {
     this.#tripInfoComponent = new TripInfo();
@@ -145,7 +145,7 @@ export default class MainRender {
     }
   }
 
-  mainRender() {
+  renderMain() {
     this.#renderFilters();
     if (!this.events.length) {
       this.#renderNoEvents();
