@@ -30,6 +30,8 @@ export const FILTER_TYPE = {
   PAST: 'past',
 };
 
+export const ELEMENTS_LIST = ['everything', 'future', 'present', 'past'];
+
 export const LABEL = 'LABEL';
 export const INPUT = 'INPUT';
 export const ESC = 'Escape';

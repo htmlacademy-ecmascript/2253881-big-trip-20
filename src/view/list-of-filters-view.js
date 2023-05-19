@@ -1,10 +1,7 @@
 import AbstractView from '../framework/view/abstract-view';
-import { INPUT } from '../framework/conts';
+import { INPUT, ELEMENTS_LIST } from '../framework/conts';
 
-const ELEMENTS_LIST = ['everything', 'future', 'present', 'past'];
-
-function createNewListOfElems({ filters, currentFilter }) {
-  console.log(filters);
+function createNewListOfElems({ currentFilter }) {
   const ourFilters = ELEMENTS_LIST.map(
     (el) => /*html*/ `<div class="trip-filters__filter">
       <input
