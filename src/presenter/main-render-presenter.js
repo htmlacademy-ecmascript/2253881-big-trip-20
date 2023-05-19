@@ -5,7 +5,12 @@ import EventList from '../view/event-list-view';
 import OneWayPointPresenter from './one-way-point-presenter';
 import { getWeightForNullDate, filter } from '../framework/utils';
 import { render, RenderPosition, remove } from '../framework/render';
-import { SORT_TYPES, UPDATE_TYPE, USER_ACTION } from '../framework/consts';
+import {
+  SORT_TYPES,
+  UPDATE_TYPE,
+  USER_ACTION,
+  FILTER_TYPE,
+} from '../framework/consts';
 import dayjs from 'dayjs';
 
 const sortContainerElem = document.querySelector('.trip-events');
@@ -15,6 +20,7 @@ export default class MainRender {
   #eventsModel = null;
   #filterModel = null;
   #sortType = SORT_TYPES.day;
+  #filterType = FILTER_TYPE.EVERYTHING;
   #instsOfPresenters = new Map();
 
   #sortComponent = null;
@@ -30,10 +36,9 @@ export default class MainRender {
   }
 
   get events() {
-    const filterType = this.#filterModel.filter;
-    const events = this.#eventsModel.events;
-    const filteredEvents = filter[filterType](events);
-
+    this.#filterType = this.#filterModel.filter;
+    const events = [...this.#eventsModel.events];
+    const filteredEvents = filter[this.#filterType](events);
     switch (this.#sortType) {
       case SORT_TYPES.day:
         return filteredEvents;
@@ -44,7 +49,6 @@ export default class MainRender {
           const secondDate = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
           return isNull ?? secondDate - firstDate;
         });
-
       case SORT_TYPES.price:
         return filteredEvents.sort((a, b) => {
           const first = a.offers.offers.reduce(
@@ -86,7 +90,7 @@ export default class MainRender {
         this.#renderAllEvents(this.events);
         break;
       case UPDATE_TYPE.MAJOR:
-        this.#resetAllComponents();
+        this.#resetAllComponents(true);
         this.renderMain();
         break;
     }
@@ -172,7 +176,7 @@ export default class MainRender {
     this.#instsOfPresenters.clear();
   }
 
-  #resetAllComponents(resetSort = false) {
+  #resetAllComponents(resetSort) {
     this.#resetEventsList();
 
     if (this.#renderNoEvents) {

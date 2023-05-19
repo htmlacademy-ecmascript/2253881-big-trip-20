@@ -24,7 +24,7 @@ export const UPDATE_TYPE = {
 };
 
 export const FILTER_TYPE = {
-  EVERYTHINK: 'everything',
+  EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
   PAST: 'past',
