@@ -59,7 +59,7 @@ export default class MainRender {
     }
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleModelDataChange = (actionType, updateType, update) => {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
         this.#eventsModel.updateEvents(updateType, update);
@@ -142,7 +142,7 @@ export default class MainRender {
     const newWayPoint = new OneWayPointPresenter({
       data: elem,
       handleModeChange: this.#handleModeChange,
-      handleEventChange: this.#handleViewAction,
+      handleModelDataChange: this.#handleModelDataChange,
     });
     this.#instsOfPresenters.set(elem.id, newWayPoint);
     newWayPoint.init(elem);
