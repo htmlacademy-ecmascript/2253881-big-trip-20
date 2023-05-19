@@ -133,7 +133,7 @@ export default class MainRender {
   }
 
   #renderNoEvents() {
-    this.#noEventsComponent = new ErrorDwnl();
+    this.#noEventsComponent = new ErrorDwnl({ filterType: this.#filterType });
     render(
       this.#noEventsComponent,
       sortContainerElem,
