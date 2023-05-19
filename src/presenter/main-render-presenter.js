@@ -22,11 +22,10 @@ export default class MainRender {
   #noEventsComponent = null;
   #listFiltersComponent = null;
   #tripInfoComponent = null;
-  #ulListComponent = new EventList();
+  #ulListComponent = null;
 
   constructor({ eventsModel }) {
     this.#eventsModel = eventsModel;
-
     this.#eventsModel.addObserver(this.#handleModelEvent);
   }
 
@@ -129,6 +128,11 @@ export default class MainRender {
     render(this.#sortComponent, sortContainerElem, RenderPosition.AFTERBEGIN);
   }
 
+  #renderUlList() {
+    this.#ulListComponent = new EventList();
+    render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
+  }
+
   #renderNoEvents() {
     this.#noEventsComponent = new ErrorDwnl();
     render(
@@ -160,7 +164,8 @@ export default class MainRender {
       this.#renderNoEvents();
       return;
     }
-    render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
+
+    this.#renderUlList();
     this.#renderTrip();
     this.#renderSort();
     this.#renderAllEvents(this.events);
