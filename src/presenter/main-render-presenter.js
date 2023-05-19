@@ -1,5 +1,5 @@
 import { render, RenderPosition, remove } from '../framework/render';
-import { SORT_TYPES } from '../framework/conts';
+import { SORT_TYPES, UPDATE_TYPE, USER_ACTION } from '../framework/conts';
 import ErrorDwnl from '../view/error-on-download-view';
 import ListOfFilters from '../view/list-of-filters-view';
 import TripInfo from '../view/trip-info-view';
@@ -16,7 +16,7 @@ const tripMainContElem = document.querySelector('.trip-main');
 export default class MainRender {
   #eventsModel = null;
   #sortType = SORT_TYPES.day;
-  #arrayOfInst = new Map();
+  #instsOfPresenters = new Map();
 
   #sortComponent = null;
   #noEventsComponent = null;
@@ -60,19 +60,36 @@ export default class MainRender {
   }
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
+    switch (actionType) {
+      case USER_ACTION.UPDATE_EVENT:
+        this.#eventsModel.updateEvents(updateType, update);
+        break;
+      case USER_ACTION.ADD_EVENT:
+        this.#eventsModel.addEvent(updateType, update);
+        break;
+      case USER_ACTION.DELETE_EVENT:
+        this.#eventsModel.deleteEvent(updateType, update);
+        break;
+    }
   };
 
   #handleModelEvent = (undateType, update) => {
     console.log(undateType, update);
-  };
 
-  #handleEventChange = (newEvent) => {
-    this.#arrayOfInst.get(newEvent.id).init(newEvent);
+    switch (undateType) {
+      case UPDATE_TYPE.PATCH:
+        this.#instsOfPresenters.get(update.id).init(update);
+        break;
+      case UPDATE_TYPE.MINOR:
+        break;
+
+      case UPDATE_TYPE.MAJOR:
+        break;
+    }
   };
 
   #handleModeChange = () => {
-    this.#arrayOfInst.forEach((elem) => {
+    this.#instsOfPresenters.forEach((elem) => {
       elem.resetView();
     });
   };
@@ -88,10 +105,10 @@ export default class MainRender {
   };
 
   #resetList() {
-    this.#arrayOfInst.forEach((elem) => {
+    this.#instsOfPresenters.forEach((elem) => {
       elem.destroy();
     });
-    this.#arrayOfInst.clear();
+    this.#instsOfPresenters.clear();
   }
 
   #renderTrip() {
@@ -135,7 +152,7 @@ export default class MainRender {
       handleModeChange: this.#handleModeChange,
       handleEventChange: this.#handleViewAction,
     });
-    this.#arrayOfInst.set(elem.id, newWayPoint);
+    this.#instsOfPresenters.set(elem.id, newWayPoint);
     newWayPoint.init(elem);
   }
 

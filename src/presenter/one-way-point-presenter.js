@@ -23,7 +23,7 @@ export default class OneWayPointPresenter {
     this.#elem = { ...newElem };
     this.#handleEventChange(
       USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.MINOR,
+      UPDATE_TYPE.PATCH,
       newElem
     );
     this.replaceWithContentToNoContent();
@@ -33,7 +33,7 @@ export default class OneWayPointPresenter {
     this.#elem.isFavourite = !this.#elem.isFavourite;
     this.#handleEventChange(
       USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.MINOR,
+      UPDATE_TYPE.PATCH,
       this.#elem
     );
   }
