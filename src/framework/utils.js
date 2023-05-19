@@ -66,5 +66,5 @@ export const filter = {
         dayjs(oneEvent.dateTo).diff(new Date()) >= ZERO
     ),
   [FILTER_TYPE.PAST]: (events) =>
-    events.filter((oneEvent) => dayjs(oneEvent.dateTo).diff(new Date()) > ZERO),
+    events.filter((oneEvent) => dayjs(oneEvent.dateTo).diff(new Date()) < ZERO),
 };

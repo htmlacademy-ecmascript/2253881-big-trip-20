@@ -20,7 +20,6 @@ export default class FilterPresenter {
 
   get filters() {
     const events = this.#eventsModel.events;
-
     return Object.values(FILTER_TYPE).map((type) => ({
       type,
       count: filter[type](events).length,
@@ -31,14 +30,12 @@ export default class FilterPresenter {
     if (this.#filterModel.filter === filterType) {
       return;
     }
-
     this.#filterModel.setFilter(UPDATE_TYPE.MAJOR, filterType);
   };
 
-  mainRender() {
+  mainRender = () => {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
-
     this.#filterComponent = new ListOfFilters({
       filters,
       currentFilterType: this.#filterModel.filter,
@@ -56,5 +53,5 @@ export default class FilterPresenter {
 
     replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
-  }
+  };
 }

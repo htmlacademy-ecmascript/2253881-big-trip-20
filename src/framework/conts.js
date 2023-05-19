@@ -24,10 +24,10 @@ export const UPDATE_TYPE = {
 };
 
 export const FILTER_TYPE = {
-  EVERYTHINK: 'EVERYTHINK',
-  FUTURE: 'FUTURE',
-  PRESENT: 'PRESENT',
-  PAST: 'PAST',
+  EVERYTHINK: 'everythink',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
 };
 
 export const LABEL = 'LABEL';
