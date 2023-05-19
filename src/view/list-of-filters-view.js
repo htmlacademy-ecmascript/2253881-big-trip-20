@@ -1,46 +1,86 @@
 import AbstractView from '../framework/view/abstract-view';
 
 const ELEMENTS_LIST = ['Everything', 'Future', 'Present', 'Past'];
-/* eslint-disable */
+
 function createNewListOfElems(data) {
-  const isEmpty = data.length === 0;
-  const filterList = ELEMENTS_LIST.map((elem) => {
-    let isDisabled = false;
-    if (elem === ELEMENTS_LIST[1] || elem === ELEMENTS_LIST[3]) {
-      if (isEmpty) {
-        isDisabled = true;
-      }
-    }
-    return /*html*/ `<div class="trip-filters__filter">
-      <input id="filter-${elem.toLocaleLowerCase()}" ${
-      isDisabled && 'disabled'
-    } class="trip-filters__filter-input  visually-hidden"  type="radio" name="trip-filter" value="${elem.toLocaleLowerCase()} ${
-      elem.toLocaleLowerCase === 'past' ? 'checked' : ''
-    }">
-      <label class="trip-filters__filter-label" for="filter-everything">${elem}</label>
-    </div>`;
-  }).join('');
+  /* eslint-disable */
+  return /*html*/ `<form class="trip-filters" action="#" method="get">
+      <div class="trip-filters__filter">
+        <input
+          id="filter-everything"
+          class="trip-filters__filter-input  visually-hidden"
+          type="radio"
+          name="trip-filter"
+          value="everything"
+        />
+        <label class="trip-filters__filter-label" for="filter-everything">
+          Everything
+        </label>
+      </div>
 
-  return `<form class="trip-filters" action="#" method="get">
+      <div class="trip-filters__filter">
+        <input
+          id="filter-future"
+          class="trip-filters__filter-input  visually-hidden"
+          type="radio"
+          name="trip-filter"
+          value="future"
+        />
+        <label class="trip-filters__filter-label" for="filter-future">
+          Future
+        </label>
+      </div>
 
+      <div class="trip-filters__filter">
+        <input
+          id="filter-present"
+          class="trip-filters__filter-input  visually-hidden"
+          type="radio"
+          name="trip-filter"
+          value="present"
+        />
+        <label class="trip-filters__filter-label" for="filter-present">
+          Present
+        </label>
+      </div>
 
-  ${filterList}
+      <div class="trip-filters__filter">
+        <input
+          id="filter-past"
+          class="trip-filters__filter-input  visually-hidden"
+          type="radio"
+          name="trip-filter"
+          value="past"
+        />
+        <label class="trip-filters__filter-label" for="filter-past">
+          Past
+        </label>
+      </div>
 
-
-  <button class="visually-hidden" type="submit">Accept filter</button>
-</form>`;
+      <button class="visually-hidden" type="submit">
+        Accept filter
+      </button>
+    </form>`;
 }
+
 /* eslint-enable */
 
 export default class ListOfFilters extends AbstractView {
-  #infosContent = null;
+  #filters = null;
+  #currentFilter = null;
+  #handleChangeFilter = null;
 
-  constructor(infosContent) {
+  constructor({ filters, currentFilterType, onFilterTypeChange }) {
     super();
-    this.#infosContent = infosContent;
+    this.#filters = filters;
+    this.#currentFilter = currentFilterType;
+    this.#handleChangeFilter = onFilterTypeChange;
+    console.log(filters);
+    console.log(currentFilterType);
+    console.log(onFilterTypeChange);
   }
 
   get template() {
-    return createNewListOfElems(this.#infosContent);
+    return createNewListOfElems();
   }
 }

@@ -53,14 +53,14 @@ export function getWeightForNullDate(dateA, dateB) {
   return null;
 }
 
-const filer = {
+export const filter = {
   [FILTER_TYPE.EVERYTHINK]: (events) => events,
   [FILTER_TYPE.FUTURE]: (events) =>
     events.filter(
       (oneEvent) => dayjs(oneEvent.dateFrom).diff(new Date()) > ZERO
     ),
   [FILTER_TYPE.PRESENT]: (events) =>
-    events.filer(
+    events.filter(
       (oneEvent) =>
         dayjs(oneEvent.dateFrom).diff(new Date()) <= ZERO &&
         dayjs(oneEvent.dateTo).diff(new Date()) >= ZERO
