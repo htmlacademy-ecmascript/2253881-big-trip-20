@@ -67,15 +67,15 @@ export default class MainRender {
     console.log(undateType, update);
   };
 
-  #handleSortTypeChange(sortType) {
+  #handleSortTypeChange = (sortType) => {
     if (this.#sortType === sortType) {
       return;
     }
-
     this.#sortType = sortType;
     this.#resetList();
+
     this.#renderAllEvents(this.events);
-  }
+  };
 
   #handleEventChange = (newEvent) => {
     this.#arrayOfInst.get(newEvent.id).init(newEvent);
@@ -93,6 +93,15 @@ export default class MainRender {
       elem.resetView();
     });
   };
+
+  #renderTrip() {
+    this.#tripInfoComponent = new TripInfo();
+    render(
+      this.#tripInfoComponent,
+      tripMainContElem,
+      RenderPosition.AFTERBEGIN
+    );
+  }
 
   #renderSort() {
     this.#sortComponent = new ListOfSort({
@@ -122,9 +131,21 @@ export default class MainRender {
     }
   }
 
-  #mainRender() {
+  mainRender() {
+    render(
+      new ListOfFilters(this.events),
+      filterContainerElem,
+      RenderPosition.BEFOREEND
+    );
+
     if (!this.events.length) {
       this.#noEventsRender();
+      return;
     }
+
+    render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
+    this.#renderTrip();
+    this.#renderSort();
+    this.#renderAllEvents(this.events);
   }
 }

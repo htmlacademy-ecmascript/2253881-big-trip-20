@@ -2,6 +2,7 @@ import EventWithContent from '../view/event-with-content-view';
 import EventWithOutContent from '../view/event-with-out-content-view';
 import { replace, render, remove } from '../framework/render';
 import { MODE, ESC } from '../framework/conts';
+import { USER_ACTION, UPDATE_TYPE } from '../framework/conts';
 
 export default class OneWayPointPresenter {
   #placeToRenderElem = document.querySelector('.trip-events__list');
@@ -21,13 +22,21 @@ export default class OneWayPointPresenter {
 
   #onClickSubmit = (newElem) => {
     this.#elem = { ...newElem };
-    this.#handleEventChange(this.#elem);
+    this.#handleEventChange(
+      USER_ACTION.UPDATE_TASK,
+      UPDATE_TYPE.MINOR,
+      newElem
+    );
     this.replaceWithContentToNoContent();
   };
 
   #isFavouriteChanging() {
     this.#elem.isFavourite = !this.#elem.isFavourite;
-    this.#handleEventChange(this.#elem);
+    this.#handleEventChange(
+      USER_ACTION.UPDATE_TASK,
+      UPDATE_TYPE.MINOR,
+      this.#elem
+    );
   }
 
   #escKeyDownHandlerWithContent = (evt) => {

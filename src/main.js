@@ -6,4 +6,4 @@ const eventsModel = new EventModel();
 
 const mainBoard = new MainRender({ eventsModel });
 
-mainBoard.init();
+mainBoard.mainRender();
