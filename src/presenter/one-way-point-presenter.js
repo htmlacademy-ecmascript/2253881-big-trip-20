@@ -14,8 +14,7 @@ export default class OneWayPointPresenter {
   #handleEventChange = null;
   #handleModeChange = null;
 
-  constructor({ data, handleModeChange, handleEventChange }) {
-    this.#elem = data;
+  constructor({ handleModeChange, handleEventChange }) {
     this.#handleModeChange = handleModeChange;
     this.#handleEventChange = handleEventChange;
   }
@@ -23,7 +22,7 @@ export default class OneWayPointPresenter {
   #onClickSubmit = (newElem) => {
     this.#elem = { ...newElem };
     this.#handleEventChange(
-      USER_ACTION.UPDATE_TASK,
+      USER_ACTION.UPDATE_EVENT,
       UPDATE_TYPE.MINOR,
       newElem
     );
@@ -33,7 +32,7 @@ export default class OneWayPointPresenter {
   #isFavouriteChanging() {
     this.#elem.isFavourite = !this.#elem.isFavourite;
     this.#handleEventChange(
-      USER_ACTION.UPDATE_TASK,
+      USER_ACTION.UPDATE_EVENT,
       UPDATE_TYPE.MINOR,
       this.#elem
     );

@@ -19,7 +19,7 @@ export default class MainRender {
   #arrayOfInst = new Map();
 
   #sortComponent = null;
-  #noEventsComponent = new ErrorDwnl();
+  #noEventsComponent = null;
   #listFiltersComponent = null;
   #tripInfoComponent = null;
   #ulListComponent = new EventList();
@@ -67,16 +67,6 @@ export default class MainRender {
     console.log(undateType, update);
   };
 
-  #handleSortTypeChange = (sortType) => {
-    if (this.#sortType === sortType) {
-      return;
-    }
-    this.#sortType = sortType;
-    this.#resetList();
-
-    this.#renderAllEvents(this.events);
-  };
-
   #handleEventChange = (newEvent) => {
     this.#arrayOfInst.get(newEvent.id).init(newEvent);
   };
@@ -94,12 +84,31 @@ export default class MainRender {
     });
   };
 
+  #handleSortTypeChange = (sortType) => {
+    if (this.#sortType === sortType) {
+      return;
+    }
+    this.#sortType = sortType;
+    this.#resetList();
+
+    this.#renderAllEvents(this.events);
+  };
+
   #renderTrip() {
     this.#tripInfoComponent = new TripInfo();
     render(
       this.#tripInfoComponent,
       tripMainContElem,
       RenderPosition.AFTERBEGIN
+    );
+  }
+
+  #renderFilters() {
+    this.#listFiltersComponent = new ListOfFilters(this.events);
+    render(
+      this.#listFiltersComponent,
+      filterContainerElem,
+      RenderPosition.BEFOREEND
     );
   }
 
@@ -111,8 +120,13 @@ export default class MainRender {
     render(this.#sortComponent, sortContainerElem, RenderPosition.AFTERBEGIN);
   }
 
-  #noEventsRender() {
-    render(new ErrorDwnl(), sortContainerElem, RenderPosition.BEFOREEND);
+  #renderNoEvents() {
+    this.#noEventsComponent = new ErrorDwnl();
+    render(
+      this.#noEventsComponent,
+      sortContainerElem,
+      RenderPosition.BEFOREEND
+    );
   }
 
   #renderOneEvent(elem) {
@@ -132,14 +146,9 @@ export default class MainRender {
   }
 
   mainRender() {
-    render(
-      new ListOfFilters(this.events),
-      filterContainerElem,
-      RenderPosition.BEFOREEND
-    );
-
+    this.#renderFilters();
     if (!this.events.length) {
-      this.#noEventsRender();
+      this.#renderNoEvents();
       return;
     }
 
