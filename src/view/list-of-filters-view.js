@@ -1,46 +1,53 @@
 import AbstractView from '../framework/view/abstract-view';
+import { INPUT, ELEMENTS_LIST } from '../framework/consts';
 
-const ELEMENTS_LIST = ['Everything', 'Future', 'Present', 'Past'];
-/* eslint-disable */
-function createNewListOfElems(data) {
-  const isEmpty = data.length === 0;
-  const filterList = ELEMENTS_LIST.map((elem) => {
-    let isDisabled = false;
-    if (elem === ELEMENTS_LIST[1] || elem === ELEMENTS_LIST[3]) {
-      if (isEmpty) {
-        isDisabled = true;
-      }
-    }
-    return /*html*/ `<div class="trip-filters__filter">
-      <input id="filter-${elem.toLocaleLowerCase()}" ${
-      isDisabled && 'disabled'
-    } class="trip-filters__filter-input  visually-hidden"  type="radio" name="trip-filter" value="${elem.toLocaleLowerCase()} ${
-      elem.toLocaleLowerCase === 'past' ? 'checked' : ''
-    }">
-      <label class="trip-filters__filter-label" for="filter-everything">${elem}</label>
-    </div>`;
-  }).join('');
+function createNewListOfElems({ currentFilter }) {
+  const ourFilters = ELEMENTS_LIST.map(
+    (el) => /*html*/ `<div class="trip-filters__filter">
+      <input
+        id="filter-${el}"
+        class="trip-filters__filter-input  visually-hidden"
+        type="radio"
+        ${el === currentFilter ? 'checked' : ''}
+        name="trip-filter"
+        value="${el}"
+      />
+      <label class="trip-filters__filter-label" for="filter-${el}">
+        ${el}
+      </label>
+    </div>`
+  ).join('');
 
-  return `<form class="trip-filters" action="#" method="get">
-
-
-  ${filterList}
-
-
-  <button class="visually-hidden" type="submit">Accept filter</button>
-</form>`;
+  return /*html*/ `<form class="trip-filters" action="#" method="get">
+      ${ourFilters}
+      <button class="visually-hidden" type="submit">
+        Accept filter
+      </button>
+    </form>`;
 }
-/* eslint-enable */
 
 export default class ListOfFilters extends AbstractView {
-  #infosContent = null;
+  #filters = null;
+  #currentFilter = null;
+  #handleChangeFilter = null;
 
-  constructor(infosContent) {
+  constructor({ filters, currentFilterType, onFilterTypeChange }) {
     super();
-    this.#infosContent = infosContent;
+    this.#filters = filters;
+    this.#currentFilter = currentFilterType;
+    this.#handleChangeFilter = onFilterTypeChange;
+
+    this.element.onchange = (evt) => {
+      if (evt.target.tagName === INPUT) {
+        this.#handleChangeFilter(evt.target.value);
+      }
+    };
   }
 
   get template() {
-    return createNewListOfElems(this.#infosContent);
+    return createNewListOfElems({
+      filters: this.#filters,
+      currentFilter: this.#currentFilter,
+    });
   }
 }

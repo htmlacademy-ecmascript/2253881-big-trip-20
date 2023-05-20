@@ -1,8 +1,10 @@
+import { FILTER_TYPE } from './consts';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
 
+const ZERO = 0;
 const MSEC_IN_SEC = 1000;
 const SEC_IN_MIN = 60;
 const MIN_IN_HOUR = 60;
@@ -50,3 +52,19 @@ export function getWeightForNullDate(dateA, dateB) {
 
   return null;
 }
+
+export const filter = {
+  [FILTER_TYPE.EVERYTHING]: (events) => events,
+  [FILTER_TYPE.FUTURE]: (events) =>
+    events.filter(
+      (oneEvent) => dayjs(oneEvent.dateFrom).diff(new Date()) > ZERO
+    ),
+  [FILTER_TYPE.PRESENT]: (events) =>
+    events.filter(
+      (oneEvent) =>
+        dayjs(oneEvent.dateFrom).diff(new Date()) <= ZERO &&
+        dayjs(oneEvent.dateTo).diff(new Date()) >= ZERO
+    ),
+  [FILTER_TYPE.PAST]: (events) =>
+    events.filter((oneEvent) => dayjs(oneEvent.dateTo).diff(new Date()) < ZERO),
+};

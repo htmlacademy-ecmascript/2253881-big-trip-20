@@ -1,9 +1,24 @@
 import { RenderPosition, createElement } from '../framework/render';
 import { MOVING_ELEMENTS, mapCitys, mapOffers } from '../mocks/mock';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { INPUT } from '../framework/conts';
+import { INPUT } from '../framework/consts';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+
+const currentTime = new Date();
+currentTime.setMinutes(currentTime.getMinutes() - 20);
+const nextTime = new Date();
+nextTime.setMinutes(currentTime.getMinutes() + 20);
+
+const dataOnCreateEvent = {
+  basePrice: 0,
+  dateFrom: currentTime,
+  dateTo: nextTime,
+  destination: mapCitys.get('Moskow'),
+  isFavourite: false,
+  offers: mapOffers.get(MOVING_ELEMENTS[0]),
+  type: MOVING_ELEMENTS[0],
+};
 
 /* eslint-disable */
 function createEventWithContent() {
@@ -22,11 +37,13 @@ function createContentHeader(data) {
 </div>`
   ).join('');
 
-  return `<header class="event__header">
+  return /*html*/ `<header class="event__header">
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
-      <img class="event__type-icon" width="17" height="17" src="img/icons/${data.type}.png" alt="Event type icon">
+      <img class="event__type-icon" width="17" height="17" src="img/icons/${
+        data.type
+      }.png" alt="Event type icon">
     </label>
     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -42,7 +59,9 @@ function createContentHeader(data) {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${data.type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="" list="destination-list-1">
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${
+      data?.destination?.cityName
+    }" list="destination-list-1">
     <datalist id="destination-list-1">
       <option value="Amsterdam"></option>
       <option value="Geneva"></option>
@@ -67,7 +86,9 @@ function createContentHeader(data) {
   </div>
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">Cancel</button>
+  <button class="event__reset-btn" type="reset">${
+    data.isAddNewEvent ? 'Cancel' : 'Delete'
+  }</button>
   <button class="event__rollup-btn" type="button">
                   <span class="visually-hidden">Open event</span>
                 </button>
@@ -109,7 +130,9 @@ function createEventSectionOffers(data) {
 function createContentEventSectionDestination(data) {
   return `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-  <p class="event__destination-description">${data.destination.description}</p>
+  <p class="event__destination-description">${
+    data?.destination?.description
+  }</p>
 
 
 
@@ -130,22 +153,32 @@ function createContentEventSectionDestination(data) {
 export default class EventWithContent extends AbstractStatefulView {
   #onClickSubmit = null;
   #onClickArrow = null;
+  #onClickDelete = null;
   #datePickerFrom = null;
   #datePickerTo = null;
+  #onEscClick = null;
 
-  constructor({ data, onClickSubmit, onClickArrow }) {
+  constructor({
+    data = EventWithContent.parseTaskToState(dataOnCreateEvent),
+    onClickSubmit,
+    onClickArrow,
+    onEscClick,
+    onClickDelete,
+  }) {
     super();
 
     this._setState(EventWithContent.parseTaskToState(data));
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
+    this.#onEscClick = onEscClick;
+    this.#onClickDelete = onClickDelete;
     this._restoreHandlers();
   }
 
-  _restoreHandlers() {
+  _restoreHandlers = () => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
-      this.#onClickSubmit(this._state);
+      this.#onClickSubmit(EventWithContent.parseStateToTask(this._state));
     };
 
     this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
@@ -166,11 +199,29 @@ export default class EventWithContent extends AbstractStatefulView {
     };
 
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
-      this.updateElement({ destination: mapCitys.get(evt.target.value) });
+      const prevDestination = this._state.destination.cityName;
+
+      this.updateElement({
+        destination: mapCitys.get(evt.target.value)
+          ? mapCitys.get(evt.target.value)
+          : mapCitys.get(prevDestination),
+      });
+    };
+
+    this.element.querySelector('#event-destination-1').onfocus = () => {
+      document.removeEventListener('keydown', this.#onEscClick);
+    };
+
+    this.element.querySelector('#event-destination-1').onblur = () => {
+      document.addEventListener('keydown', this.#onEscClick);
+    };
+
+    this.element.querySelector('.event__reset-btn').onclick = () => {
+      this.#onClickDelete();
     };
 
     this.#setDatepickers();
-  }
+  };
 
   #dueDateChangeHandlerFrom = ([userDateFrom]) => {
     this.updateElement({
@@ -184,7 +235,7 @@ export default class EventWithContent extends AbstractStatefulView {
     });
   };
 
-  #setDatepickers() {
+  #setDatepickers = () => {
     if (this._state.dateFrom) {
       this.#datePickerFrom = flatpickr(
         this.element.querySelector('#event-start-time-1'),
@@ -213,9 +264,9 @@ export default class EventWithContent extends AbstractStatefulView {
         }
       );
     }
-  }
+  };
 
-  removeElement() {
+  removeElement = () => {
     super.removeElement();
 
     if (this.#datePickerTo) {
@@ -227,19 +278,27 @@ export default class EventWithContent extends AbstractStatefulView {
       this.#datePickerFrom.destroy();
       this.#datePickerFrom = null;
     }
-  }
+  };
 
-  reset(data) {
-    this.updateElement(data);
-  }
+  reset = (data) => {
+    this.updateElement(EventWithContent.parseTaskToState(data));
+  };
 
   static parseTaskToState(data) {
+    if (!data.id) {
+      return { isAddNewEvent: true, ...data };
+    }
     return { ...data };
   }
 
-  static parseStateToTask(data) {
-    const parsedData = { ...data };
-    return parsedData;
+  static parseStateToTask(state) {
+    const eventDestination = { ...state };
+
+    if (eventDestination.isAddNewEvent) {
+      delete eventDestination.isAddNewEvent;
+    }
+
+    return eventDestination;
   }
 
   get template() {

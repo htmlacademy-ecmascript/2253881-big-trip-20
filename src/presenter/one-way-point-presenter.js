@@ -1,7 +1,8 @@
 import EventWithContent from '../view/event-with-content-view';
 import EventWithOutContent from '../view/event-with-out-content-view';
 import { replace, render, remove } from '../framework/render';
-import { MODE, ESC } from '../framework/conts';
+import { MODE, ESC } from '../framework/consts';
+import { USER_ACTION, UPDATE_TYPE } from '../framework/consts';
 
 export default class OneWayPointPresenter {
   #placeToRenderElem = document.querySelector('.trip-events__list');
@@ -10,28 +11,40 @@ export default class OneWayPointPresenter {
   #evtWithContent = null;
   #status = MODE.closed;
 
-  #handleEventChange = null;
+  #handleModelDataChange = null;
   #handleModeChange = null;
-  #updateBackup = null;
 
-  constructor({ data, handleModeChange, handleEventChange, updateBackup }) {
-    this.#elem = data;
+  constructor({ handleModeChange, handleModelDataChange }) {
     this.#handleModeChange = handleModeChange;
-    this.#handleEventChange = handleEventChange;
-    this.#updateBackup = updateBackup;
+    this.#handleModelDataChange = handleModelDataChange;
   }
 
   #onClickSubmit = (newElem) => {
     this.#elem = { ...newElem };
-    this.#updateBackup(newElem);
-    this.#handleEventChange(this.#elem);
+    this.#handleModelDataChange(
+      USER_ACTION.UPDATE_EVENT,
+      UPDATE_TYPE.PATCH,
+      newElem
+    );
     this.replaceWithContentToNoContent();
   };
 
-  isFavouriteChanging() {
-    this.#elem.isFavourite = !this.#elem.isFavourite;
-    this.#handleEventChange(this.#elem);
-  }
+  #onClickDelete = () => {
+    this.#handleModelDataChange(
+      USER_ACTION.DELETE_EVENT,
+      UPDATE_TYPE.MAJOR,
+      this.#elem
+    );
+  };
+
+  #isFavouriteChanging = () => {
+    const newEvent = { ...this.#elem, isFavourite: !this.#elem.isFavourite };
+    this.#handleModelDataChange(
+      USER_ACTION.UPDATE_EVENT,
+      UPDATE_TYPE.PATCH,
+      newEvent
+    );
+  };
 
   #escKeyDownHandlerWithContent = (evt) => {
     if (
@@ -42,7 +55,6 @@ export default class OneWayPointPresenter {
       evt.preventDefault();
       this.#evtWithContent.reset(this.#elem);
       this.replaceWithContentToNoContent();
-      this.#status = MODE.closed;
     }
   };
 
@@ -69,7 +81,7 @@ export default class OneWayPointPresenter {
     this.#status = MODE.openened;
   }
 
-  init(newElem) {
+  mainRender(newElem) {
     this.#elem = newElem;
 
     const prevEventWithOutContentComponent = this.#evtWithOutContent;
@@ -86,20 +98,18 @@ export default class OneWayPointPresenter {
         );
       },
       onClickStar: () => {
-        this.isFavouriteChanging();
+        this.#isFavouriteChanging();
       },
     });
 
     this.#evtWithContent = new EventWithContent({
       data: this.#elem,
       onClickSubmit: this.#onClickSubmit,
+      onEscClick: this.#escKeyDownHandlerWithContent,
+      onClickDelete: this.#onClickDelete,
       onClickArrow: () => {
         this.#evtWithContent.reset(this.#elem);
         this.replaceWithContentToNoContent();
-        document.removeEventListener(
-          'keydown',
-          this.#escKeyDownHandlerWithContent
-        );
       },
     });
 
@@ -121,7 +131,5 @@ export default class OneWayPointPresenter {
 
     remove(prevEventWithContent);
     remove(prevEventWithOutContentComponent);
-
-    render(this.#evtWithOutContent, this.#placeToRenderElem);
   }
 }

@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { SORT_TYPES, LABEL } from '../framework/conts';
+import { SORT_TYPES, LABEL } from '../framework/consts';
 
 /* eslint-disable */
 function createSortList() {
@@ -43,6 +43,13 @@ export default class ListOfSort extends AbstractView {
         return;
       }
 
+      const notOurSort =
+        evt.target.dataset.sortType === SORT_TYPES.event ||
+        evt.target.dataset.sortType === SORT_TYPES.offers;
+
+      if (notOurSort) {
+        return;
+      }
       this.#handleSort(evt.target.dataset.sortType);
     };
   }
