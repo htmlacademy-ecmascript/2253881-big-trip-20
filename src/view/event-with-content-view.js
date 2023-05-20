@@ -5,6 +5,21 @@ import { INPUT } from '../framework/consts';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
+const currentTime = new Date();
+currentTime.setMinutes(currentTime.getMinutes() - 20);
+const nextTime = new Date();
+nextTime.setMinutes(currentTime.getMinutes() + 20);
+
+const dataOnCreateEvent = {
+  basePrice: 0,
+  dateFrom: currentTime,
+  dateTo: nextTime,
+  destination: mapCitys.get('Moskow'),
+  isFavourite: false,
+  offers: mapOffers.get(MOVING_ELEMENTS[0]),
+  type: MOVING_ELEMENTS[0],
+};
+
 /* eslint-disable */
 function createEventWithContent() {
   return '<li class="trip-events__item"></li>';
@@ -42,7 +57,7 @@ function createContentHeader(data) {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${data.type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${data.destination.cityName}" list="destination-list-1">
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${data?.destination?.cityName}" list="destination-list-1">
     <datalist id="destination-list-1">
       <option value="Amsterdam"></option>
       <option value="Geneva"></option>
@@ -109,7 +124,9 @@ function createEventSectionOffers(data) {
 function createContentEventSectionDestination(data) {
   return `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-  <p class="event__destination-description">${data.destination.description}</p>
+  <p class="event__destination-description">${
+    data?.destination?.description
+  }</p>
 
 
 
@@ -130,21 +147,29 @@ function createContentEventSectionDestination(data) {
 export default class EventWithContent extends AbstractStatefulView {
   #onClickSubmit = null;
   #onClickArrow = null;
+  #onClickDelete = null;
   #datePickerFrom = null;
   #datePickerTo = null;
   #onEscClick = null;
 
-  constructor({ data, onClickSubmit, onClickArrow, onEscClick }) {
+  constructor({
+    data = EventWithContent.parseTaskToState(dataOnCreateEvent),
+    onClickSubmit,
+    onClickArrow,
+    onEscClick,
+    onClickDelete,
+  }) {
     super();
 
     this._setState(EventWithContent.parseTaskToState(data));
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
     this.#onEscClick = onEscClick;
+    this.#onClickDelete = onClickDelete;
     this._restoreHandlers();
   }
 
-  _restoreHandlers() {
+  _restoreHandlers = () => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
       this.#onClickSubmit(EventWithContent.parseStateToTask(this._state));
@@ -185,8 +210,12 @@ export default class EventWithContent extends AbstractStatefulView {
       document.addEventListener('keydown', this.#onEscClick);
     };
 
+    this.element.querySelector('.event__reset-btn').onclick = () => {
+      this.#onClickDelete();
+    };
+
     this.#setDatepickers();
-  }
+  };
 
   #dueDateChangeHandlerFrom = ([userDateFrom]) => {
     this.updateElement({
@@ -200,7 +229,7 @@ export default class EventWithContent extends AbstractStatefulView {
     });
   };
 
-  #setDatepickers() {
+  #setDatepickers = () => {
     if (this._state.dateFrom) {
       this.#datePickerFrom = flatpickr(
         this.element.querySelector('#event-start-time-1'),
@@ -229,9 +258,9 @@ export default class EventWithContent extends AbstractStatefulView {
         }
       );
     }
-  }
+  };
 
-  removeElement() {
+  removeElement = () => {
     super.removeElement();
 
     if (this.#datePickerTo) {
@@ -243,18 +272,25 @@ export default class EventWithContent extends AbstractStatefulView {
       this.#datePickerFrom.destroy();
       this.#datePickerFrom = null;
     }
-  }
+  };
 
-  reset(data) {
+  reset = (data) => {
     this.updateElement(EventWithContent.parseTaskToState(data));
-  }
+  };
 
   static parseTaskToState(data) {
+    if (!data.id) {
+      return { isAddNewEvent: true, ...data };
+    }
     return { ...data };
   }
 
   static parseStateToTask(state) {
     const eventDestination = { ...state };
+
+    if (eventDestination.isAddNewEvent) {
+      delete eventDestination.isAddNewEvent;
+    }
 
     return eventDestination;
   }

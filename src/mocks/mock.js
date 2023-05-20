@@ -61,6 +61,7 @@ export const generateObj = (count) => {
   while (i <= count) {
     i++;
     typeOfMoving = getRandomElem(MOVING_ELEMENTS);
+
     data.push({
       id: nanoid(),
       basePrice: Math.floor(Math.random() * 100000),

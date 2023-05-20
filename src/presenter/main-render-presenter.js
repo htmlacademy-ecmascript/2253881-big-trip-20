@@ -1,8 +1,9 @@
 import ErrorDwnl from '../view/error-on-download-view';
 import TripInfo from '../view/trip-info-view';
 import ListOfSort from '../view/list-of-sort-view';
-import EventList from '../view/event-list-view';
 import OneWayPointPresenter from './one-way-point-presenter';
+import NewEventPresenter from '../presenter/new-event-presenter';
+import EventList from '../view/event-list-view';
 import { getWeightForNullDate, filter } from '../framework/utils';
 import { render, RenderPosition, remove } from '../framework/render';
 import {
@@ -23,14 +24,22 @@ export default class MainRender {
   #filterType = FILTER_TYPE.EVERYTHING;
   #instsOfPresenters = new Map();
 
+  #newEventPresenter = null;
+
+  #ulListComponent = null;
   #sortComponent = null;
   #noEventsComponent = null;
   #tripInfoComponent = null;
-  #ulListComponent = null;
 
-  constructor({ eventsModel, filterModel }) {
+  constructor({ eventsModel, filterModel, onNewEventDestroy }) {
     this.#eventsModel = eventsModel;
     this.#filterModel = filterModel;
+
+    this.#newEventPresenter = new NewEventPresenter({
+      onDataChange: this.#handleModelDataChange,
+      onDestroy: onNewEventDestroy,
+    });
+
     this.#eventsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -66,6 +75,12 @@ export default class MainRender {
     }
   }
 
+  createEvent() {
+    this.#sortType = SORT_TYPES.day;
+    this.#filterModel.setFilter(UPDATE_TYPE.MAJOR, FILTER_TYPE.EVERYTHING);
+    this.#newEventPresenter.mainRender();
+  }
+
   #handleModelDataChange = (actionType, updateType, update) => {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
@@ -83,7 +98,7 @@ export default class MainRender {
   #handleModelEvent = (undateType, update) => {
     switch (undateType) {
       case UPDATE_TYPE.PATCH:
-        this.#instsOfPresenters.get(update.id).init(update);
+        this.#instsOfPresenters.get(update.id).mainRender(update);
         break;
       case UPDATE_TYPE.MINOR:
         this.#resetEventsList();
@@ -97,6 +112,7 @@ export default class MainRender {
   };
 
   #handleModeChange = () => {
+    this.#newEventPresenter.destroy();
     this.#instsOfPresenters.forEach((elem) => {
       elem.resetView();
     });
@@ -119,17 +135,17 @@ export default class MainRender {
     );
   }
 
+  #renderUlList() {
+    this.#ulListComponent = new EventList();
+    render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
+  }
+
   #renderSort() {
     this.#sortComponent = new ListOfSort({
       handleSort: this.#handleSortTypeChange,
     });
 
     render(this.#sortComponent, sortContainerElem, RenderPosition.AFTERBEGIN);
-  }
-
-  #renderUlList() {
-    this.#ulListComponent = new EventList();
-    render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
   }
 
   #renderNoEvents() {
@@ -148,7 +164,7 @@ export default class MainRender {
       handleModelDataChange: this.#handleModelDataChange,
     });
     this.#instsOfPresenters.set(elem.id, newWayPoint);
-    newWayPoint.init(elem);
+    newWayPoint.mainRender(elem);
   }
 
   #renderAllEvents(events) {
@@ -158,12 +174,13 @@ export default class MainRender {
   }
 
   renderMain() {
+    this.#renderUlList();
+
     if (!this.events.length) {
       this.#renderNoEvents();
       return;
     }
 
-    this.#renderUlList();
     this.#renderTrip();
     this.#renderSort();
     this.#renderAllEvents(this.events);
@@ -177,16 +194,16 @@ export default class MainRender {
   }
 
   #resetAllComponents(resetSort) {
+    this.#newEventPresenter.destroy();
     this.#resetEventsList();
 
     if (this.#renderNoEvents) {
       remove(this.#noEventsComponent);
     }
 
-    remove(this.#ulListComponent);
     remove(this.#tripInfoComponent);
     remove(this.#sortComponent);
-
+    remove(this.#ulListComponent);
     if (resetSort) {
       this.#sortType = SORT_TYPES.day;
     }

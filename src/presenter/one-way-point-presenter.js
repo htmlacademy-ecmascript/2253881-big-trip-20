@@ -29,14 +29,22 @@ export default class OneWayPointPresenter {
     this.replaceWithContentToNoContent();
   };
 
-  #isFavouriteChanging() {
-    this.#elem.isFavourite = !this.#elem.isFavourite;
+  #onClickDelete = () => {
+    this.#handleModelDataChange(
+      USER_ACTION.DELETE_EVENT,
+      UPDATE_TYPE.MAJOR,
+      this.#elem
+    );
+  };
+
+  #isFavouriteChanging = () => {
+    const newEvent = { ...this.#elem, isFavourite: !this.#elem.isFavourite };
     this.#handleModelDataChange(
       USER_ACTION.UPDATE_EVENT,
       UPDATE_TYPE.PATCH,
-      this.#elem
+      newEvent
     );
-  }
+  };
 
   #escKeyDownHandlerWithContent = (evt) => {
     if (
@@ -73,7 +81,7 @@ export default class OneWayPointPresenter {
     this.#status = MODE.openened;
   }
 
-  init(newElem) {
+  mainRender(newElem) {
     this.#elem = newElem;
 
     const prevEventWithOutContentComponent = this.#evtWithOutContent;
@@ -98,6 +106,7 @@ export default class OneWayPointPresenter {
       data: this.#elem,
       onClickSubmit: this.#onClickSubmit,
       onEscClick: this.#escKeyDownHandlerWithContent,
+      onClickDelete: this.#onClickDelete,
       onClickArrow: () => {
         this.#evtWithContent.reset(this.#elem);
         this.replaceWithContentToNoContent();
