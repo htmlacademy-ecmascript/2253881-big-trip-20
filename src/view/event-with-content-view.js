@@ -41,7 +41,9 @@ function createContentHeader(data) {
   <div class="event__type-wrapper">
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
-      <img class="event__type-icon" width="17" height="17" src="img/icons/${data.type}.png" alt="Event type icon">
+      <img class="event__type-icon" width="17" height="17" src="img/icons/${
+        data.type
+      }.png" alt="Event type icon">
     </label>
     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -57,7 +59,9 @@ function createContentHeader(data) {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${data.type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${data?.destination?.cityName}" list="destination-list-1">
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${
+      data?.destination?.cityName
+    }" list="destination-list-1">
     <datalist id="destination-list-1">
       <option value="Amsterdam"></option>
       <option value="Geneva"></option>
@@ -82,7 +86,9 @@ function createContentHeader(data) {
   </div>
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">Cancel</button>
+  <button class="event__reset-btn" type="reset">${
+    data.isAddNewEvent ? 'Cancel' : 'Delete'
+  }</button>
   <button class="event__rollup-btn" type="button">
                   <span class="visually-hidden">Open event</span>
                 </button>
