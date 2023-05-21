@@ -1,9 +1,9 @@
-import ErrorDwnl from '../view/error-on-download-view';
-import TripInfo from '../view/trip-info-view';
-import ListOfSort from '../view/list-of-sort-view';
+import ErrorOnDownloadView from '../view/error-on-download-view';
+import TripInfoView from '../view/trip-info-view';
+import ListOfSortView from '../view/list-of-sort-view';
 import OneWayPointPresenter from './one-way-point-presenter';
 import NewEventPresenter from '../presenter/new-event-presenter';
-import EventList from '../view/event-list-view';
+import EventListView from '../view/event-list-view';
 import { getWeightForNullDate, filter } from '../framework/utils';
 import { render, RenderPosition, remove } from '../framework/render';
 import {
@@ -29,7 +29,7 @@ export default class MainRender {
   #ulListComponent = null;
   #sortComponent = null;
   #noEventsComponent = null;
-  #tripInfoComponent = null;
+  #TripInfoViewComponent = null;
 
   constructor({ eventsModel, filterModel, onNewEventDestroy }) {
     this.#eventsModel = eventsModel;
@@ -127,21 +127,21 @@ export default class MainRender {
   };
 
   #renderTrip() {
-    this.#tripInfoComponent = new TripInfo();
+    this.#TripInfoViewComponent = new TripInfoView();
     render(
-      this.#tripInfoComponent,
+      this.#TripInfoViewComponent,
       tripMainContElem,
       RenderPosition.AFTERBEGIN
     );
   }
 
   #renderUlList() {
-    this.#ulListComponent = new EventList();
+    this.#ulListComponent = new EventListView();
     render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
   }
 
   #renderSort() {
-    this.#sortComponent = new ListOfSort({
+    this.#sortComponent = new ListOfSortView({
       handleSort: this.#handleSortTypeChange,
     });
 
@@ -149,7 +149,9 @@ export default class MainRender {
   }
 
   #renderNoEvents() {
-    this.#noEventsComponent = new ErrorDwnl({ filterType: this.#filterType });
+    this.#noEventsComponent = new ErrorOnDownloadView({
+      filterType: this.#filterType,
+    });
     render(
       this.#noEventsComponent,
       sortContainerElem,
@@ -201,7 +203,7 @@ export default class MainRender {
       remove(this.#noEventsComponent);
     }
 
-    remove(this.#tripInfoComponent);
+    remove(this.#TripInfoViewComponent);
     remove(this.#sortComponent);
     remove(this.#ulListComponent);
     if (resetSort) {

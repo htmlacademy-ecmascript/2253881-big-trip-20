@@ -1,4 +1,4 @@
-import ListOfFilters from '../view/list-of-filters-view';
+import ListOfFiltersView from '../view/list-of-filters-view';
 import { render, replace, remove, RenderPosition } from '../framework/render';
 import { filter } from '../framework/utils';
 import { FILTER_TYPE, UPDATE_TYPE } from '../framework/consts';
@@ -36,7 +36,7 @@ export default class FilterPresenter {
   mainRender = () => {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
-    this.#filterComponent = new ListOfFilters({
+    this.#filterComponent = new ListOfFiltersView({
       filters,
       currentFilterType: this.#filterModel.filter,
       onFilterTypeChange: this.#handleFilterTypeChange,

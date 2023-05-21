@@ -2,17 +2,17 @@ import MainRender from './presenter/main-render-presenter';
 import FilterPresenter from './presenter/filter-presenter';
 import EventModel from './models/event-model';
 import FilterModel from './models/filter-model';
-import AddNewEvent from './view/buttom-new-event-view';
-import EventList from './view/event-list-view';
+import ButtonNewEventView from './view/buttom-new-event-view';
+import EventListView from './view/event-list-view';
 import { render, RenderPosition } from './framework/render';
 
 const containerForButton = document.querySelector('.trip-main');
 const sortContainerElem = document.querySelector('.trip-events');
 
-const ulListContainer = new EventList();
+const ulListContainer = new EventListView();
 render(ulListContainer, sortContainerElem, RenderPosition.BEFOREEND);
 
-const createEventButton = new AddNewEvent({
+const createEventButton = new ButtonNewEventView({
   onClick: handleNewEventButtonClick,
 });
 

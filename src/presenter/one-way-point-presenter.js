@@ -1,5 +1,5 @@
-import EventWithContent from '../view/event-with-content-view';
-import EventWithOutContent from '../view/event-with-out-content-view';
+import EventWithContentView from '../view/event-with-content-view';
+import EventWithOutContentView from '../view/event-with-out-content-view';
 import { replace, render, remove } from '../framework/render';
 import { MODE, ESC } from '../framework/consts';
 import { USER_ACTION, UPDATE_TYPE } from '../framework/consts';
@@ -84,10 +84,10 @@ export default class OneWayPointPresenter {
   mainRender(newElem) {
     this.#elem = newElem;
 
-    const prevEventWithOutContentComponent = this.#evtWithOutContent;
-    const prevEventWithContent = this.#evtWithContent;
+    const prevEventWithOutContentViewComponent = this.#evtWithOutContent;
+    const prevEventWithContentView = this.#evtWithContent;
 
-    this.#evtWithOutContent = new EventWithOutContent({
+    this.#evtWithOutContent = new EventWithOutContentView({
       data: this.#elem,
       onClickArrow: () => {
         this.#handleModeChange();
@@ -102,7 +102,7 @@ export default class OneWayPointPresenter {
       },
     });
 
-    this.#evtWithContent = new EventWithContent({
+    this.#evtWithContent = new EventWithContentView({
       data: this.#elem,
       onClickSubmit: this.#onClickSubmit,
       onEscClick: this.#escKeyDownHandlerWithContent,
@@ -114,22 +114,22 @@ export default class OneWayPointPresenter {
     });
 
     if (
-      prevEventWithOutContentComponent === null ||
-      prevEventWithContent === null
+      prevEventWithOutContentViewComponent === null ||
+      prevEventWithContentView === null
     ) {
       render(this.#evtWithOutContent, this.#placeToRenderElem);
       return;
     }
 
     if (this.#status === MODE.closed) {
-      replace(this.#evtWithOutContent, prevEventWithOutContentComponent);
+      replace(this.#evtWithOutContent, prevEventWithOutContentViewComponent);
     }
 
     if (this.#status === MODE.openened) {
-      replace(this.#evtWithContent, prevEventWithContent);
+      replace(this.#evtWithContent, prevEventWithContentView);
     }
 
-    remove(prevEventWithContent);
-    remove(prevEventWithOutContentComponent);
+    remove(prevEventWithContentView);
+    remove(prevEventWithOutContentViewComponent);
   }
 }

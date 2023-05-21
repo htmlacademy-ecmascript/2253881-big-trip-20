@@ -1,4 +1,4 @@
-import EventWithContent from '../view/event-with-content-view';
+import EventWithContentView from '../view/event-with-content-view';
 import { ESC, UPDATE_TYPE, USER_ACTION } from '../framework/consts';
 import { render, RenderPosition, remove } from '../framework/render';
 import { nanoid } from 'nanoid';
@@ -8,7 +8,7 @@ export default class NewEventPresenter {
   #handleDataChange = null;
   #handleDestroy = null;
 
-  #eventWithContent = null;
+  #EventWithContentView = null;
 
   constructor({ onDataChange, onDestroy }) {
     this.#ulListContainer = document.querySelector('.trip-events__list');
@@ -17,11 +17,11 @@ export default class NewEventPresenter {
   }
 
   mainRender = () => {
-    if (this.#eventWithContent !== null) {
+    if (this.#EventWithContentView !== null) {
       return;
     }
 
-    this.#eventWithContent = new EventWithContent({
+    this.#EventWithContentView = new EventWithContentView({
       onClickSubmit: this.#handleFormSubmit,
       onClickArrow: this.#handleDeleteClick,
       onClickDelete: this.#handleDeleteClick,
@@ -29,7 +29,7 @@ export default class NewEventPresenter {
     });
 
     render(
-      this.#eventWithContent,
+      this.#EventWithContentView,
       this.#ulListContainer,
       RenderPosition.AFTERBEGIN
     );
@@ -38,14 +38,14 @@ export default class NewEventPresenter {
   };
 
   destroy = () => {
-    if (this.#eventWithContent === null) {
+    if (this.#EventWithContentView === null) {
       return;
     }
 
     this.#handleDestroy();
 
-    remove(this.#eventWithContent);
-    this.#eventWithContent = null;
+    remove(this.#EventWithContentView);
+    this.#EventWithContentView = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };

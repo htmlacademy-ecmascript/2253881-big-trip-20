@@ -3,6 +3,7 @@ import { MOVING_ELEMENTS, mapCitys, mapOffers } from '../mocks/mock';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { INPUT } from '../framework/consts';
 import flatpickr from 'flatpickr';
+import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const currentTime = new Date();
@@ -21,7 +22,7 @@ const dataOnCreateEvent = {
 };
 
 /* eslint-disable */
-function createEventWithContent() {
+function createEventWithContentView() {
   return '<li class="trip-events__item"></li>';
 }
 
@@ -59,9 +60,9 @@ function createContentHeader(data) {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${data.type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${
-      data?.destination?.cityName
-    }" list="destination-list-1">
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(
+      data.destination.cityName
+    )}" list="destination-list-1">
     <datalist id="destination-list-1">
       <option value="Amsterdam"></option>
       <option value="Geneva"></option>
@@ -82,12 +83,14 @@ function createContentHeader(data) {
       <span class="visually-hidden">Price</span>
       &euro;
     </label>
-    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(
+      '?'
+    )}">
   </div>
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
   <button class="event__reset-btn" type="reset">${
-    data.isAddNewEvent ? 'Cancel' : 'Delete'
+    data.isButtonNewEventView ? 'Cancel' : 'Delete'
   }</button>
   <button class="event__rollup-btn" type="button">
                   <span class="visually-hidden">Open event</span>
@@ -150,7 +153,7 @@ function createContentEventSectionDestination(data) {
 </section>`;
 }
 /* eslint-enable */
-export default class EventWithContent extends AbstractStatefulView {
+export default class EventWithContentView extends AbstractStatefulView {
   #onClickSubmit = null;
   #onClickArrow = null;
   #onClickDelete = null;
@@ -159,7 +162,7 @@ export default class EventWithContent extends AbstractStatefulView {
   #onEscClick = null;
 
   constructor({
-    data = EventWithContent.parseTaskToState(dataOnCreateEvent),
+    data = EventWithContentView.parseTaskToState(dataOnCreateEvent),
     onClickSubmit,
     onClickArrow,
     onEscClick,
@@ -167,7 +170,7 @@ export default class EventWithContent extends AbstractStatefulView {
   }) {
     super();
 
-    this._setState(EventWithContent.parseTaskToState(data));
+    this._setState(EventWithContentView.parseTaskToState(data));
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
     this.#onEscClick = onEscClick;
@@ -178,7 +181,7 @@ export default class EventWithContent extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
-      this.#onClickSubmit(EventWithContent.parseStateToTask(this._state));
+      this.#onClickSubmit(EventWithContentView.parseStateToTask(this._state));
     };
 
     this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
@@ -281,12 +284,12 @@ export default class EventWithContent extends AbstractStatefulView {
   };
 
   reset = (data) => {
-    this.updateElement(EventWithContent.parseTaskToState(data));
+    this.updateElement(EventWithContentView.parseTaskToState(data));
   };
 
   static parseTaskToState(data) {
     if (!data.id) {
-      return { isAddNewEvent: true, ...data };
+      return { isButtonNewEventView: true, ...data };
     }
     return { ...data };
   }
@@ -294,15 +297,15 @@ export default class EventWithContent extends AbstractStatefulView {
   static parseStateToTask(state) {
     const eventDestination = { ...state };
 
-    if (eventDestination.isAddNewEvent) {
-      delete eventDestination.isAddNewEvent;
+    if (eventDestination.isButtonNewEventView) {
+      delete eventDestination.isButtonNewEventView;
     }
 
     return eventDestination;
   }
 
   get template() {
-    const liElem = createElement(createEventWithContent());
+    const liElem = createElement(createEventWithContentView());
     const formWrapperElem = createElement(createFormForContent());
     const headerContent = createElement(createContentHeader(this._state));
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
