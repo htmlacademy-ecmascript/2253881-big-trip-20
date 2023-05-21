@@ -29,7 +29,7 @@ export default class MainRender {
   #ulListComponent = null;
   #sortComponent = null;
   #noEventsComponent = null;
-  #TripInfoViewComponent = null;
+  #tripInfoViewComponent = null;
 
   constructor({ eventsModel, filterModel, onNewEventDestroy }) {
     this.#eventsModel = eventsModel;
@@ -127,9 +127,9 @@ export default class MainRender {
   };
 
   #renderTrip() {
-    this.#TripInfoViewComponent = new TripInfoView();
+    this.#tripInfoViewComponent = new TripInfoView();
     render(
-      this.#TripInfoViewComponent,
+      this.#tripInfoViewComponent,
       tripMainContElem,
       RenderPosition.AFTERBEGIN
     );
@@ -203,7 +203,7 @@ export default class MainRender {
       remove(this.#noEventsComponent);
     }
 
-    remove(this.#TripInfoViewComponent);
+    remove(this.#tripInfoViewComponent);
     remove(this.#sortComponent);
     remove(this.#ulListComponent);
     if (resetSort) {

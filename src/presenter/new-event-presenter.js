@@ -8,7 +8,7 @@ export default class NewEventPresenter {
   #handleDataChange = null;
   #handleDestroy = null;
 
-  #EventWithContentView = null;
+  #eventWithContentView = null;
 
   constructor({ onDataChange, onDestroy }) {
     this.#ulListContainer = document.querySelector('.trip-events__list');
@@ -17,11 +17,11 @@ export default class NewEventPresenter {
   }
 
   mainRender = () => {
-    if (this.#EventWithContentView !== null) {
+    if (this.#eventWithContentView !== null) {
       return;
     }
 
-    this.#EventWithContentView = new EventWithContentView({
+    this.#eventWithContentView = new EventWithContentView({
       onClickSubmit: this.#handleFormSubmit,
       onClickArrow: this.#handleDeleteClick,
       onClickDelete: this.#handleDeleteClick,
@@ -29,7 +29,7 @@ export default class NewEventPresenter {
     });
 
     render(
-      this.#EventWithContentView,
+      this.#eventWithContentView,
       this.#ulListContainer,
       RenderPosition.AFTERBEGIN
     );
@@ -38,14 +38,14 @@ export default class NewEventPresenter {
   };
 
   destroy = () => {
-    if (this.#EventWithContentView === null) {
+    if (this.#eventWithContentView === null) {
       return;
     }
 
     this.#handleDestroy();
 
-    remove(this.#EventWithContentView);
-    this.#EventWithContentView = null;
+    remove(this.#eventWithContentView);
+    this.#eventWithContentView = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
