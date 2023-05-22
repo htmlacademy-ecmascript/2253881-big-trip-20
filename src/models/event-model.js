@@ -27,7 +27,7 @@ export default class EventModel extends Observable {
         this.#destinations,
         this.#offers
       );
-      // console.log(this.#events);
+      console.log(this.#offers);
     } catch (err) {
       this.#events = [];
     }

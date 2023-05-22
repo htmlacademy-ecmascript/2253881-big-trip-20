@@ -31,6 +31,18 @@ export const FILTER_TYPE = {
   PAST: 'past',
 };
 
+export const MOVING_ELEMENTS = [
+  'Taxi',
+  'Bus',
+  'Train',
+  'Ship',
+  'Drive',
+  'Flight',
+  'Check-in',
+  'Sightseeing',
+  'Restaurant',
+];
+
 export const AUTHORIZATION = 'Basic jkahsdsa7816381724dsf';
 
 export const URLS = {

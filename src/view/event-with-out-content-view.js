@@ -5,16 +5,18 @@ import dayjs from 'dayjs';
 /* eslint-disable */
 function createEvent(data) {
   const isFavourite = data.isFavourite ? 'event__favorite-btn--active' : '';
-  //   const offersList = data.offers
-  //     .map(
-  //       (elem) => /*html*/ `<li class="event__offer">
-  //   <span class="event__offer-title">${elem.title}</span>
-  //   &plus;&euro;
-  //   <span class="event__offer-price">${elem.price}</span>
-  // </li>`
-  //     )
-  //     .join('');
-  const offersList = 'dasdsa';
+  const offersList = data.offers.length
+    ? data.offers
+        .map(
+          (elem) => /*html*/ `<li class="event__offer">
+    <span class="event__offer-title">${elem.title}</span>
+    &plus;&euro;
+    <span class="event__offer-price">${elem.price}</span>
+  </li>`
+        )
+        .join('')
+    : '';
+
   // const price = data?.offers.reduce((acc, elem) => (acc += elem.price), 0);
   const baseDate = dayjs(data.dateFrom).format('MMM DD');
   const dateFiffs = getDiffDates(data.dateFrom, data.dateTo);
@@ -26,7 +28,7 @@ function createEvent(data) {
   <div class="event__type">
     <img class="event__type-icon" width="42" height="42" src="img/icons/${data.type}.png" alt="Event type icon">
   </div>
-  <h3 class="event__title">${data.type} ${data.destination?.cityName}</h3>
+  <h3 class="event__title">${data.type} ${data.destination.name}</h3>
   <div class="event__schedule">
     <p class="event__time">
       <time class="event__start-time" datetime="2019-03-18T10:30">${dateFrom}</time>

@@ -1,5 +1,6 @@
 import { RenderPosition, createElement } from '../framework/render';
-import { MOVING_ELEMENTS, mapCitys, mapOffers } from '../mocks/mock';
+import { mapCitys, mapOffers } from '../mocks/mock';
+import { MOVING_ELEMENTS } from '../framework/consts';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { INPUT } from '../framework/consts';
 import flatpickr from 'flatpickr';
@@ -36,6 +37,7 @@ function createContentHeader(data) {
     : `<button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>`;
+
   const eventTypesList = MOVING_ELEMENTS.map(
     (elem) => /*html*/ `<div class="event__type-item">
   <input id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
@@ -66,7 +68,7 @@ function createContentHeader(data) {
       ${data.type}
     </label>
     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(
-      data.destination
+      data.destination.name
     )}" list="destination-list-1">
     <datalist id="destination-list-1">
       <option value="Amsterdam"></option>
@@ -107,8 +109,8 @@ function createEventDetailsWrapper() {
 
 function createEventSectionOffers(data) {
   const offersList =
-    data.offers.offers &&
-    `<div class="event__available-offers">${data?.offers.offers
+    data.offers &&
+    `<div class="event__available-offers">${data?.offers
       .map(
         (elem) => `<div class="event__offer-selector">
 <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
