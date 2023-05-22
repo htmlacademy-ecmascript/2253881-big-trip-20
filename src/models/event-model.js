@@ -1,11 +1,35 @@
-import { generateObj } from '../mocks/mock';
 import Observable from '../framework/observable';
+import { UPDATE_TYPE } from '../framework/consts';
 
 export default class EventModel extends Observable {
-  #events = generateObj(Math.floor(Math.random() * 10));
+  #events = [];
+  #eventsApiServices = null;
+
+  constructor({ eventsApiServices }) {
+    super();
+    this.#eventsApiServices = eventsApiServices;
+  }
 
   get events() {
     return this.#events;
+  }
+
+  async downloadEvents() {
+    try {
+      const events = await this.#eventsApiServices.events;
+      const destinations = await this.#eventsApiServices.destinations;
+      const offers = await this.#eventsApiServices.offers;
+
+      this.#events = this.#eventsApiServices.adaptToClient(
+        events,
+        destinations,
+        offers
+      );
+    } catch (err) {
+      this.#events = [];
+    }
+
+    this._notify(UPDATE_TYPE.INIT);
   }
 
   updateEvent(updateType, newEvent) {

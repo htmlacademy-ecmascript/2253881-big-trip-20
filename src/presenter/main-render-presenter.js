@@ -4,6 +4,7 @@ import ListOfSortView from '../view/list-of-sort-view';
 import OneWayPointPresenter from './one-way-point-presenter';
 import NewEventPresenter from '../presenter/new-event-presenter';
 import EventListView from '../view/event-list-view';
+import LoadingView from '../view/loading-view';
 import { getWeightForNullDate, filter } from '../framework/utils';
 import { render, RenderPosition, remove } from '../framework/render';
 import {
@@ -23,11 +24,13 @@ export default class MainRender {
   #sortType = SORT_TYPES.day;
   #filterType = FILTER_TYPE.EVERYTHING;
   #instsOfPresenters = new Map();
+  #isLoading = true;
 
   #newEventPresenter = null;
 
   #ulListComponent = null;
   #sortComponent = null;
+  #loadingComponent = null;
   #noEventsComponent = null;
   #tripInfoViewComponent = null;
 
@@ -108,6 +111,11 @@ export default class MainRender {
         this.#resetAllComponents(true);
         this.renderMain();
         break;
+      case UPDATE_TYPE.INIT:
+        this.#isLoading = false;
+        this.#resetAllComponents(true);
+        this.renderMain();
+        break;
     }
   };
 
@@ -138,6 +146,11 @@ export default class MainRender {
   #renderUlList() {
     this.#ulListComponent = new EventListView();
     render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
+  }
+
+  #renderLoading() {
+    this.#loadingComponent = new LoadingView();
+    render(this.#loadingComponent, sortContainerElem, RenderPosition.BEFOREEND);
   }
 
   #renderSort() {
@@ -178,6 +191,11 @@ export default class MainRender {
   renderMain() {
     this.#renderUlList();
 
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (!this.events.length) {
       this.#renderNoEvents();
       return;
@@ -202,7 +220,7 @@ export default class MainRender {
     if (this.#renderNoEvents) {
       remove(this.#noEventsComponent);
     }
-
+    remove(this.#loadingComponent);
     remove(this.#tripInfoViewComponent);
     remove(this.#sortComponent);
     remove(this.#ulListComponent);

@@ -66,7 +66,7 @@ function createContentHeader(data) {
       ${data.type}
     </label>
     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(
-      data.destination.cityName
+      data.destination
     )}" list="destination-list-1">
     <datalist id="destination-list-1">
       <option value="Amsterdam"></option>
@@ -108,7 +108,7 @@ function createEventDetailsWrapper() {
 function createEventSectionOffers(data) {
   const offersList =
     data.offers.offers &&
-    `<div class="event__available-offers">${data.offers.offers
+    `<div class="event__available-offers">${data?.offers.offers
       .map(
         (elem) => `<div class="event__offer-selector">
 <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
@@ -125,7 +125,7 @@ function createEventSectionOffers(data) {
 
 
   ${
-    data.offers.offers.length > 0
+    data.offers?.length > 0
       ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>'
       : ''
   }
@@ -143,7 +143,7 @@ function createContentEventSectionDestination(data) {
 
 
   ${
-    data.destination.pictures.length > 0
+    data.destination?.pictures?.length > 0
       ? `<div class="event__photos-container"><div class="event__photos-tape">
       ${data.destination.pictures.map(
         (elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`

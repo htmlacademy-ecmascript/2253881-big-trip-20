@@ -86,7 +86,6 @@ export default class OneWayPointPresenter {
 
     const prevEventWithOutContentViewComponent = this.#evtWithOutContent;
     const prevEventWithContentView = this.#evtWithContent;
-
     this.#evtWithOutContent = new EventWithOutContentView({
       data: this.#elem,
       onClickArrow: () => {
