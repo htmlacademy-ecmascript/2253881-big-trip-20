@@ -3,6 +3,8 @@ import { UPDATE_TYPE } from '../framework/consts';
 
 export default class EventModel extends Observable {
   #events = [];
+  #destinations = [];
+  #offers = [];
   #eventsApiServices = null;
 
   constructor({ eventsApiServices }) {
@@ -17,14 +19,15 @@ export default class EventModel extends Observable {
   async downloadEvents() {
     try {
       const events = await this.#eventsApiServices.events;
-      const destinations = await this.#eventsApiServices.destinations;
-      const offers = await this.#eventsApiServices.offers;
+      this.#destinations = await this.#eventsApiServices.destinations;
+      this.#offers = await this.#eventsApiServices.offers;
 
       this.#events = this.#eventsApiServices.adaptToClient(
         events,
-        destinations,
-        offers
+        this.#destinations,
+        this.#offers
       );
+      // console.log(this.#events);
     } catch (err) {
       this.#events = [];
     }

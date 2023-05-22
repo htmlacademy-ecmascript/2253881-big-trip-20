@@ -83,6 +83,12 @@ export default class EventsApiService extends ApiService {
       is_favorite: eventTosend.isFavourite,
     };
     /* eslint-enable */
+    anyEvent.destionation = anyEvent.destination.id;
+
+    if (anyEvent.offers.length) {
+      anyEvent.offers = anyEvent.offers.map((el) => el.id);
+    }
+
     delete anyEvent.isFavourite;
     delete anyEvent.dateTo;
     delete anyEvent.dateFrom;
