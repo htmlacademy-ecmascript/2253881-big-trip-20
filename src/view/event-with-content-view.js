@@ -31,6 +31,11 @@ function createFormForContent() {
 }
 
 function createContentHeader(data) {
+  const isButtonNew = data.isButtonNewEventView
+    ? ''
+    : `<button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+    </button>`;
   const eventTypesList = MOVING_ELEMENTS.map(
     (elem) => /*html*/ `<div class="event__type-item">
   <input id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
@@ -92,9 +97,7 @@ function createContentHeader(data) {
   <button class="event__reset-btn" type="reset">${
     data.isButtonNewEventView ? 'Cancel' : 'Delete'
   }</button>
-  <button class="event__rollup-btn" type="button">
-                  <span class="visually-hidden">Open event</span>
-                </button>
+  ${isButtonNew}
 </header>`;
 }
 
@@ -184,10 +187,12 @@ export default class EventWithContentView extends AbstractStatefulView {
       this.#onClickSubmit(EventWithContentView.parseStateToTask(this._state));
     };
 
-    this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
-      evt.preventDefault();
-      this.#onClickArrow();
-    };
+    if (this.element.querySelector('.event__rollup-btn')) {
+      this.element.querySelector('.event__rollup-btn').onclick = (evt) => {
+        evt.preventDefault();
+        this.#onClickArrow();
+      };
+    }
 
     this.element.querySelector('.event__type-group').onchange = (evt) => {
       if (evt.target.tagName === INPUT) {
