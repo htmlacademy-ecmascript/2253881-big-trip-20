@@ -63,7 +63,6 @@ export default class EventsApiService extends ApiService {
       }
       return editedEl;
     });
-
     return editedEvents;
   }
 

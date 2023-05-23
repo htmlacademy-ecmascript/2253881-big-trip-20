@@ -4,16 +4,16 @@ import { render, RenderPosition, remove } from '../framework/render';
 import { nanoid } from 'nanoid';
 
 export default class NewEventPresenter {
-  #ulListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
+  #modelEvents = null;
 
   #eventWithContentView = null;
 
-  constructor({ onDataChange, onDestroy }) {
-    this.#ulListContainer = document.querySelector('.trip-events__list');
+  constructor({ onDataChange, onDestroy, modelEvents }) {
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+    this.#modelEvents = modelEvents;
   }
 
   mainRender = () => {
@@ -26,11 +26,14 @@ export default class NewEventPresenter {
       onClickArrow: this.#handleDeleteClick,
       onClickDelete: this.#handleDeleteClick,
       onEscClick: this.#escKeyDownHandler,
+      modelEvents: this.#modelEvents,
     });
+
+    const placeToRenderElem = document.querySelector('.trip-events__list');
 
     render(
       this.#eventWithContentView,
-      this.#ulListContainer,
+      placeToRenderElem,
       RenderPosition.AFTERBEGIN
     );
 

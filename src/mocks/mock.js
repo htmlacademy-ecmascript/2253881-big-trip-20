@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { getRandomArbitrary } from '../framework/utils';
+import { MOVING_ELEMENTS } from '../framework/consts';
 
 export const FLIGHT_POINTS = [
   'Amsterdam',
@@ -10,18 +11,6 @@ export const FLIGHT_POINTS = [
   'Tokyo',
 ];
 
-export const MOVING_ELEMENTS = [
-  'Taxi',
-  'Bus',
-  'Train',
-  'Ship',
-  'Drive',
-  'Flight',
-  'Check-in',
-  'Sightseeing',
-  'Restaurant',
-];
-
 const getRandomElem = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 export const mapCitys = new Map();
@@ -29,7 +18,7 @@ export const mapOffers = new Map();
 
 FLIGHT_POINTS.forEach((elem) => {
   mapCitys.set(elem, {
-    cityName: elem,
+    name: elem,
     description: `${elem}, is a beautiful city, a true asian pearl, with crowded streets.',
     sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus`,
     pictures: Array.from({ length: Math.floor(Math.random() * 10) }, () => ({

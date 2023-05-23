@@ -3,16 +3,11 @@ import FilterPresenter from './presenter/filter-presenter';
 import EventModel from './models/event-model';
 import FilterModel from './models/filter-model';
 import ButtonNewEventView from './view/buttom-new-event-view';
-import EventListView from './view/event-list-view';
 import EventsApiService from './events-api-sevices';
 import { render, RenderPosition } from './framework/render';
 import { URLS, AUTHORIZATION } from './framework/consts';
 
 const containerForButton = document.querySelector('.trip-main');
-const sortContainerElem = document.querySelector('.trip-events');
-
-const ulListContainer = new EventListView();
-render(ulListContainer, sortContainerElem, RenderPosition.BEFOREEND);
 
 const createEventButton = new ButtonNewEventView({
   onClick: handleNewEventButtonClick,

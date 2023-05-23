@@ -41,6 +41,7 @@ export default class MainRender {
     this.#newEventPresenter = new NewEventPresenter({
       onDataChange: this.#handleModelDataChange,
       onDestroy: onNewEventDestroy,
+      modelEvents: this.#eventsModel,
     });
 
     this.#eventsModel.addObserver(this.#handleModelEvent);
@@ -62,17 +63,7 @@ export default class MainRender {
           return isNull ?? secondDate - firstDate;
         });
       case SORT_TYPES.price:
-        return filteredEvents.sort((a, b) => {
-          const first = a.offers.offers.reduce(
-            (acc, elem) => (acc += elem.price),
-            0
-          );
-          const second = b.offers.offers.reduce(
-            (acc, elem) => (acc += elem.price),
-            0
-          );
-          return second - first;
-        });
+        return filteredEvents.sort((a, b) => b.basePrice - a.basePrice);
       default:
         return filteredEvents;
     }
@@ -177,6 +168,7 @@ export default class MainRender {
       data: elem,
       handleModeChange: this.#handleModeChange,
       handleModelDataChange: this.#handleModelDataChange,
+      modelEvents: this.#eventsModel,
     });
     this.#instsOfPresenters.set(elem.id, newWayPoint);
     newWayPoint.mainRender(elem);

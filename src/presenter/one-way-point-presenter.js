@@ -13,10 +13,12 @@ export default class OneWayPointPresenter {
 
   #handleModelDataChange = null;
   #handleModeChange = null;
+  #modelEvents = null;
 
-  constructor({ handleModeChange, handleModelDataChange }) {
+  constructor({ handleModeChange, handleModelDataChange, modelEvents }) {
     this.#handleModeChange = handleModeChange;
     this.#handleModelDataChange = handleModelDataChange;
+    this.#modelEvents = modelEvents;
   }
 
   #onClickSubmit = (newElem) => {
@@ -103,6 +105,7 @@ export default class OneWayPointPresenter {
 
     this.#evtWithContent = new EventWithContentView({
       data: this.#elem,
+      modelEvents: this.#modelEvents,
       onClickSubmit: this.#onClickSubmit,
       onEscClick: this.#escKeyDownHandlerWithContent,
       onClickDelete: this.#onClickDelete,

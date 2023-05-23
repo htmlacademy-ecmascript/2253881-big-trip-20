@@ -1,26 +1,10 @@
 import { RenderPosition, createElement } from '../framework/render';
-import { mapCitys, mapOffers } from '../mocks/mock';
 import { MOVING_ELEMENTS } from '../framework/consts';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { INPUT } from '../framework/consts';
 import flatpickr from 'flatpickr';
 import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
-
-const currentTime = new Date();
-currentTime.setMinutes(currentTime.getMinutes() - 20);
-const nextTime = new Date();
-nextTime.setMinutes(currentTime.getMinutes() + 20);
-
-const dataOnCreateEvent = {
-  basePrice: 0,
-  dateFrom: currentTime,
-  dateTo: nextTime,
-  destination: mapCitys.get('Moskow'),
-  isFavourite: false,
-  offers: mapOffers.get(MOVING_ELEMENTS[0]),
-  type: MOVING_ELEMENTS[0],
-};
 
 /* eslint-disable */
 function createEventWithContentView() {
@@ -31,7 +15,10 @@ function createFormForContent() {
   return '<form class="event event--edit" action="#" method="post"></form>';
 }
 
-function createContentHeader(data) {
+function createContentHeader(data, destinations) {
+  const listOfDestinations = destinations.map(
+    (el) => `<option name="${el.id}" value="${el.name}"></option>`
+  );
   const isButtonNew = data.isButtonNewEventView
     ? ''
     : `<button class="event__rollup-btn" type="button">
@@ -68,12 +55,10 @@ function createContentHeader(data) {
       ${data.type}
     </label>
     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(
-      data.destination.name
+      data.destination?.name
     )}" list="destination-list-1">
     <datalist id="destination-list-1">
-      <option value="Amsterdam"></option>
-      <option value="Geneva"></option>
-      <option value="Chamonix"></option>
+    ${listOfDestinations}
     </datalist>
   </div>
 
@@ -108,11 +93,10 @@ function createEventDetailsWrapper() {
 }
 
 function createEventSectionOffers(data) {
-  const offersList =
-    data.offers &&
-    `<div class="event__available-offers">${data?.offers
-      .map(
-        (elem) => `<div class="event__offer-selector">
+  const offersList = data.offers.length
+    ? `<div class="event__available-offers">${data?.offers
+        .map(
+          (elem) => `<div class="event__offer-selector">
 <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
 <label class="event__offer-label" for="event-offer-luggage-1">
   <span class="event__offer-title">${elem.title}</span>
@@ -120,14 +104,15 @@ function createEventSectionOffers(data) {
   <span class="event__offer-price">${elem.price}</span>
 </label>
 </div>`
-      )
-      .join('')}</div>`;
+        )
+        .join('')}</div>`
+    : '';
 
   return `<section class="event__section  event__section--offers">
 
 
   ${
-    data.offers?.length > 0
+    data.offers.length
       ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>'
       : ''
   }
@@ -138,14 +123,12 @@ function createEventSectionOffers(data) {
 function createContentEventSectionDestination(data) {
   return `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-  <p class="event__destination-description">${
-    data?.destination?.description
-  }</p>
+  <p class="event__destination-description">${data?.destination.description}</p>
 
 
 
   ${
-    data.destination?.pictures?.length > 0
+    data.destination.pictures.length
       ? `<div class="event__photos-container"><div class="event__photos-tape">
       ${data.destination.pictures.map(
         (elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`
@@ -165,17 +148,29 @@ export default class EventWithContentView extends AbstractStatefulView {
   #datePickerFrom = null;
   #datePickerTo = null;
   #onEscClick = null;
+  #modelEvents = null;
 
   constructor({
-    data = EventWithContentView.parseTaskToState(dataOnCreateEvent),
+    data,
     onClickSubmit,
     onClickArrow,
     onEscClick,
     onClickDelete,
+    modelEvents,
   }) {
     super();
+    this.#modelEvents = modelEvents;
+    if (data) {
+      this._setState(EventWithContentView.parseTaskToState(data));
+    } else {
+      const anyEventsPlaceholder = this.#modelEvents.events[0];
+      anyEventsPlaceholder.isFavourite = false;
+      delete anyEventsPlaceholder.id;
+      this._setState(
+        EventWithContentView.parseTaskToState(anyEventsPlaceholder)
+      );
+    }
 
-    this._setState(EventWithContentView.parseTaskToState(data));
     this.#onClickSubmit = onClickSubmit;
     this.#onClickArrow = onClickArrow;
     this.#onEscClick = onEscClick;
@@ -198,23 +193,34 @@ export default class EventWithContentView extends AbstractStatefulView {
 
     this.element.querySelector('.event__type-group').onchange = (evt) => {
       if (evt.target.tagName === INPUT) {
-        const typeEvent =
-          evt.target.value[0].toUpperCase() + evt.target.value.slice(1);
+        const newType = this.#modelEvents.offers.find(
+          (el) => el.type === evt.target.value
+        );
 
         this.updateElement({
-          type: typeEvent,
-          offers: mapOffers.get(typeEvent),
+          type: evt.target.value,
+          offers: [...newType.offers],
         });
       }
     };
 
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
-      const prevDestination = this._state.destination.cityName;
+      const prevDestination = this._state.destination.name;
 
+      /* eslint-disable */
+      const newDestination = this.#modelEvents.destinations.find(
+        (el) => el.name === evt.target.value
+      )
+        ? this.#modelEvents.destinations.find(
+            (el) => el.name === evt.target.value
+          )
+        : this.#modelEvents.destinations.find(
+            (el) => el.name === prevDestination
+          );
+
+      /* eslint-enable */
       this.updateElement({
-        destination: mapCitys.get(evt.target.value)
-          ? mapCitys.get(evt.target.value)
-          : mapCitys.get(prevDestination),
+        destination: newDestination,
       });
     };
 
@@ -314,7 +320,9 @@ export default class EventWithContentView extends AbstractStatefulView {
   get template() {
     const liElem = createElement(createEventWithContentView());
     const formWrapperElem = createElement(createFormForContent());
-    const headerContent = createElement(createContentHeader(this._state));
+    const headerContent = createElement(
+      createContentHeader(this._state, this.#modelEvents.destinations)
+    );
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
       createEventSectionOffers(this._state)

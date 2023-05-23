@@ -16,6 +16,14 @@ export default class EventModel extends Observable {
     return this.#events;
   }
 
+  get offers() {
+    return this.#offers;
+  }
+
+  get destinations() {
+    return this.#destinations;
+  }
+
   async downloadEvents() {
     try {
       const events = await this.#eventsApiServices.events;
@@ -27,7 +35,6 @@ export default class EventModel extends Observable {
         this.#destinations,
         this.#offers
       );
-      console.log(this.#offers);
     } catch (err) {
       this.#events = [];
     }
