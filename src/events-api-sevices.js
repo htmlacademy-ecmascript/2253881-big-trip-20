@@ -29,6 +29,60 @@ export default class EventsApiService extends ApiService {
     return answer;
   }
 
+  async addEvent(newEvent) {
+    const response = await this._load({
+      url: `${URLS.EVENTS}`,
+      method: METODS.POST,
+      body: JSON.stringify(this.adaptToServer(newEvent)),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(response);
+
+    return parsedResponse;
+  }
+
+  async deleteEvent(deletebleEvent) {
+    const response = await this._load({
+      url: `${URLS.EVENTS}/${deletebleEvent.id}`,
+      method: METODS.DELETE,
+    });
+
+    return response;
+  }
+
+  adaptToClientOneEvent(el, destinations, offers) {
+    const editedEl = {
+      ...el,
+      basePrice: el['base_price'],
+      dateFrom:
+        el['date_from'] !== null ? new Date(el['date_from']) : el['date_from'],
+      dateTo: el['date_to'] !== null ? new Date(el['date_to']) : el['date_to'],
+      isFavourite: el['is_favorite'],
+    };
+
+    delete editedEl['base_price'];
+    delete editedEl['date_from'];
+    delete editedEl['date_to'];
+    delete editedEl['is_favorite'];
+
+    editedEl.destination = destinations.find(
+      (point) => point.id === editedEl.destination
+    );
+
+    if (editedEl.offers.length) {
+      const typeOffers = offers.find(
+        (typeOffer) => typeOffer.type === editedEl.type
+      );
+
+      editedEl.offers = editedEl.offers.map((idOfEditedEl) =>
+        typeOffers.offers.find((elOfOffers) => elOfOffers.id === idOfEditedEl)
+      );
+    }
+
+    return editedEl;
+  }
+
   adaptToClient(events, destinations, offers) {
     const editedEvents = events.map((el) => {
       const editedEl = {
@@ -82,7 +136,7 @@ export default class EventsApiService extends ApiService {
       is_favorite: eventTosend.isFavourite,
     };
     /* eslint-enable */
-    anyEvent.destionation = anyEvent.destination.id;
+    anyEvent.destination = anyEvent.destination.id;
 
     if (anyEvent.offers.length) {
       anyEvent.offers = anyEvent.offers.map((el) => el.id);

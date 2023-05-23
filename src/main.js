@@ -16,7 +16,12 @@ const createEventButton = new ButtonNewEventView({
 const eventsModel = new EventModel({
   eventsApiServices: new EventsApiService(URLS.MAIN, AUTHORIZATION),
 });
-eventsModel.downloadEvents();
+eventsModel.downloadEvents().finally(() => {
+  if (!eventsModel.destinations.length || !eventsModel.offers.length) {
+    createEventButton.element.disabled = true;
+  }
+  render(createEventButton, containerForButton, RenderPosition.BEFOREEND);
+});
 
 const filterModel = new FilterModel();
 const mainPresenter = new MainRender({
@@ -34,8 +39,6 @@ function handleNewEventButtonClick() {
   mainPresenter.createEvent();
   createEventButton.element.disabled = true;
 }
-
-render(createEventButton, containerForButton, RenderPosition.BEFOREEND);
 
 filterPresenter.mainRender();
 mainPresenter.renderMain();

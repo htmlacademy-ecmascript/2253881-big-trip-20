@@ -163,7 +163,7 @@ export default class EventWithContentView extends AbstractStatefulView {
     if (data) {
       this._setState(EventWithContentView.parseTaskToState(data));
     } else {
-      const anyEventsPlaceholder = this.#modelEvents.events[0];
+      const anyEventsPlaceholder = { ...this.#modelEvents.events[0] };
       anyEventsPlaceholder.isFavourite = false;
       delete anyEventsPlaceholder.id;
       this._setState(
@@ -181,6 +181,7 @@ export default class EventWithContentView extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
+
       this.#onClickSubmit(EventWithContentView.parseStateToTask(this._state));
     };
 
