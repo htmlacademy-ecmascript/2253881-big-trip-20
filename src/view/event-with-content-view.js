@@ -27,7 +27,9 @@ function createContentHeader(data, destinations) {
 
   const eventTypesList = MOVING_ELEMENTS.map(
     (elem) => /*html*/ `<div class="event__type-item">
-  <input id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
+  <input ${
+    data.isDisabled ? 'disabled' : ''
+  } id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
   <label class="event__type-label  event__type-label--${elem.toLocaleLowerCase()}" for="event-type-${elem.toLocaleLowerCase()}-1">${elem}</label>
 </div>`
   ).join('');
@@ -40,7 +42,9 @@ function createContentHeader(data, destinations) {
         data.type
       }.png" alt="Event type icon">
     </label>
-    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+    <input ${
+      data.isDisabled ? 'disabled' : ''
+    } class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
     <div class="event__type-list">
       <fieldset class="event__type-group">
@@ -54,9 +58,11 @@ function createContentHeader(data, destinations) {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${data.type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(
-      data.destination?.name
-    )}" list="destination-list-1">
+    <input class="event__input ${
+      data.isDisabled ? 'disabled' : ''
+    }  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(
+    data.destination?.name
+  )}" list="destination-list-1">
     <datalist id="destination-list-1">
     ${listOfDestinations}
     </datalist>
@@ -75,14 +81,26 @@ function createContentHeader(data, destinations) {
       <span class="visually-hidden">Price</span>
       &euro;
     </label>
-    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(
-      '1337'
-    )}">
+    <input ${
+      data.isDisabled ? 'disabled' : ''
+    } class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(
+    '1337'
+  )}">
   </div>
 
-  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">${
-    data.isButtonNewEventView ? 'Cancel' : 'Delete'
+  <button ${
+    data.isDisabled ? 'disabled' : ''
+  } class="event__save-btn  btn  btn--blue" type="submit">${
+    data.isSaving ? 'Saving...' : 'Save'
+  }</button>
+  <button class="event__reset-btn" ${
+    data.isDisabled ? 'disabled' : ''
+  } type="reset">${
+    data.isButtonNewEventView
+      ? 'Cancel'
+      : data.isDeleting
+      ? 'Deleting...'
+      : 'Delete'
   }</button>
   ${isButtonNew}
 </header>`;
@@ -303,9 +321,15 @@ export default class EventWithContentView extends AbstractStatefulView {
 
   static parseTaskToState(data) {
     if (!data.id) {
-      return { isButtonNewEventView: true, ...data };
+      return {
+        isButtonNewEventView: true,
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+        ...data,
+      };
     }
-    return { ...data };
+    return { isDisabled: false, isSaving: false, isDeleting: false, ...data };
   }
 
   static parseStateToTask(state) {
@@ -314,6 +338,9 @@ export default class EventWithContentView extends AbstractStatefulView {
     if (eventDestination.isButtonNewEventView) {
       delete eventDestination.isButtonNewEventView;
     }
+    delete eventDestination.isDeleting;
+    delete eventDestination.isSaving;
+    delete eventDestination.isDisabled;
 
     return eventDestination;
   }

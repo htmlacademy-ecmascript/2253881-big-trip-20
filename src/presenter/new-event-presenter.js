@@ -52,6 +52,13 @@ export default class NewEventPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
+  setSaving() {
+    this.#eventWithContentView.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
   #handleFormSubmit = (newEvent) => {
     this.#handleDataChange(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MAJOR, newEvent);
     this.destroy();

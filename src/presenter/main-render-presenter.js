@@ -78,12 +78,15 @@ export default class MainRender {
   #handleModelDataChange = (actionType, updateType, update) => {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
+        this.#instsOfPresenters.get(update.id).setSaving();
         this.#eventsModel.updateEvent(updateType, update);
         break;
       case USER_ACTION.ADD_EVENT:
+        this.#newEventPresenter.setSaving();
         this.#eventsModel.addEvent(updateType, update);
         break;
       case USER_ACTION.DELETE_EVENT:
+        this.#instsOfPresenters.get(update.id).setDeleting();
         this.#eventsModel.deleteEvent(updateType, update);
         break;
     }

@@ -48,6 +48,21 @@ export default class OneWayPointPresenter {
     );
   };
 
+  setSaving() {
+    if (this.#status === MODE.openened) {
+      this.#evtWithContent.updateElement({ isDisabled: true, isSaving: true });
+    }
+  }
+
+  setDeleting() {
+    if (this.#status === MODE.openened) {
+      this.#evtWithContent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
   #escKeyDownHandlerWithContent = (evt) => {
     if (
       evt.key === ESC &&
