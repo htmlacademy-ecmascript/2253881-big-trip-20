@@ -1,7 +1,9 @@
 import AbstractView from '../framework/view/abstract-view';
 import { INPUT, ELEMENTS_LIST } from '../framework/consts';
 
-function createNewListOfElems({ currentFilter }) {
+function createNewListOfElems({ currentFilter, eventsModel }) {
+  const isOffrsOrDestinationsEmpty =
+    !eventsModel.offers.length || !eventsModel.destinations.length;
   const ourFilters = ELEMENTS_LIST.map(
     (el) => /*html*/ `<div class="trip-filters__filter">
       <input
@@ -9,6 +11,7 @@ function createNewListOfElems({ currentFilter }) {
         class="trip-filters__filter-input  visually-hidden"
         type="radio"
         ${el === currentFilter ? 'checked' : ''}
+        ${isOffrsOrDestinationsEmpty ? 'disabled' : ''}
         name="trip-filter"
         value="${el}"
       />
@@ -30,12 +33,14 @@ export default class ListOfFiltersView extends AbstractView {
   #filters = null;
   #currentFilter = null;
   #handleChangeFilter = null;
+  #eventsModel = null;
 
-  constructor({ filters, currentFilterType, onFilterTypeChange }) {
+  constructor({ filters, currentFilterType, onFilterTypeChange, eventsModel }) {
     super();
     this.#filters = filters;
     this.#currentFilter = currentFilterType;
     this.#handleChangeFilter = onFilterTypeChange;
+    this.#eventsModel = eventsModel;
 
     this.element.onchange = (evt) => {
       if (evt.target.tagName === INPUT) {
@@ -48,6 +53,7 @@ export default class ListOfFiltersView extends AbstractView {
     return createNewListOfElems({
       filters: this.#filters,
       currentFilter: this.#currentFilter,
+      eventsModel: this.#eventsModel,
     });
   }
 }

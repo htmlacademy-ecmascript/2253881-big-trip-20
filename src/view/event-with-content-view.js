@@ -76,7 +76,7 @@ function createContentHeader(data, destinations) {
       &euro;
     </label>
     <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(
-      '?'
+      '1337'
     )}">
   </div>
 

@@ -8,21 +8,28 @@ const NO_EVENTS_TEXT_TYPE = {
   [FILTER_TYPE.PRESENT]: 'There are no present events now',
 };
 
-function createError(filterType) {
+function createError(filterType, eventsModel) {
+  const isOffrsOrDestinationsEmpty =
+    !eventsModel.offers.length || !eventsModel.destinations.length;
+
   /* eslint-disable */
-  return /*html*/ `<p class="trip-events__msg">${NO_EVENTS_TEXT_TYPE[filterType]}</p>`;
+  return /*html*/ isOffrsOrDestinationsEmpty
+    ? `<p class="trip-events__msg">Error on download events</p>`
+    : `<p class="trip-events__msg">${NO_EVENTS_TEXT_TYPE[filterType]}</p>`;
   /*eslint-enable*/
 }
 
 export default class ErrorOnDownloadView extends AbstractView {
   #filterType = null;
+  #eventsModel = null;
 
-  constructor({ filterType }) {
+  constructor({ filterType, eventsModel }) {
     super();
     this.#filterType = filterType;
+    this.#eventsModel = eventsModel;
   }
 
   get template() {
-    return createError(this.#filterType);
+    return createError(this.#filterType, this.#eventsModel);
   }
 }

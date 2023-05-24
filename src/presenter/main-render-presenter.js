@@ -155,6 +155,7 @@ export default class MainRender {
   #renderNoEvents() {
     this.#noEventsComponent = new ErrorOnDownloadView({
       filterType: this.#filterType,
+      eventsModel: this.#eventsModel,
     });
     render(
       this.#noEventsComponent,
