@@ -84,7 +84,7 @@ function createContentHeader(data, destinations) {
     <input ${
       data.isDisabled ? 'disabled' : ''
     } class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(
-    '1337'
+    `${data.basePrice}`
   )}">
   </div>
 
@@ -181,7 +181,16 @@ export default class EventWithContentView extends AbstractStatefulView {
     if (data) {
       this._setState(EventWithContentView.parseTaskToState(data));
     } else {
-      const anyEventsPlaceholder = { ...this.#modelEvents.events[0] };
+      const anyEventsPlaceholder = {
+        basePrice: '500',
+        dateFrom: new Date(),
+        dateTo: new Date(),
+        destination: { ...this.#modelEvents.destinations[0] },
+        isFavourite: false,
+        offers: [...this.#modelEvents.offers[0].offers],
+        type: this.#modelEvents.offers[0].type,
+      };
+
       anyEventsPlaceholder.isFavourite = false;
       delete anyEventsPlaceholder.id;
       this._setState(
