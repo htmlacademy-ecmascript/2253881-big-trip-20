@@ -181,9 +181,12 @@ export default class EventWithContentView extends AbstractStatefulView {
     if (data) {
       this._setState(EventWithContentView.parseTaskToState(data));
     } else {
+      const dateFrom = new Date();
+      dateFrom.setDate(dateFrom.getDate() - 2);
+
       const anyEventsPlaceholder = {
-        basePrice: '500',
-        dateFrom: new Date(),
+        basePrice: 500,
+        dateFrom: dateFrom,
         dateTo: new Date(),
         destination: { ...this.#modelEvents.destinations[0] },
         isFavourite: false,
@@ -191,8 +194,6 @@ export default class EventWithContentView extends AbstractStatefulView {
         type: this.#modelEvents.offers[0].type,
       };
 
-      anyEventsPlaceholder.isFavourite = false;
-      delete anyEventsPlaceholder.id;
       this._setState(
         EventWithContentView.parseTaskToState(anyEventsPlaceholder)
       );
