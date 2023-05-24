@@ -28,7 +28,6 @@ export default class OneWayPointPresenter {
       UPDATE_TYPE.PATCH,
       newElem
     );
-    this.replaceWithContentToNoContent();
   };
 
   #onClickDelete = () => {
@@ -98,6 +97,23 @@ export default class OneWayPointPresenter {
     this.#status = MODE.openened;
   }
 
+  setAborting() {
+    if (this.#status === MODE.closed) {
+      this.#evtWithOutContent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#evtWithContent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#evtWithContent.shake(resetFormState);
+  }
+
   mainRender(newElem) {
     this.#elem = newElem;
 
@@ -143,7 +159,8 @@ export default class OneWayPointPresenter {
     }
 
     if (this.#status === MODE.openened) {
-      replace(this.#evtWithContent, prevEventWithContentView);
+      replace(this.#evtWithOutContent, prevEventWithContentView);
+      this.#status = MODE.closed;
     }
 
     remove(prevEventWithContentView);

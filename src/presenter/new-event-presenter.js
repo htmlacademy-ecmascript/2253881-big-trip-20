@@ -59,9 +59,20 @@ export default class NewEventPresenter {
     });
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this.#eventWithContentView.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventWithContentView.shake(resetFormState);
+  }
+
   #handleFormSubmit = (newEvent) => {
     this.#handleDataChange(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MAJOR, newEvent);
-    this.destroy();
   };
 
   #handleDeleteClick = () => {

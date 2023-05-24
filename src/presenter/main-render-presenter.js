@@ -75,19 +75,31 @@ export default class MainRender {
     this.#newEventPresenter.mainRender();
   }
 
-  #handleModelDataChange = (actionType, updateType, update) => {
+  #handleModelDataChange = async (actionType, updateType, update) => {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
         this.#instsOfPresenters.get(update.id).setSaving();
-        this.#eventsModel.updateEvent(updateType, update);
+        try {
+          await this.#eventsModel.updateEvent(updateType, update);
+        } catch (e) {
+          this.#instsOfPresenters.get(update.id).setAborting();
+        }
         break;
       case USER_ACTION.ADD_EVENT:
         this.#newEventPresenter.setSaving();
-        this.#eventsModel.addEvent(updateType, update);
+        try {
+          await this.#eventsModel.addEvent(updateType, update);
+        } catch (e) {
+          this.#newEventPresenter.setAborting();
+        }
         break;
       case USER_ACTION.DELETE_EVENT:
         this.#instsOfPresenters.get(update.id).setDeleting();
-        this.#eventsModel.deleteEvent(updateType, update);
+        try {
+          await this.#eventsModel.deleteEvent(updateType, update);
+        } catch (e) {
+          this.#instsOfPresenters.get(update.id).setAborting();
+        }
         break;
     }
   };
