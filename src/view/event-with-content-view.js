@@ -148,10 +148,13 @@ function createContentEventSectionDestination(data) {
   ${
     data.destination.pictures.length
       ? `<div class="event__photos-container"><div class="event__photos-tape">
-      ${data.destination.pictures.map(
-        (elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`
-      )}
-      </div></div>`
+      ${data.destination.pictures
+        .map(
+          (elem) =>
+            `<img class="event__photo" src=${elem.src} alt="Event photo">`
+        )
+        .join('')}
+     </div>`
       : ''
   }
 
