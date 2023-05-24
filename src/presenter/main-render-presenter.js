@@ -1,9 +1,10 @@
-import ErrorDwnl from '../view/error-on-download-view';
-import TripInfo from '../view/trip-info-view';
-import ListOfSort from '../view/list-of-sort-view';
+import ErrorOnDownloadView from '../view/error-on-download-view';
+import TripInfoView from '../view/trip-info-view';
+import ListOfSortView from '../view/list-of-sort-view';
 import OneWayPointPresenter from './one-way-point-presenter';
 import NewEventPresenter from '../presenter/new-event-presenter';
-import EventList from '../view/event-list-view';
+import EventListView from '../view/event-list-view';
+import LoadingView from '../view/loading-view';
 import { getWeightForNullDate, filter } from '../framework/utils';
 import { render, RenderPosition, remove } from '../framework/render';
 import {
@@ -23,13 +24,15 @@ export default class MainRender {
   #sortType = SORT_TYPES.day;
   #filterType = FILTER_TYPE.EVERYTHING;
   #instsOfPresenters = new Map();
+  #isLoading = true;
 
   #newEventPresenter = null;
 
   #ulListComponent = null;
   #sortComponent = null;
+  #loadingComponent = null;
   #noEventsComponent = null;
-  #tripInfoComponent = null;
+  #tripInfoViewComponent = null;
 
   constructor({ eventsModel, filterModel, onNewEventDestroy }) {
     this.#eventsModel = eventsModel;
@@ -38,6 +41,7 @@ export default class MainRender {
     this.#newEventPresenter = new NewEventPresenter({
       onDataChange: this.#handleModelDataChange,
       onDestroy: onNewEventDestroy,
+      modelEvents: this.#eventsModel,
     });
 
     this.#eventsModel.addObserver(this.#handleModelEvent);
@@ -59,17 +63,7 @@ export default class MainRender {
           return isNull ?? secondDate - firstDate;
         });
       case SORT_TYPES.price:
-        return filteredEvents.sort((a, b) => {
-          const first = a.offers.offers.reduce(
-            (acc, elem) => (acc += elem.price),
-            0
-          );
-          const second = b.offers.offers.reduce(
-            (acc, elem) => (acc += elem.price),
-            0
-          );
-          return second - first;
-        });
+        return filteredEvents.sort((a, b) => b.basePrice - a.basePrice);
       default:
         return filteredEvents;
     }
@@ -108,6 +102,11 @@ export default class MainRender {
         this.#resetAllComponents(true);
         this.renderMain();
         break;
+      case UPDATE_TYPE.INIT:
+        this.#isLoading = false;
+        this.#resetAllComponents(true);
+        this.renderMain();
+        break;
     }
   };
 
@@ -127,21 +126,26 @@ export default class MainRender {
   };
 
   #renderTrip() {
-    this.#tripInfoComponent = new TripInfo();
+    this.#tripInfoViewComponent = new TripInfoView();
     render(
-      this.#tripInfoComponent,
+      this.#tripInfoViewComponent,
       tripMainContElem,
       RenderPosition.AFTERBEGIN
     );
   }
 
   #renderUlList() {
-    this.#ulListComponent = new EventList();
+    this.#ulListComponent = new EventListView();
     render(this.#ulListComponent, sortContainerElem, RenderPosition.BEFOREEND);
   }
 
+  #renderLoading() {
+    this.#loadingComponent = new LoadingView();
+    render(this.#loadingComponent, sortContainerElem, RenderPosition.BEFOREEND);
+  }
+
   #renderSort() {
-    this.#sortComponent = new ListOfSort({
+    this.#sortComponent = new ListOfSortView({
       handleSort: this.#handleSortTypeChange,
     });
 
@@ -149,7 +153,9 @@ export default class MainRender {
   }
 
   #renderNoEvents() {
-    this.#noEventsComponent = new ErrorDwnl({ filterType: this.#filterType });
+    this.#noEventsComponent = new ErrorOnDownloadView({
+      filterType: this.#filterType,
+    });
     render(
       this.#noEventsComponent,
       sortContainerElem,
@@ -162,6 +168,7 @@ export default class MainRender {
       data: elem,
       handleModeChange: this.#handleModeChange,
       handleModelDataChange: this.#handleModelDataChange,
+      modelEvents: this.#eventsModel,
     });
     this.#instsOfPresenters.set(elem.id, newWayPoint);
     newWayPoint.mainRender(elem);
@@ -175,6 +182,11 @@ export default class MainRender {
 
   renderMain() {
     this.#renderUlList();
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
 
     if (!this.events.length) {
       this.#renderNoEvents();
@@ -200,8 +212,8 @@ export default class MainRender {
     if (this.#renderNoEvents) {
       remove(this.#noEventsComponent);
     }
-
-    remove(this.#tripInfoComponent);
+    remove(this.#loadingComponent);
+    remove(this.#tripInfoViewComponent);
     remove(this.#sortComponent);
     remove(this.#ulListComponent);
     if (resetSort) {

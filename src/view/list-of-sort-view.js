@@ -31,7 +31,7 @@ function createSortList() {
 </form>`;
 }
 
-export default class ListOfSort extends AbstractView {
+export default class ListOfSortView extends AbstractView {
   #handleSort = null;
 
   constructor({ handleSort }) {

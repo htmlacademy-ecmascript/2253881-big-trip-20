@@ -14,7 +14,7 @@ function createError(filterType) {
   /*eslint-enable*/
 }
 
-export default class ErrorDwnl extends AbstractView {
+export default class ErrorOnDownloadView extends AbstractView {
   #filterType = null;
 
   constructor({ filterType }) {

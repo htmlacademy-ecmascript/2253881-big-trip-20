@@ -2,21 +2,27 @@ import MainRender from './presenter/main-render-presenter';
 import FilterPresenter from './presenter/filter-presenter';
 import EventModel from './models/event-model';
 import FilterModel from './models/filter-model';
-import AddNewEvent from './view/buttom-new-event-view';
-import EventList from './view/event-list-view';
+import ButtonNewEventView from './view/buttom-new-event-view';
+import EventsApiService from './events-api-sevices';
 import { render, RenderPosition } from './framework/render';
+import { URLS, AUTHORIZATION } from './framework/consts';
 
 const containerForButton = document.querySelector('.trip-main');
-const sortContainerElem = document.querySelector('.trip-events');
 
-const ulListContainer = new EventList();
-render(ulListContainer, sortContainerElem, RenderPosition.BEFOREEND);
-
-const createEventButton = new AddNewEvent({
+const createEventButton = new ButtonNewEventView({
   onClick: handleNewEventButtonClick,
 });
 
-const eventsModel = new EventModel();
+const eventsModel = new EventModel({
+  eventsApiServices: new EventsApiService(URLS.MAIN, AUTHORIZATION),
+});
+eventsModel.downloadEvents().finally(() => {
+  if (!eventsModel.destinations.length || !eventsModel.offers.length) {
+    createEventButton.element.disabled = true;
+  }
+  render(createEventButton, containerForButton, RenderPosition.BEFOREEND);
+});
+
 const filterModel = new FilterModel();
 const mainPresenter = new MainRender({
   eventsModel,
@@ -33,8 +39,6 @@ function handleNewEventButtonClick() {
   mainPresenter.createEvent();
   createEventButton.element.disabled = true;
 }
-
-render(createEventButton, containerForButton, RenderPosition.BEFOREEND);
 
 filterPresenter.mainRender();
 mainPresenter.renderMain();

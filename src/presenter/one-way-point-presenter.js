@@ -1,5 +1,5 @@
-import EventWithContent from '../view/event-with-content-view';
-import EventWithOutContent from '../view/event-with-out-content-view';
+import EventWithContentView from '../view/event-with-content-view';
+import EventWithOutContentView from '../view/event-with-out-content-view';
 import { replace, render, remove } from '../framework/render';
 import { MODE, ESC } from '../framework/consts';
 import { USER_ACTION, UPDATE_TYPE } from '../framework/consts';
@@ -13,10 +13,12 @@ export default class OneWayPointPresenter {
 
   #handleModelDataChange = null;
   #handleModeChange = null;
+  #modelEvents = null;
 
-  constructor({ handleModeChange, handleModelDataChange }) {
+  constructor({ handleModeChange, handleModelDataChange, modelEvents }) {
     this.#handleModeChange = handleModeChange;
     this.#handleModelDataChange = handleModelDataChange;
+    this.#modelEvents = modelEvents;
   }
 
   #onClickSubmit = (newElem) => {
@@ -84,10 +86,9 @@ export default class OneWayPointPresenter {
   mainRender(newElem) {
     this.#elem = newElem;
 
-    const prevEventWithOutContentComponent = this.#evtWithOutContent;
-    const prevEventWithContent = this.#evtWithContent;
-
-    this.#evtWithOutContent = new EventWithOutContent({
+    const prevEventWithOutContentViewComponent = this.#evtWithOutContent;
+    const prevEventWithContentView = this.#evtWithContent;
+    this.#evtWithOutContent = new EventWithOutContentView({
       data: this.#elem,
       onClickArrow: () => {
         this.#handleModeChange();
@@ -102,8 +103,9 @@ export default class OneWayPointPresenter {
       },
     });
 
-    this.#evtWithContent = new EventWithContent({
+    this.#evtWithContent = new EventWithContentView({
       data: this.#elem,
+      modelEvents: this.#modelEvents,
       onClickSubmit: this.#onClickSubmit,
       onEscClick: this.#escKeyDownHandlerWithContent,
       onClickDelete: this.#onClickDelete,
@@ -114,22 +116,22 @@ export default class OneWayPointPresenter {
     });
 
     if (
-      prevEventWithOutContentComponent === null ||
-      prevEventWithContent === null
+      prevEventWithOutContentViewComponent === null ||
+      prevEventWithContentView === null
     ) {
       render(this.#evtWithOutContent, this.#placeToRenderElem);
       return;
     }
 
     if (this.#status === MODE.closed) {
-      replace(this.#evtWithOutContent, prevEventWithOutContentComponent);
+      replace(this.#evtWithOutContent, prevEventWithOutContentViewComponent);
     }
 
     if (this.#status === MODE.openened) {
-      replace(this.#evtWithContent, prevEventWithContent);
+      replace(this.#evtWithContent, prevEventWithContentView);
     }
 
-    remove(prevEventWithContent);
-    remove(prevEventWithOutContentComponent);
+    remove(prevEventWithContentView);
+    remove(prevEventWithOutContentViewComponent);
   }
 }

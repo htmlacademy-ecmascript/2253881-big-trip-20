@@ -5,19 +5,19 @@ import dayjs from 'dayjs';
 /* eslint-disable */
 function createEvent(data) {
   const isFavourite = data.isFavourite ? 'event__favorite-btn--active' : '';
-  const offersList = data.offers.offers
-    .map(
-      (elem) => /*html*/ `<li class="event__offer">
-  <span class="event__offer-title">${elem.title}</span>
-  &plus;&euro;
-  <span class="event__offer-price">${elem.price}</span>
-</li>`
-    )
-    .join('');
-  const price = data.offers.offers.reduce(
-    (acc, elem) => (acc += elem.price),
-    0
-  );
+  const offersList = data.offers.length
+    ? data.offers
+        .map(
+          (elem) => /*html*/ `<li class="event__offer">
+    <span class="event__offer-title">${elem.title}</span>
+    &plus;&euro;
+    <span class="event__offer-price">${elem.price}</span>
+  </li>`
+        )
+        .join('')
+    : '';
+
+  // const price = data?.offers.reduce((acc, elem) => (acc += elem.price), 0);
   const baseDate = dayjs(data.dateFrom).format('MMM DD');
   const dateFiffs = getDiffDates(data.dateFrom, data.dateTo);
   const dateFrom = dayjs(data.dateFrom).format('HH:mm');
@@ -28,7 +28,7 @@ function createEvent(data) {
   <div class="event__type">
     <img class="event__type-icon" width="42" height="42" src="img/icons/${data.type}.png" alt="Event type icon">
   </div>
-  <h3 class="event__title">${data.type} ${data.destination.cityName}</h3>
+  <h3 class="event__title">${data.type} ${data.destination.name}</h3>
   <div class="event__schedule">
     <p class="event__time">
       <time class="event__start-time" datetime="2019-03-18T10:30">${dateFrom}</time>
@@ -38,11 +38,11 @@ function createEvent(data) {
     <p class="event__duration">${dateFiffs}</p>
   </div>
   <p class="event__price">
-    &euro;&nbsp;<span class="event__price-value">${price}</span>
+    &euro;&nbsp;<span class="event__price-value">${data.basePrice}</span>
   </p>
   <h4 class="visually-hidden">Offers:</h4>
   <ul class="event__selected-offers">
-  ${offersList}
+   ${offersList}
   </ul>
   <button class="event__favorite-btn ${isFavourite}" type="button">
     <span class="visually-hidden">Add to favorite</span>
@@ -56,7 +56,7 @@ function createEvent(data) {
 </div></li>`;
 }
 /* eslint-enable */
-export default class EventWithoutContent extends AbstractStatefulView {
+export default class EventWithOutContentView extends AbstractStatefulView {
   #onClickArrow = null;
   #onClickStar = null;
 

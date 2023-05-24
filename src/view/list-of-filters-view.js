@@ -26,7 +26,7 @@ function createNewListOfElems({ currentFilter }) {
     </form>`;
 }
 
-export default class ListOfFilters extends AbstractView {
+export default class ListOfFiltersView extends AbstractView {
   #filters = null;
   #currentFilter = null;
   #handleChangeFilter = null;

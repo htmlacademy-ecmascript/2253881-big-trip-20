@@ -21,6 +21,7 @@ export const UPDATE_TYPE = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export const FILTER_TYPE = {
@@ -28,6 +29,34 @@ export const FILTER_TYPE = {
   FUTURE: 'future',
   PRESENT: 'present',
   PAST: 'past',
+};
+
+export const MOVING_ELEMENTS = [
+  'Taxi',
+  'Bus',
+  'Train',
+  'Ship',
+  'Drive',
+  'Flight',
+  'Check-in',
+  'Sightseeing',
+  'Restaurant',
+];
+
+export const AUTHORIZATION = 'Basic jkahsdsa7816381724dsf';
+
+export const URLS = {
+  MAIN: 'https://20.objects.pages.academy/big-trip',
+  EVENTS: 'points',
+  DESTINATIONS: 'destinations',
+  OFFERS: 'offers',
+};
+
+export const METODS = {
+  GET: 'GET',
+  DELETE: 'DELETE',
+  POST: 'POST',
+  PUT: 'PUT',
 };
 
 export const ELEMENTS_LIST = ['everything', 'future', 'present', 'past'];

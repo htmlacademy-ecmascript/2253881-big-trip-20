@@ -1,36 +1,38 @@
-import EventWithContent from '../view/event-with-content-view';
+import EventWithContentView from '../view/event-with-content-view';
 import { ESC, UPDATE_TYPE, USER_ACTION } from '../framework/consts';
 import { render, RenderPosition, remove } from '../framework/render';
-import { nanoid } from 'nanoid';
 
 export default class NewEventPresenter {
-  #ulListContainer = null;
   #handleDataChange = null;
   #handleDestroy = null;
+  #modelEvents = null;
 
-  #eventWithContent = null;
+  #eventWithContentView = null;
 
-  constructor({ onDataChange, onDestroy }) {
-    this.#ulListContainer = document.querySelector('.trip-events__list');
+  constructor({ onDataChange, onDestroy, modelEvents }) {
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+    this.#modelEvents = modelEvents;
   }
 
   mainRender = () => {
-    if (this.#eventWithContent !== null) {
+    if (this.#eventWithContentView !== null) {
       return;
     }
 
-    this.#eventWithContent = new EventWithContent({
+    this.#eventWithContentView = new EventWithContentView({
       onClickSubmit: this.#handleFormSubmit,
       onClickArrow: this.#handleDeleteClick,
       onClickDelete: this.#handleDeleteClick,
       onEscClick: this.#escKeyDownHandler,
+      modelEvents: this.#modelEvents,
     });
 
+    const placeToRenderElem = document.querySelector('.trip-events__list');
+
     render(
-      this.#eventWithContent,
-      this.#ulListContainer,
+      this.#eventWithContentView,
+      placeToRenderElem,
       RenderPosition.AFTERBEGIN
     );
 
@@ -38,23 +40,20 @@ export default class NewEventPresenter {
   };
 
   destroy = () => {
-    if (this.#eventWithContent === null) {
+    if (this.#eventWithContentView === null) {
       return;
     }
 
     this.#handleDestroy();
 
-    remove(this.#eventWithContent);
-    this.#eventWithContent = null;
+    remove(this.#eventWithContentView);
+    this.#eventWithContentView = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleFormSubmit = (newEvent) => {
-    this.#handleDataChange(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MAJOR, {
-      id: nanoid(),
-      ...newEvent,
-    });
+    this.#handleDataChange(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MAJOR, newEvent);
     this.destroy();
   };
 
