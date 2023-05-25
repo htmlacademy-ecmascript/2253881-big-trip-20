@@ -43,7 +43,7 @@ export const MOVING_ELEMENTS = [
   'Restaurant',
 ];
 
-export const AUTHORIZATION = 'Basic jkahsdsa7816381724dsf';
+export const AUTHORIZATION = 'Basic jkahsdsasdasda7816381724dsf';
 
 export const URLS = {
   MAIN: 'https://20.objects.pages.academy/big-trip',

@@ -52,9 +52,27 @@ export default class NewEventPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
+  setSaving() {
+    this.#eventWithContentView.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#eventWithContentView.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventWithContentView.shake(resetFormState);
+  }
+
   #handleFormSubmit = (newEvent) => {
     this.#handleDataChange(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MAJOR, newEvent);
-    this.destroy();
   };
 
   #handleDeleteClick = () => {

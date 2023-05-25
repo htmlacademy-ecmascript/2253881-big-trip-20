@@ -28,7 +28,6 @@ export default class OneWayPointPresenter {
       UPDATE_TYPE.PATCH,
       newElem
     );
-    this.replaceWithContentToNoContent();
   };
 
   #onClickDelete = () => {
@@ -47,6 +46,21 @@ export default class OneWayPointPresenter {
       newEvent
     );
   };
+
+  setSaving() {
+    if (this.#status === MODE.openened) {
+      this.#evtWithContent.updateElement({ isDisabled: true, isSaving: true });
+    }
+  }
+
+  setDeleting() {
+    if (this.#status === MODE.openened) {
+      this.#evtWithContent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
 
   #escKeyDownHandlerWithContent = (evt) => {
     if (
@@ -81,6 +95,23 @@ export default class OneWayPointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandlerWithContent);
     replace(this.#evtWithContent, this.#evtWithOutContent);
     this.#status = MODE.openened;
+  }
+
+  setAborting() {
+    if (this.#status === MODE.closed) {
+      this.#evtWithOutContent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#evtWithContent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#evtWithContent.shake(resetFormState);
   }
 
   mainRender(newElem) {
@@ -128,7 +159,8 @@ export default class OneWayPointPresenter {
     }
 
     if (this.#status === MODE.openened) {
-      replace(this.#evtWithContent, prevEventWithContentView);
+      replace(this.#evtWithOutContent, prevEventWithContentView);
+      this.#status = MODE.closed;
     }
 
     remove(prevEventWithContentView);

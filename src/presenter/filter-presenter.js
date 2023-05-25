@@ -40,6 +40,7 @@ export default class FilterPresenter {
       filters,
       currentFilterType: this.#filterModel.filter,
       onFilterTypeChange: this.#handleFilterTypeChange,
+      eventsModel: this.#eventsModel,
     });
 
     if (prevFilterComponent === null) {

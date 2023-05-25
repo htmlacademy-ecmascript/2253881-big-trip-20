@@ -75,16 +75,31 @@ export default class MainRender {
     this.#newEventPresenter.mainRender();
   }
 
-  #handleModelDataChange = (actionType, updateType, update) => {
+  #handleModelDataChange = async (actionType, updateType, update) => {
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
-        this.#eventsModel.updateEvent(updateType, update);
+        this.#instsOfPresenters.get(update.id).setSaving();
+        try {
+          await this.#eventsModel.updateEvent(updateType, update);
+        } catch (e) {
+          this.#instsOfPresenters.get(update.id).setAborting();
+        }
         break;
       case USER_ACTION.ADD_EVENT:
-        this.#eventsModel.addEvent(updateType, update);
+        this.#newEventPresenter.setSaving();
+        try {
+          await this.#eventsModel.addEvent(updateType, update);
+        } catch (e) {
+          this.#newEventPresenter.setAborting();
+        }
         break;
       case USER_ACTION.DELETE_EVENT:
-        this.#eventsModel.deleteEvent(updateType, update);
+        this.#instsOfPresenters.get(update.id).setDeleting();
+        try {
+          await this.#eventsModel.deleteEvent(updateType, update);
+        } catch (e) {
+          this.#instsOfPresenters.get(update.id).setAborting();
+        }
         break;
     }
   };
@@ -155,6 +170,7 @@ export default class MainRender {
   #renderNoEvents() {
     this.#noEventsComponent = new ErrorOnDownloadView({
       filterType: this.#filterType,
+      eventsModel: this.#eventsModel,
     });
     render(
       this.#noEventsComponent,
