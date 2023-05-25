@@ -1,5 +1,4 @@
 import { RenderPosition, createElement } from '../framework/render';
-import { MOVING_ELEMENTS } from '../framework/consts';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { INPUT, LABEL } from '../framework/consts';
 import flatpickr from 'flatpickr';
