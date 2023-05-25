@@ -1,7 +1,7 @@
 import { RenderPosition, createElement } from '../framework/render';
 import { MOVING_ELEMENTS } from '../framework/consts';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { INPUT } from '../framework/consts';
+import { INPUT, LABEL } from '../framework/consts';
 import flatpickr from 'flatpickr';
 import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -115,8 +115,11 @@ function createEventSectionOffers(data) {
     ? `<div class="event__available-offers">${data?.offers
         .map(
           (elem) => `<div class="event__offer-selector">
-<input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-<label class="event__offer-label" for="event-offer-luggage-1">
+<input ${elem.checked ? 'checked' : ''}
+ class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
+<label data-id="${
+            elem.id
+          }" class="event__offer-label" for="event-offer-luggage-1">
   <span class="event__offer-title">${elem.title}</span>
   &plus;&euro;&nbsp;
   <span class="event__offer-price">${elem.price}</span>
@@ -267,6 +270,52 @@ export default class EventWithContentView extends AbstractStatefulView {
     this.element.querySelector('.event__reset-btn').onclick = () => {
       this.#onClickDelete();
     };
+
+    if (this.element.querySelector('.event__available-offers')) {
+      this.element.querySelector('.event__available-offers').onclick = (
+        evt
+      ) => {
+        if (evt.target.tagName === 'SPAN') {
+          const idOffer = evt.target.parentElement.dataset.id;
+
+          const price = Number(
+            evt.target.parentElement.querySelector('.event__offer-price')
+              .textContent
+          );
+
+          const offerToMutate = {
+            ...this._state.offers.find((el) => el.id === idOffer),
+          };
+
+          const newOffersArr = this._state.offers.map((el) => {
+            if (el.id === idOffer) {
+              if (el.checked) {
+                el.checked = false;
+              } else if (!el.checked) {
+                el.checked = true;
+              }
+              return el;
+            }
+            return el;
+          });
+
+          if (!offerToMutate.checked || offerToMutate.checked === undefined) {
+            this.updateElement({
+              basePrice: this._state.basePrice + price,
+              offers: newOffersArr,
+            });
+          } else if (offerToMutate.checked) {
+            this.updateElement({
+              basePrice: this._state.basePrice - price,
+              offers: newOffersArr,
+            });
+          }
+        }
+        if (evt.target.tagName === 'LABEL') {
+          console.log(evt.target);
+        }
+      };
+    }
 
     this.#setDatepickers();
   };
