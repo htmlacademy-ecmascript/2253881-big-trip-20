@@ -17,7 +17,7 @@ function createFormForContent() {
   return '<form class="event event--edit" action="#" method="post"></form>';
 }
 
-function createContentHeader(data, destinations) {
+function createContentHeader(data, destinations, offers) {
   const listOfDestinations = destinations.map(
     (el) => `<option name="${el.id}" value="${el.name}"></option>`
   );
@@ -27,14 +27,18 @@ function createContentHeader(data, destinations) {
       <span class="visually-hidden">Open event</span>
     </button>`;
 
-  const eventTypesList = MOVING_ELEMENTS.map(
-    (elem) => /*html*/ `<div class="event__type-item">
+  const eventTypesList = offers
+    .map(
+      (elem) => /*html*/ `<div class="event__type-item">
   <input ${
     data.isDisabled ? 'disabled' : ''
-  } id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
-  <label class="event__type-label  event__type-label--${elem.toLocaleLowerCase()}" for="event-type-${elem.toLocaleLowerCase()}-1">${elem}</label>
+  } id="event-type-${elem.type.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.type.toLocaleLowerCase()}">
+  <label class="event__type-label  event__type-label--${elem.type.toLocaleLowerCase()}" for="event-type-${elem.type.toLocaleLowerCase()}-1">${
+        elem.type[0].toUpperCase() + elem.type.slice(1)
+      }</label>
 </div>`
-  ).join('');
+    )
+    .join('');
 
   return /*html*/ `<header class="event__header">
   <div class="event__type-wrapper">
@@ -467,7 +471,11 @@ export default class EventWithContentView extends AbstractStatefulView {
     const liElem = createElement(createEventWithContentView());
     const formWrapperElem = createElement(createFormForContent());
     const headerContent = createElement(
-      createContentHeader(this._state, this.#modelEvents.destinations)
+      createContentHeader(
+        this._state,
+        this.#modelEvents.destinations,
+        this.#modelEvents.offers
+      )
     );
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
