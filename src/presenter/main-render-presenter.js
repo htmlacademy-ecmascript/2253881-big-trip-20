@@ -141,7 +141,9 @@ export default class MainRender {
   };
 
   #renderTrip() {
-    this.#tripInfoViewComponent = new TripInfoView();
+    this.#tripInfoViewComponent = new TripInfoView({
+      eventsModel: this.#eventsModel,
+    });
     render(
       this.#tripInfoViewComponent,
       tripMainContElem,
