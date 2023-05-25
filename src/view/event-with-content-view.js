@@ -217,7 +217,6 @@ export default class EventWithContentView extends AbstractStatefulView {
   _restoreHandlers = () => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
-
       this.#onClickSubmit(EventWithContentView.parseStateToTask(this._state));
     };
 
@@ -230,13 +229,36 @@ export default class EventWithContentView extends AbstractStatefulView {
 
     this.element.querySelector('.event__type-group').onchange = (evt) => {
       if (evt.target.tagName === INPUT) {
-        const newType = this.#modelEvents.offers.find(
-          (el) => el.type === evt.target.value
-        );
+        let sumIsChecked;
+
+        const newType = {
+          ...this.#modelEvents.offers.find(
+            (el) => el.type === evt.target.value
+          ),
+        };
+
+        if (this._state.offers.some((el) => el.checked)) {
+          sumIsChecked = this._state.offers.reduce((acc, el) => {
+            if (el.checked) {
+              acc += el.price;
+              return acc;
+            }
+            return acc;
+          }, 0);
+        }
+
+        const idOfStateEvent = this._state.id;
+
+        const backup = {
+          ...this.#modelEvents.events.find((el) => el.id === idOfStateEvent),
+        };
 
         this.updateElement({
           type: evt.target.value,
           offers: [...newType.offers],
+          basePrice: sumIsChecked
+            ? backup.basePrice - sumIsChecked
+            : backup.basePrice,
         });
       }
     };
