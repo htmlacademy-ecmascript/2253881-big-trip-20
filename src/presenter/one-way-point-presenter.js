@@ -25,7 +25,7 @@ export default class OneWayPointPresenter {
     this.#elem = { ...newElem };
     this.#handleModelDataChange(
       USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.PATCH,
+      UPDATE_TYPE.MAJOR,
       newElem
     );
   };

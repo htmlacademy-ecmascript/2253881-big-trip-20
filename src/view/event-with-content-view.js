@@ -6,6 +6,8 @@ import flatpickr from 'flatpickr';
 import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
+const SPAN = 'SPAN';
+
 /* eslint-disable */
 function createEventWithContentView() {
   return '<li class="trip-events__item"></li>';
@@ -275,7 +277,7 @@ export default class EventWithContentView extends AbstractStatefulView {
       this.element.querySelector('.event__available-offers').onclick = (
         evt
       ) => {
-        if (evt.target.tagName === 'SPAN') {
+        if (evt.target.tagName === SPAN) {
           const idOffer = evt.target.parentElement.dataset.id;
 
           const price = Number(
@@ -299,7 +301,7 @@ export default class EventWithContentView extends AbstractStatefulView {
             return el;
           });
 
-          if (!offerToMutate.checked || offerToMutate.checked === undefined) {
+          if (!offerToMutate.checked) {
             this.updateElement({
               basePrice: this._state.basePrice + price,
               offers: newOffersArr,
@@ -311,8 +313,40 @@ export default class EventWithContentView extends AbstractStatefulView {
             });
           }
         }
-        if (evt.target.tagName === 'LABEL') {
-          console.log(evt.target);
+        if (evt.target.tagName === LABEL) {
+          const idOffer = evt.target.dataset.id;
+
+          const price = Number(
+            evt.target.querySelector('.event__offer-price').textContent
+          );
+
+          const offerToMutate = {
+            ...this._state.offers.find((el) => el.id === idOffer),
+          };
+
+          const newOffersArr = this._state.offers.map((el) => {
+            if (el.id === idOffer) {
+              if (el.checked) {
+                el.checked = false;
+              } else if (!el.checked) {
+                el.checked = true;
+              }
+              return el;
+            }
+            return el;
+          });
+
+          if (!offerToMutate.checked) {
+            this.updateElement({
+              basePrice: this._state.basePrice + price,
+              offers: newOffersArr,
+            });
+          } else if (offerToMutate.checked) {
+            this.updateElement({
+              basePrice: this._state.basePrice - price,
+              offers: newOffersArr,
+            });
+          }
         }
       };
     }

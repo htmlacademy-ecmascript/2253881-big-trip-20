@@ -41,6 +41,8 @@ function createTripInfoView(events) {
     }`;
   }
 
+  const sum = events.reduce((acc, el) => (acc += el.basePrice), 0);
+
   return /*html*/ `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
 
@@ -50,7 +52,7 @@ function createTripInfoView(events) {
   </div>
 
   <p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+    Total: &euro;&nbsp;<span class="trip-info__cost-value">${sum}</span>
   </p>
 </section>`;
 }
