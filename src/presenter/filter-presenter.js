@@ -51,7 +51,7 @@ export default class FilterPresenter {
       );
       return;
     }
-
+    console.log('asdasd');
     replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
   };
