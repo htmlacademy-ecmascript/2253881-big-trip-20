@@ -5,6 +5,7 @@ import OneWayPointPresenter from './one-way-point-presenter';
 import NewEventPresenter from '../presenter/new-event-presenter';
 import EventListView from '../view/event-list-view';
 import LoadingView from '../view/loading-view';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 import { getWeightForNullDate, filter } from '../framework/utils';
 import { render, RenderPosition, remove } from '../framework/render';
 import {
@@ -15,6 +16,11 @@ import {
 } from '../framework/consts';
 import dayjs from 'dayjs';
 
+const TIME_LIMIT = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 const sortContainerElem = document.querySelector('.trip-events');
 const tripMainContElem = document.querySelector('.trip-main');
 
@@ -24,6 +30,11 @@ export default class MainRender {
   #sortType = SORT_TYPES.day;
   #filterType = FILTER_TYPE.EVERYTHING;
   #instsOfPresenters = new Map();
+  #uiBlocker = new UiBlocker({
+    lowerLimit: TIME_LIMIT.LOWER_LIMIT,
+    upperLimit: TIME_LIMIT.UPPER_LIMIT,
+  });
+
   #isLoading = true;
 
   #newEventPresenter = null;
@@ -76,6 +87,7 @@ export default class MainRender {
   }
 
   #handleModelDataChange = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
     switch (actionType) {
       case USER_ACTION.UPDATE_EVENT:
         this.#instsOfPresenters.get(update.id).setSaving();
@@ -102,6 +114,7 @@ export default class MainRender {
         }
         break;
     }
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (undateType, update) => {
@@ -141,7 +154,9 @@ export default class MainRender {
   };
 
   #renderTrip() {
-    this.#tripInfoViewComponent = new TripInfoView();
+    this.#tripInfoViewComponent = new TripInfoView({
+      eventsModel: this.#eventsModel,
+    });
     render(
       this.#tripInfoViewComponent,
       tripMainContElem,
