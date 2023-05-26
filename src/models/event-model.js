@@ -84,7 +84,7 @@ export default class EventModel extends Observable {
 
       this._notify(updateType, ansEvent);
     } catch (e) {
-      throw new Error('some KEK');
+      throw new Error('some error');
     }
   }
 

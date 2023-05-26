@@ -13,13 +13,9 @@ import {
   UPDATE_TYPE,
   USER_ACTION,
   FILTER_TYPE,
+  TIME_LIMITS,
 } from '../framework/consts';
 import dayjs from 'dayjs';
-
-const TIME_LIMIT = {
-  LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000,
-};
 
 const sortContainerElem = document.querySelector('.trip-events');
 const tripMainContElem = document.querySelector('.trip-main');
@@ -31,8 +27,8 @@ export default class MainRender {
   #filterType = FILTER_TYPE.EVERYTHING;
   #instsOfPresenters = new Map();
   #uiBlocker = new UiBlocker({
-    lowerLimit: TIME_LIMIT.LOWER_LIMIT,
-    upperLimit: TIME_LIMIT.UPPER_LIMIT,
+    lowerLimit: TIME_LIMITS.LOWER_LIMIT,
+    upperLimit: TIME_LIMITS.UPPER_LIMIT,
   });
 
   #isLoading = true;
