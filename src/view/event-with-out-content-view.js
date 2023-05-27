@@ -70,6 +70,10 @@ export default class EventWithOutContentView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  get template() {
+    return createEvent(this._state);
+  }
+
   reset(data) {
     this.updateElement(data);
   }
@@ -84,9 +88,5 @@ export default class EventWithOutContentView extends AbstractStatefulView {
       evt.preventDefault();
       this.#onClickStar();
     };
-  }
-
-  get template() {
-    return createEvent(this._state);
   }
 }

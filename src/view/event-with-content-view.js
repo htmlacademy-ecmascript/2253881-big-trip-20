@@ -217,6 +217,73 @@ export default class EventWithContentView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  get template() {
+    const liElem = createElement(createEventWithContentView());
+    const formWrapperElem = createElement(createFormForContent());
+    const headerContent = createElement(
+      createContentHeader(
+        this._state,
+        this.#modelEvents.destinations,
+        this.#modelEvents.offers
+      )
+    );
+    const sectionWrapperElem = createElement(createEventDetailsWrapper());
+    const eventSectionOffers = createElement(
+      createEventSectionOffers(this._state)
+    );
+    const eventSectionDestination = createElement(
+      createContentEventSectionDestination(this._state)
+    );
+    sectionWrapperElem.insertAdjacentElement(
+      RenderPosition.AFTERBEGIN,
+      eventSectionOffers
+    );
+    sectionWrapperElem.insertAdjacentElement(
+      RenderPosition.BEFOREEND,
+      eventSectionDestination
+    );
+    formWrapperElem.insertAdjacentElement(
+      RenderPosition.AFTERBEGIN,
+      headerContent
+    );
+    formWrapperElem.insertAdjacentElement(
+      RenderPosition.BEFOREEND,
+      sectionWrapperElem
+    );
+    //обертка ли с контентом
+    liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
+    const wrapperElem = document.createElement('div');
+    wrapperElem.append(liElem);
+    const stringedLiElem = wrapperElem.innerHTML;
+    return stringedLiElem;
+  }
+
+  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
+    this.updateElement({
+      dateFrom: userDateFrom,
+    });
+  };
+
+  #dueDateChangeHandlerTo = ([userDataTo]) => {
+    this.updateElement({
+      dateTo: userDataTo,
+    });
+  };
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
+
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+  };
+
   _restoreHandlers = () => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
@@ -376,18 +443,6 @@ export default class EventWithContentView extends AbstractStatefulView {
     this.#setDatepickers();
   };
 
-  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
-    this.updateElement({
-      dateFrom: userDateFrom,
-    });
-  };
-
-  #dueDateChangeHandlerTo = ([userDataTo]) => {
-    this.updateElement({
-      dateTo: userDataTo,
-    });
-  };
-
   #setDatepickers = () => {
     if (this._state.dateFrom) {
       this.#datePickerFrom = flatpickr(
@@ -419,20 +474,6 @@ export default class EventWithContentView extends AbstractStatefulView {
     }
   };
 
-  removeElement = () => {
-    super.removeElement();
-
-    if (this.#datePickerTo) {
-      this.#datePickerTo.destroy();
-      this.#datePickerTo = null;
-    }
-
-    if (this.#datePickerFrom) {
-      this.#datePickerFrom.destroy();
-      this.#datePickerFrom = null;
-    }
-  };
-
   reset = (data) => {
     this.updateElement(EventWithContentView.parseEventToState(data));
   };
@@ -461,46 +502,5 @@ export default class EventWithContentView extends AbstractStatefulView {
     delete eventDestination.isDisabled;
 
     return eventDestination;
-  }
-
-  get template() {
-    const liElem = createElement(createEventWithContentView());
-    const formWrapperElem = createElement(createFormForContent());
-    const headerContent = createElement(
-      createContentHeader(
-        this._state,
-        this.#modelEvents.destinations,
-        this.#modelEvents.offers
-      )
-    );
-    const sectionWrapperElem = createElement(createEventDetailsWrapper());
-    const eventSectionOffers = createElement(
-      createEventSectionOffers(this._state)
-    );
-    const eventSectionDestination = createElement(
-      createContentEventSectionDestination(this._state)
-    );
-    sectionWrapperElem.insertAdjacentElement(
-      RenderPosition.AFTERBEGIN,
-      eventSectionOffers
-    );
-    sectionWrapperElem.insertAdjacentElement(
-      RenderPosition.BEFOREEND,
-      eventSectionDestination
-    );
-    formWrapperElem.insertAdjacentElement(
-      RenderPosition.AFTERBEGIN,
-      headerContent
-    );
-    formWrapperElem.insertAdjacentElement(
-      RenderPosition.BEFOREEND,
-      sectionWrapperElem
-    );
-    //обертка ли с контентом
-    liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
-    const wrapperElem = document.createElement('div');
-    wrapperElem.append(liElem);
-    const stringedLiElem = wrapperElem.innerHTML;
-    return stringedLiElem;
   }
 }
