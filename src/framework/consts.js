@@ -31,18 +31,6 @@ export const FILTER_TYPE = {
   PAST: 'past',
 };
 
-export const MOVING_ELEMENTS = [
-  'Taxi',
-  'Bus',
-  'Train',
-  'Ship',
-  'Drive',
-  'Flight',
-  'Check-in',
-  'Sightseeing',
-  'Restaurant',
-];
-
 export const AUTHORIZATION = 'Basic jkahsdsasdasda7816381724dsf';
 
 export const URLS = {
@@ -57,6 +45,11 @@ export const METODS = {
   DELETE: 'DELETE',
   POST: 'POST',
   PUT: 'PUT',
+};
+
+export const TIME_LIMITS = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
 };
 
 export const ELEMENTS_LIST = ['everything', 'future', 'present', 'past'];

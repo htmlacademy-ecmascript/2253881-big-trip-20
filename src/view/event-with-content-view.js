@@ -1,10 +1,11 @@
 import { RenderPosition, createElement } from '../framework/render';
-import { MOVING_ELEMENTS } from '../framework/consts';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { INPUT } from '../framework/consts';
+import { INPUT, LABEL } from '../framework/consts';
 import flatpickr from 'flatpickr';
 import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
+
+const SPAN = 'SPAN';
 
 /* eslint-disable */
 function createEventWithContentView() {
@@ -15,7 +16,7 @@ function createFormForContent() {
   return '<form class="event event--edit" action="#" method="post"></form>';
 }
 
-function createContentHeader(data, destinations) {
+function createContentHeader(data, destinations, offers) {
   const listOfDestinations = destinations.map(
     (el) => `<option name="${el.id}" value="${el.name}"></option>`
   );
@@ -25,14 +26,18 @@ function createContentHeader(data, destinations) {
       <span class="visually-hidden">Open event</span>
     </button>`;
 
-  const eventTypesList = MOVING_ELEMENTS.map(
-    (elem) => /*html*/ `<div class="event__type-item">
+  const eventTypesList = offers
+    .map(
+      (elem) => /*html*/ `<div class="event__type-item">
   <input ${
     data.isDisabled ? 'disabled' : ''
-  } id="event-type-${elem.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.toLocaleLowerCase()}">
-  <label class="event__type-label  event__type-label--${elem.toLocaleLowerCase()}" for="event-type-${elem.toLocaleLowerCase()}-1">${elem}</label>
+  } id="event-type-${elem.type.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.type.toLocaleLowerCase()}">
+  <label class="event__type-label  event__type-label--${elem.type.toLocaleLowerCase()}" for="event-type-${elem.type.toLocaleLowerCase()}-1">${
+        elem.type[0].toUpperCase() + elem.type.slice(1)
+      }</label>
 </div>`
-  ).join('');
+    )
+    .join('');
 
   return /*html*/ `<header class="event__header">
   <div class="event__type-wrapper">
@@ -115,8 +120,11 @@ function createEventSectionOffers(data) {
     ? `<div class="event__available-offers">${data?.offers
         .map(
           (elem) => `<div class="event__offer-selector">
-<input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-<label class="event__offer-label" for="event-offer-luggage-1">
+<input ${elem.checked ? 'checked' : ''}
+ class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
+<label data-id="${
+            elem.id
+          }" class="event__offer-label" for="event-offer-luggage-1">
   <span class="event__offer-title">${elem.title}</span>
   &plus;&euro;&nbsp;
   <span class="event__offer-price">${elem.price}</span>
@@ -182,7 +190,7 @@ export default class EventWithContentView extends AbstractStatefulView {
     super();
     this.#modelEvents = modelEvents;
     if (data) {
-      this._setState(EventWithContentView.parseTaskToState(data));
+      this._setState(EventWithContentView.parseEventToState(data));
     } else {
       const dateFrom = new Date();
       dateFrom.setDate(dateFrom.getDate() - 2);
@@ -198,7 +206,7 @@ export default class EventWithContentView extends AbstractStatefulView {
       };
 
       this._setState(
-        EventWithContentView.parseTaskToState(anyEventsPlaceholder)
+        EventWithContentView.parseEventToState(anyEventsPlaceholder)
       );
     }
 
@@ -209,11 +217,77 @@ export default class EventWithContentView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  get template() {
+    const liElem = createElement(createEventWithContentView());
+    const formWrapperElem = createElement(createFormForContent());
+    const headerContent = createElement(
+      createContentHeader(
+        this._state,
+        this.#modelEvents.destinations,
+        this.#modelEvents.offers
+      )
+    );
+    const sectionWrapperElem = createElement(createEventDetailsWrapper());
+    const eventSectionOffers = createElement(
+      createEventSectionOffers(this._state)
+    );
+    const eventSectionDestination = createElement(
+      createContentEventSectionDestination(this._state)
+    );
+    sectionWrapperElem.insertAdjacentElement(
+      RenderPosition.AFTERBEGIN,
+      eventSectionOffers
+    );
+    sectionWrapperElem.insertAdjacentElement(
+      RenderPosition.BEFOREEND,
+      eventSectionDestination
+    );
+    formWrapperElem.insertAdjacentElement(
+      RenderPosition.AFTERBEGIN,
+      headerContent
+    );
+    formWrapperElem.insertAdjacentElement(
+      RenderPosition.BEFOREEND,
+      sectionWrapperElem
+    );
+    //обертка ли с контентом
+    liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
+    const wrapperElem = document.createElement('div');
+    wrapperElem.append(liElem);
+    const stringedLiElem = wrapperElem.innerHTML;
+    return stringedLiElem;
+  }
+
+  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
+    this.updateElement({
+      dateFrom: userDateFrom,
+    });
+  };
+
+  #dueDateChangeHandlerTo = ([userDataTo]) => {
+    this.updateElement({
+      dateTo: userDataTo,
+    });
+  };
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
+
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+  };
+
   _restoreHandlers = () => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
-
-      this.#onClickSubmit(EventWithContentView.parseStateToTask(this._state));
+      this.#onClickSubmit(EventWithContentView.parseStateToEvent(this._state));
     };
 
     if (this.element.querySelector('.event__rollup-btn')) {
@@ -225,15 +299,35 @@ export default class EventWithContentView extends AbstractStatefulView {
 
     this.element.querySelector('.event__type-group').onchange = (evt) => {
       if (evt.target.tagName === INPUT) {
-        const newType = this.#modelEvents.offers.find(
-          (el) => el.type === evt.target.value
-        );
-
         this.updateElement({
           type: evt.target.value,
-          offers: [...newType.offers],
         });
       }
+    };
+
+    this.element.querySelector('#event-price-1').onchange = (evt) => {
+      const sumOfCheckedOffers = this._state.offers.reduce((acc, el) => {
+        if (el.checked) {
+          acc += el.price;
+        }
+        return acc;
+      }, 0);
+
+      if (evt.target.value > sumOfCheckedOffers) {
+        this.updateElement({ basePrice: Number(evt.target.value) });
+      } else {
+        this.updateElement({
+          basePrice: sumOfCheckedOffers > 0 ? sumOfCheckedOffers : 1,
+        });
+      }
+    };
+
+    this.element.querySelector('#event-price-1').onfocus = () => {
+      document.removeEventListener('keydown', this.#onEscClick);
+    };
+
+    this.element.querySelector('#event-price-1').onblur = () => {
+      document.addEventListener('keydown', this.#onEscClick);
     };
 
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
@@ -268,19 +362,85 @@ export default class EventWithContentView extends AbstractStatefulView {
       this.#onClickDelete();
     };
 
+    if (this.element.querySelector('.event__available-offers')) {
+      this.element.querySelector('.event__available-offers').onclick = (
+        evt
+      ) => {
+        if (evt.target.tagName === SPAN) {
+          const idOffer = evt.target.parentElement.dataset.id;
+
+          const price = Number(
+            evt.target.parentElement.querySelector('.event__offer-price')
+              .textContent
+          );
+
+          const offerToMutate = {
+            ...this._state.offers.find((el) => el.id === idOffer),
+          };
+
+          const newOffersArr = this._state.offers.map((el) => {
+            if (el.id === idOffer) {
+              if (el.checked) {
+                el.checked = false;
+              } else if (!el.checked) {
+                el.checked = true;
+              }
+              return el;
+            }
+            return el;
+          });
+
+          if (!offerToMutate.checked) {
+            this.updateElement({
+              basePrice: this._state.basePrice + price,
+              offers: newOffersArr,
+            });
+          } else if (offerToMutate.checked) {
+            this.updateElement({
+              basePrice: this._state.basePrice - price,
+              offers: newOffersArr,
+            });
+          }
+        }
+        if (evt.target.tagName === LABEL) {
+          const idOffer = evt.target.dataset.id;
+
+          const price = Number(
+            evt.target.querySelector('.event__offer-price').textContent
+          );
+
+          const offerToMutate = {
+            ...this._state.offers.find((el) => el.id === idOffer),
+          };
+
+          const newOffersArr = this._state.offers.map((el) => {
+            if (el.id === idOffer) {
+              if (el.checked) {
+                el.checked = false;
+              } else if (!el.checked) {
+                el.checked = true;
+              }
+              return el;
+            }
+            return el;
+          });
+
+          if (!offerToMutate.checked) {
+            this.updateElement({
+              basePrice: this._state.basePrice + price,
+              offers: newOffersArr,
+            });
+          } else if (offerToMutate.checked) {
+            this.updateElement({
+              basePrice: this._state.basePrice - price,
+              offers: newOffersArr,
+            });
+          }
+        }
+      };
+    }
+
     this.#setDatepickers();
-  };
-
-  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
-    this.updateElement({
-      dateFrom: userDateFrom,
-    });
-  };
-
-  #dueDateChangeHandlerTo = ([userDataTo]) => {
-    this.updateElement({
-      dateTo: userDataTo,
-    });
   };
 
   #setDatepickers = () => {
@@ -314,25 +474,11 @@ export default class EventWithContentView extends AbstractStatefulView {
     }
   };
 
-  removeElement = () => {
-    super.removeElement();
-
-    if (this.#datePickerTo) {
-      this.#datePickerTo.destroy();
-      this.#datePickerTo = null;
-    }
-
-    if (this.#datePickerFrom) {
-      this.#datePickerFrom.destroy();
-      this.#datePickerFrom = null;
-    }
-  };
-
   reset = (data) => {
-    this.updateElement(EventWithContentView.parseTaskToState(data));
+    this.updateElement(EventWithContentView.parseEventToState(data));
   };
 
-  static parseTaskToState(data) {
+  static parseEventToState(data) {
     if (!data.id) {
       return {
         isButtonNewEventView: true,
@@ -345,7 +491,7 @@ export default class EventWithContentView extends AbstractStatefulView {
     return { isDisabled: false, isSaving: false, isDeleting: false, ...data };
   }
 
-  static parseStateToTask(state) {
+  static parseStateToEvent(state) {
     const eventDestination = { ...state };
 
     if (eventDestination.isButtonNewEventView) {
@@ -356,42 +502,5 @@ export default class EventWithContentView extends AbstractStatefulView {
     delete eventDestination.isDisabled;
 
     return eventDestination;
-  }
-
-  get template() {
-    const liElem = createElement(createEventWithContentView());
-    const formWrapperElem = createElement(createFormForContent());
-    const headerContent = createElement(
-      createContentHeader(this._state, this.#modelEvents.destinations)
-    );
-    const sectionWrapperElem = createElement(createEventDetailsWrapper());
-    const eventSectionOffers = createElement(
-      createEventSectionOffers(this._state)
-    );
-    const eventSectionDestination = createElement(
-      createContentEventSectionDestination(this._state)
-    );
-    sectionWrapperElem.insertAdjacentElement(
-      RenderPosition.AFTERBEGIN,
-      eventSectionOffers
-    );
-    sectionWrapperElem.insertAdjacentElement(
-      RenderPosition.BEFOREEND,
-      eventSectionDestination
-    );
-    formWrapperElem.insertAdjacentElement(
-      RenderPosition.AFTERBEGIN,
-      headerContent
-    );
-    formWrapperElem.insertAdjacentElement(
-      RenderPosition.BEFOREEND,
-      sectionWrapperElem
-    );
-    //обертка ли с контентом
-    liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
-    const wrapperElem = document.createElement('div');
-    wrapperElem.append(liElem);
-    const stringedLiElem = wrapperElem.innerHTML;
-    return stringedLiElem;
   }
 }

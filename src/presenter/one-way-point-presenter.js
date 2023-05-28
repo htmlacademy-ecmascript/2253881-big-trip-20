@@ -21,59 +21,6 @@ export default class OneWayPointPresenter {
     this.#modelEvents = modelEvents;
   }
 
-  #onClickSubmit = (newElem) => {
-    this.#elem = { ...newElem };
-    this.#handleModelDataChange(
-      USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.PATCH,
-      newElem
-    );
-  };
-
-  #onClickDelete = () => {
-    this.#handleModelDataChange(
-      USER_ACTION.DELETE_EVENT,
-      UPDATE_TYPE.MAJOR,
-      this.#elem
-    );
-  };
-
-  #isFavouriteChanging = () => {
-    const newEvent = { ...this.#elem, isFavourite: !this.#elem.isFavourite };
-    this.#handleModelDataChange(
-      USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.PATCH,
-      newEvent
-    );
-  };
-
-  setSaving() {
-    if (this.#status === MODE.openened) {
-      this.#evtWithContent.updateElement({ isDisabled: true, isSaving: true });
-    }
-  }
-
-  setDeleting() {
-    if (this.#status === MODE.openened) {
-      this.#evtWithContent.updateElement({
-        isDisabled: true,
-        isDeleting: true,
-      });
-    }
-  }
-
-  #escKeyDownHandlerWithContent = (evt) => {
-    if (
-      evt.key === ESC &&
-      document.querySelector('.event--edit') &&
-      this.#status === MODE.openened
-    ) {
-      evt.preventDefault();
-      this.#evtWithContent.reset(this.#elem);
-      this.replaceWithContentToNoContent();
-    }
-  };
-
   destroy() {
     remove(this.#evtWithOutContent);
     remove(this.#evtWithContent);
@@ -95,23 +42,6 @@ export default class OneWayPointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandlerWithContent);
     replace(this.#evtWithContent, this.#evtWithOutContent);
     this.#status = MODE.openened;
-  }
-
-  setAborting() {
-    if (this.#status === MODE.closed) {
-      this.#evtWithOutContent.shake();
-      return;
-    }
-
-    const resetFormState = () => {
-      this.#evtWithContent.updateElement({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      });
-    };
-
-    this.#evtWithContent.shake(resetFormState);
   }
 
   mainRender(newElem) {
@@ -165,5 +95,75 @@ export default class OneWayPointPresenter {
 
     remove(prevEventWithContentView);
     remove(prevEventWithOutContentViewComponent);
+  }
+
+  #escKeyDownHandlerWithContent = (evt) => {
+    if (
+      evt.key === ESC &&
+      document.querySelector('.event--edit') &&
+      this.#status === MODE.openened
+    ) {
+      evt.preventDefault();
+      this.#evtWithContent.reset(this.#elem);
+      this.replaceWithContentToNoContent();
+    }
+  };
+
+  #onClickSubmit = (newElem) => {
+    this.#elem = { ...newElem };
+    this.#handleModelDataChange(
+      USER_ACTION.UPDATE_EVENT,
+      UPDATE_TYPE.MAJOR,
+      newElem
+    );
+  };
+
+  #onClickDelete = () => {
+    this.#handleModelDataChange(
+      USER_ACTION.DELETE_EVENT,
+      UPDATE_TYPE.MAJOR,
+      this.#elem
+    );
+  };
+
+  #isFavouriteChanging = () => {
+    const newEvent = { ...this.#elem, isFavourite: !this.#elem.isFavourite };
+    this.#handleModelDataChange(
+      USER_ACTION.UPDATE_EVENT,
+      UPDATE_TYPE.PATCH,
+      newEvent
+    );
+  };
+
+  setSaving() {
+    if (this.#status === MODE.openened) {
+      this.#evtWithContent.updateElement({ isDisabled: true, isSaving: true });
+    }
+  }
+
+  setDeleting() {
+    if (this.#status === MODE.openened) {
+      this.#evtWithContent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#status === MODE.closed) {
+      this.#evtWithOutContent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#evtWithContent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#evtWithContent.shake(resetFormState);
   }
 }

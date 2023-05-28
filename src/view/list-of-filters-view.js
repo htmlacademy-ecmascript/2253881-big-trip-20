@@ -1,15 +1,18 @@
 import AbstractView from '../framework/view/abstract-view';
 import { INPUT, ELEMENTS_LIST } from '../framework/consts';
+import { filter } from '../framework/utils';
 
 function createNewListOfElems({ currentFilter, eventsModel }) {
   const isOffrsOrDestinationsEmpty =
     !eventsModel.offers.length || !eventsModel.destinations.length;
+
   const ourFilters = ELEMENTS_LIST.map(
     (el) => /*html*/ `<div class="trip-filters__filter">
       <input
         id="filter-${el}"
         class="trip-filters__filter-input  visually-hidden"
         type="radio"
+        ${filter[el](eventsModel.events).length ? '' : 'disabled'}
         ${el === currentFilter ? 'checked' : ''}
         ${isOffrsOrDestinationsEmpty ? 'disabled' : ''}
         name="trip-filter"
