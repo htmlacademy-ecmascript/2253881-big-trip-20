@@ -190,7 +190,7 @@ export default class EventWithContentView extends AbstractStatefulView {
     super();
     this.#modelEvents = modelEvents;
     if (data) {
-      this._setState(EventWithContentView.parseTaskToState(data));
+      this._setState(EventWithContentView.parseEventToState(data));
     } else {
       const dateFrom = new Date();
       dateFrom.setDate(dateFrom.getDate() - 2);
@@ -206,7 +206,7 @@ export default class EventWithContentView extends AbstractStatefulView {
       };
 
       this._setState(
-        EventWithContentView.parseTaskToState(anyEventsPlaceholder)
+        EventWithContentView.parseEventToState(anyEventsPlaceholder)
       );
     }
 
@@ -217,10 +217,77 @@ export default class EventWithContentView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
+  get template() {
+    const liElem = createElement(createEventWithContentView());
+    const formWrapperElem = createElement(createFormForContent());
+    const headerContent = createElement(
+      createContentHeader(
+        this._state,
+        this.#modelEvents.destinations,
+        this.#modelEvents.offers
+      )
+    );
+    const sectionWrapperElem = createElement(createEventDetailsWrapper());
+    const eventSectionOffers = createElement(
+      createEventSectionOffers(this._state)
+    );
+    const eventSectionDestination = createElement(
+      createContentEventSectionDestination(this._state)
+    );
+    sectionWrapperElem.insertAdjacentElement(
+      RenderPosition.AFTERBEGIN,
+      eventSectionOffers
+    );
+    sectionWrapperElem.insertAdjacentElement(
+      RenderPosition.BEFOREEND,
+      eventSectionDestination
+    );
+    formWrapperElem.insertAdjacentElement(
+      RenderPosition.AFTERBEGIN,
+      headerContent
+    );
+    formWrapperElem.insertAdjacentElement(
+      RenderPosition.BEFOREEND,
+      sectionWrapperElem
+    );
+    //обертка ли с контентом
+    liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
+    const wrapperElem = document.createElement('div');
+    wrapperElem.append(liElem);
+    const stringedLiElem = wrapperElem.innerHTML;
+    return stringedLiElem;
+  }
+
+  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
+    this.updateElement({
+      dateFrom: userDateFrom,
+    });
+  };
+
+  #dueDateChangeHandlerTo = ([userDataTo]) => {
+    this.updateElement({
+      dateTo: userDataTo,
+    });
+  };
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datePickerTo) {
+      this.#datePickerTo.destroy();
+      this.#datePickerTo = null;
+    }
+
+    if (this.#datePickerFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerFrom = null;
+    }
+  };
+
   _restoreHandlers = () => {
     this.element.querySelector('.event__save-btn').onclick = (evt) => {
       evt.preventDefault();
-      this.#onClickSubmit(EventWithContentView.parseStateToTask(this._state));
+      this.#onClickSubmit(EventWithContentView.parseStateToEvent(this._state));
     };
 
     if (this.element.querySelector('.event__rollup-btn')) {
@@ -236,6 +303,31 @@ export default class EventWithContentView extends AbstractStatefulView {
           type: evt.target.value,
         });
       }
+    };
+
+    this.element.querySelector('#event-price-1').onchange = (evt) => {
+      const sumOfCheckedOffers = this._state.offers.reduce((acc, el) => {
+        if (el.checked) {
+          acc += el.price;
+        }
+        return acc;
+      }, 0);
+
+      if (evt.target.value > sumOfCheckedOffers) {
+        this.updateElement({ basePrice: Number(evt.target.value) });
+      } else {
+        this.updateElement({
+          basePrice: sumOfCheckedOffers > 0 ? sumOfCheckedOffers : 1,
+        });
+      }
+    };
+
+    this.element.querySelector('#event-price-1').onfocus = () => {
+      document.removeEventListener('keydown', this.#onEscClick);
+    };
+
+    this.element.querySelector('#event-price-1').onblur = () => {
+      document.addEventListener('keydown', this.#onEscClick);
     };
 
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
@@ -351,18 +443,6 @@ export default class EventWithContentView extends AbstractStatefulView {
     this.#setDatepickers();
   };
 
-  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
-    this.updateElement({
-      dateFrom: userDateFrom,
-    });
-  };
-
-  #dueDateChangeHandlerTo = ([userDataTo]) => {
-    this.updateElement({
-      dateTo: userDataTo,
-    });
-  };
-
   #setDatepickers = () => {
     if (this._state.dateFrom) {
       this.#datePickerFrom = flatpickr(
@@ -394,25 +474,11 @@ export default class EventWithContentView extends AbstractStatefulView {
     }
   };
 
-  removeElement = () => {
-    super.removeElement();
-
-    if (this.#datePickerTo) {
-      this.#datePickerTo.destroy();
-      this.#datePickerTo = null;
-    }
-
-    if (this.#datePickerFrom) {
-      this.#datePickerFrom.destroy();
-      this.#datePickerFrom = null;
-    }
-  };
-
   reset = (data) => {
-    this.updateElement(EventWithContentView.parseTaskToState(data));
+    this.updateElement(EventWithContentView.parseEventToState(data));
   };
 
-  static parseTaskToState(data) {
+  static parseEventToState(data) {
     if (!data.id) {
       return {
         isButtonNewEventView: true,
@@ -425,7 +491,7 @@ export default class EventWithContentView extends AbstractStatefulView {
     return { isDisabled: false, isSaving: false, isDeleting: false, ...data };
   }
 
-  static parseStateToTask(state) {
+  static parseStateToEvent(state) {
     const eventDestination = { ...state };
 
     if (eventDestination.isButtonNewEventView) {
@@ -436,46 +502,5 @@ export default class EventWithContentView extends AbstractStatefulView {
     delete eventDestination.isDisabled;
 
     return eventDestination;
-  }
-
-  get template() {
-    const liElem = createElement(createEventWithContentView());
-    const formWrapperElem = createElement(createFormForContent());
-    const headerContent = createElement(
-      createContentHeader(
-        this._state,
-        this.#modelEvents.destinations,
-        this.#modelEvents.offers
-      )
-    );
-    const sectionWrapperElem = createElement(createEventDetailsWrapper());
-    const eventSectionOffers = createElement(
-      createEventSectionOffers(this._state)
-    );
-    const eventSectionDestination = createElement(
-      createContentEventSectionDestination(this._state)
-    );
-    sectionWrapperElem.insertAdjacentElement(
-      RenderPosition.AFTERBEGIN,
-      eventSectionOffers
-    );
-    sectionWrapperElem.insertAdjacentElement(
-      RenderPosition.BEFOREEND,
-      eventSectionDestination
-    );
-    formWrapperElem.insertAdjacentElement(
-      RenderPosition.AFTERBEGIN,
-      headerContent
-    );
-    formWrapperElem.insertAdjacentElement(
-      RenderPosition.BEFOREEND,
-      sectionWrapperElem
-    );
-    //обертка ли с контентом
-    liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
-    const wrapperElem = document.createElement('div');
-    wrapperElem.append(liElem);
-    const stringedLiElem = wrapperElem.innerHTML;
-    return stringedLiElem;
   }
 }

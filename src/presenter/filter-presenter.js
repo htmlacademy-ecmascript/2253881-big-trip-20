@@ -26,13 +26,6 @@ export default class FilterPresenter {
     }));
   }
 
-  #handleFilterTypeChange = (filterType) => {
-    if (this.#filterModel.filter === filterType) {
-      return;
-    }
-    this.#filterModel.setFilter(UPDATE_TYPE.MAJOR, filterType);
-  };
-
   mainRender = () => {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
@@ -54,5 +47,12 @@ export default class FilterPresenter {
 
     replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
+  };
+
+  #handleFilterTypeChange = (filterType) => {
+    if (this.#filterModel.filter === filterType) {
+      return;
+    }
+    this.#filterModel.setFilter(UPDATE_TYPE.MAJOR, filterType);
   };
 }
