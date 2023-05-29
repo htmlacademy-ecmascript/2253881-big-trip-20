@@ -5,17 +5,32 @@ import dayjs from 'dayjs';
 /* eslint-disable */
 function createEvent(data) {
   const isFavourite = data.isFavourite ? 'event__favorite-btn--active' : '';
-  const offersList = data.offers.length
-    ? data.offers
+  // const offersList = data.offers.length
+  //   ? data.offers
+  //       .map(
+  //         (elem) => /*html*/ `<li class="event__offer">
+  //   <span class="event__offer-title">${elem.title}</span>
+  //   &plus;&euro;
+  //   <span class="event__offer-price">${elem.price}</span>
+  // </li>`
+  //       )
+  //       .join('')
+  //   : '';
+
+  const offersFiltered = data.offers.filter((el) => el.checked);
+
+  const filtersToRender = offersFiltered.length
+    ? offersFiltered
         .map(
           (elem) => /*html*/ `<li class="event__offer">
-    <span class="event__offer-title">${elem.title}</span>
-    &plus;&euro;
-    <span class="event__offer-price">${elem.price}</span>
-  </li>`
+  <span class="event__offer-title">${elem.title}</span>
+  &plus;&euro;
+  <span class="event__offer-price">${elem.price}</span>
+</li>`
         )
         .join('')
     : '';
+
   /* eslint-enable */
   const baseDate = dayjs(data.dateFrom).format('MMM DD');
   const dateFiffs = getDiffDates(data.dateFrom, data.dateTo);
@@ -41,7 +56,7 @@ function createEvent(data) {
   </p>
   <h4 class="visually-hidden">Offers:</h4>
   <ul class="event__selected-offers">
-   ${offersList}
+    ${filtersToRender}
   </ul>
   <button class="event__favorite-btn ${isFavourite}" type="button">
     <span class="visually-hidden">Add to favorite</span>
@@ -65,7 +80,6 @@ export default class EventWithOutContentView extends AbstractStatefulView {
     this._setState(data);
     this.#onClickArrow = onClickArrow;
     this.#onClickStar = onClickStar;
-
     this._restoreHandlers();
   }
 
