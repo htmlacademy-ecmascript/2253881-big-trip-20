@@ -1,13 +1,10 @@
 import { RenderPosition, createElement } from '../framework/render';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { INPUT, LABEL } from '../framework/consts';
+import { INPUT, LABEL, SPAN } from '../framework/consts';
 import flatpickr from 'flatpickr';
 import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
-const SPAN = 'SPAN';
-
-/* eslint-disable */
 function createEventWithContentView() {
   return '<li class="trip-events__item"></li>';
 }
@@ -25,13 +22,15 @@ function createContentHeader(data, destinations, offers) {
     : `<button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>`;
-
+  /* eslint-disable */
   const eventTypesList = offers
     .map(
       (elem) => /*html*/ `<div class="event__type-item">
   <input ${
     data.isDisabled ? 'disabled' : ''
-  } id="event-type-${elem.type.toLocaleLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.type.toLocaleLowerCase()}">
+  } id="event-type-${elem.type.toLocaleLowerCase()}-1" ${
+        data.type === elem.type ? 'checked' : ''
+      } class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.type.toLocaleLowerCase()}">
   <label class="event__type-label  event__type-label--${elem.type.toLocaleLowerCase()}" for="event-type-${elem.type.toLocaleLowerCase()}-1">${
         elem.type[0].toUpperCase() + elem.type.slice(1)
       }</label>
@@ -109,6 +108,8 @@ function createContentHeader(data, destinations, offers) {
   }</button>
   ${isButtonNew}
 </header>`;
+
+  //eslint-enable
 }
 
 function createEventDetailsWrapper() {
@@ -147,8 +148,11 @@ function createEventSectionOffers(data) {
 }
 
 function createContentEventSectionDestination(data) {
+  const isDestination = data.destination.name
+    ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>`
+    : '';
   return `<section class="event__section  event__section--destination">
-  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+  ${isDestination}
   <p class="event__destination-description">${data?.destination.description}</p>
 
 
@@ -195,14 +199,24 @@ export default class EventWithContentView extends AbstractStatefulView {
       const dateFrom = new Date();
       dateFrom.setDate(dateFrom.getDate() - 2);
 
+      const type = this.#modelEvents.offers[0].type;
+
+      const typeOffers = this.#modelEvents.offers.find(
+        (typeOffer) => typeOffer.type === type
+      );
+
       const anyEventsPlaceholder = {
-        basePrice: 500,
-        dateFrom: dateFrom,
-        dateTo: new Date(),
-        destination: { ...this.#modelEvents.destinations[0] },
+        basePrice: '',
+        dateFrom: '19/03/19 00:00',
+        dateTo: '19/03/19 00:00',
+        destination: {
+          name: '',
+          description: '',
+          pictures: [],
+        },
         isFavourite: false,
-        offers: [...this.#modelEvents.offers[0].offers],
-        type: this.#modelEvents.offers[0].type,
+        offers: [...typeOffers.offers],
+        type: type,
       };
 
       this._setState(
@@ -250,7 +264,7 @@ export default class EventWithContentView extends AbstractStatefulView {
       RenderPosition.BEFOREEND,
       sectionWrapperElem
     );
-    //обертка ли с контентом
+
     liElem.insertAdjacentElement(RenderPosition.AFTERBEGIN, formWrapperElem);
     const wrapperElem = document.createElement('div');
     wrapperElem.append(liElem);
@@ -258,16 +272,39 @@ export default class EventWithContentView extends AbstractStatefulView {
     return stringedLiElem;
   }
 
-  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
-    this.updateElement({
-      dateFrom: userDateFrom,
-    });
+  #setDatepickers = () => {
+    if (this._state.dateFrom) {
+      this.#datePickerFrom = flatpickr(
+        this.element.querySelector('#event-start-time-1'),
+        {
+          enableTime: true,
+          dateFormat: 'd/m/y H:i',
+          // eslint-disable-next-line
+          time_24hr: true,
+          defaultDate: this._state.dateFrom,
+          onChange: this.#dueDateChangeHandlerFrom,
+        }
+      );
+    }
+
+    if (this._state.dateTo) {
+      this.#datePickerTo = flatpickr(
+        this.element.querySelector('#event-end-time-1'),
+        {
+          enableTime: true,
+          dateFormat: 'd/m/y H:i',
+          minDate: this._state.dateFrom,
+          // eslint-disable-next-line
+          time_24hr: true,
+          defaultDate: this._state.dateTo,
+          onChange: this.#dueDateChangeHandlerTo,
+        }
+      );
+    }
   };
 
-  #dueDateChangeHandlerTo = ([userDataTo]) => {
-    this.updateElement({
-      dateTo: userDataTo,
-    });
+  reset = (data) => {
+    this.updateElement(EventWithContentView.parseEventToState(data));
   };
 
   removeElement = () => {
@@ -297,18 +334,32 @@ export default class EventWithContentView extends AbstractStatefulView {
       };
     }
 
-    this.element.querySelector('.event__type-group').onchange = (evt) => {
-      if (evt.target.tagName === INPUT) {
-        this.updateElement({
-          type: evt.target.value,
-        });
-      }
-    };
+    if (this._state.isButtonNewEventView) {
+      this.element.querySelector('.event__type-group').onchange = (evt) => {
+        if (evt.target.tagName === INPUT) {
+          const typeOffers = this.#modelEvents.offers.find(
+            (typeOffer) => typeOffer.type === evt.target.value
+          );
+          this.updateElement({
+            type: evt.target.value,
+            offers: typeOffers.offers,
+          });
+        }
+      };
+    } else {
+      this.element.querySelector('.event__type-group').onchange = (evt) => {
+        if (evt.target.tagName === INPUT) {
+          this.updateElement({
+            type: evt.target.value,
+          });
+        }
+      };
+    }
 
     this.element.querySelector('#event-price-1').onchange = (evt) => {
       const sumOfCheckedOffers = this._state.offers.reduce((acc, el) => {
         if (el.checked) {
-          acc += el.price;
+          acc += Number(el.price);
         }
         return acc;
       }, 0);
@@ -380,24 +431,19 @@ export default class EventWithContentView extends AbstractStatefulView {
 
           const newOffersArr = this._state.offers.map((el) => {
             if (el.id === idOffer) {
-              if (el.checked) {
-                el.checked = false;
-              } else if (!el.checked) {
-                el.checked = true;
-              }
-              return el;
+              el.checked = !el.checked;
             }
             return el;
           });
 
           if (!offerToMutate.checked) {
             this.updateElement({
-              basePrice: this._state.basePrice + price,
+              basePrice: Number(this._state.basePrice) + price,
               offers: newOffersArr,
             });
           } else if (offerToMutate.checked) {
             this.updateElement({
-              basePrice: this._state.basePrice - price,
+              basePrice: Number(this._state.basePrice) - price,
               offers: newOffersArr,
             });
           }
@@ -415,24 +461,19 @@ export default class EventWithContentView extends AbstractStatefulView {
 
           const newOffersArr = this._state.offers.map((el) => {
             if (el.id === idOffer) {
-              if (el.checked) {
-                el.checked = false;
-              } else if (!el.checked) {
-                el.checked = true;
-              }
-              return el;
+              el.checked = !el.checked;
             }
             return el;
           });
 
           if (!offerToMutate.checked) {
             this.updateElement({
-              basePrice: this._state.basePrice + price,
+              basePrice: Number(this._state.basePrice) + price,
               offers: newOffersArr,
             });
           } else if (offerToMutate.checked) {
             this.updateElement({
-              basePrice: this._state.basePrice - price,
+              basePrice: Number(this._state.basePrice) - price,
               offers: newOffersArr,
             });
           }
@@ -443,39 +484,30 @@ export default class EventWithContentView extends AbstractStatefulView {
     this.#setDatepickers();
   };
 
-  #setDatepickers = () => {
-    if (this._state.dateFrom) {
-      this.#datePickerFrom = flatpickr(
-        this.element.querySelector('#event-start-time-1'),
-        {
-          enableTime: true,
-          dateFormat: 'd/m/y H:i',
-          // eslint-disable-next-line
-          time_24hr: true,
-          defaultDate: this._state.dateFrom,
-          onChange: this.#dueDateChangeHandlerFrom,
-        }
-      );
+  #dueDateChangeHandlerFrom = ([userDateFrom]) => {
+    if (!userDateFrom) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerTo.destroy();
+      this.#setDatepickers();
+      return;
     }
 
-    if (this._state.dateTo) {
-      this.#datePickerTo = flatpickr(
-        this.element.querySelector('#event-end-time-1'),
-        {
-          enableTime: true,
-          dateFormat: 'd/m/y H:i',
-          minDate: this._state.dateFrom,
-          // eslint-disable-next-line
-          time_24hr: true,
-          defaultDate: this._state.dateTo,
-          onChange: this.#dueDateChangeHandlerTo,
-        }
-      );
-    }
+    this.updateElement({
+      dateFrom: userDateFrom,
+    });
   };
 
-  reset = (data) => {
-    this.updateElement(EventWithContentView.parseEventToState(data));
+  #dueDateChangeHandlerTo = ([userDataTo]) => {
+    if (!userDataTo) {
+      this.#datePickerFrom.destroy();
+      this.#datePickerTo.destroy();
+      this.#setDatepickers();
+      return;
+    }
+
+    this.updateElement({
+      dateTo: userDataTo,
+    });
   };
 
   static parseEventToState(data) {

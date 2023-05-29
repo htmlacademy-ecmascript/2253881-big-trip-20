@@ -1,7 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 import { SORT_TYPES, LABEL } from '../framework/consts';
 
-/* eslint-disable */
 function createSortList() {
   return /*html*/ `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
   <div class="trip-sort__item  trip-sort__item--day">

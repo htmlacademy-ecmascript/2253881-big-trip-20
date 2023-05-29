@@ -97,35 +97,6 @@ export default class OneWayPointPresenter {
     remove(prevEventWithOutContentViewComponent);
   }
 
-  #escKeyDownHandlerWithContent = (evt) => {
-    if (
-      evt.key === ESC &&
-      document.querySelector('.event--edit') &&
-      this.#status === MODE.openened
-    ) {
-      evt.preventDefault();
-      this.#evtWithContent.reset(this.#elem);
-      this.replaceWithContentToNoContent();
-    }
-  };
-
-  #onClickSubmit = (newElem) => {
-    this.#elem = { ...newElem };
-    this.#handleModelDataChange(
-      USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.MAJOR,
-      newElem
-    );
-  };
-
-  #onClickDelete = () => {
-    this.#handleModelDataChange(
-      USER_ACTION.DELETE_EVENT,
-      UPDATE_TYPE.MAJOR,
-      this.#elem
-    );
-  };
-
   #isFavouriteChanging = () => {
     const newEvent = { ...this.#elem, isFavourite: !this.#elem.isFavourite };
     this.#handleModelDataChange(
@@ -166,4 +137,33 @@ export default class OneWayPointPresenter {
 
     this.#evtWithContent.shake(resetFormState);
   }
+
+  #escKeyDownHandlerWithContent = (evt) => {
+    if (
+      evt.key === ESC &&
+      document.querySelector('.event--edit') &&
+      this.#status === MODE.openened
+    ) {
+      evt.preventDefault();
+      this.#evtWithContent.reset(this.#elem);
+      this.replaceWithContentToNoContent();
+    }
+  };
+
+  #onClickSubmit = (newElem) => {
+    this.#elem = { ...newElem };
+    this.#handleModelDataChange(
+      USER_ACTION.UPDATE_EVENT,
+      UPDATE_TYPE.MAJOR,
+      newElem
+    );
+  };
+
+  #onClickDelete = () => {
+    this.#handleModelDataChange(
+      USER_ACTION.DELETE_EVENT,
+      UPDATE_TYPE.MAJOR,
+      this.#elem
+    );
+  };
 }

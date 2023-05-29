@@ -12,11 +12,9 @@ function createError(filterType, eventsModel) {
   const isOffrsOrDestinationsEmpty =
     !eventsModel.offers.length || !eventsModel.destinations.length;
 
-  /* eslint-disable */
   return /*html*/ isOffrsOrDestinationsEmpty
-    ? `<p class="trip-events__msg">Error on download events</p>`
+    ? '<p class="trip-events__msg">Error on download events</p>'
     : `<p class="trip-events__msg">${NO_EVENTS_TEXT_TYPE[filterType]}</p>`;
-  /*eslint-enable*/
 }
 
 export default class ErrorOnDownloadView extends AbstractView {
