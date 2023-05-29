@@ -16,8 +16,7 @@ function createEvent(data) {
         )
         .join('')
     : '';
-
-  // const price = data?.offers.reduce((acc, elem) => (acc += elem.price), 0);
+  /* eslint-enable */
   const baseDate = dayjs(data.dateFrom).format('MMM DD');
   const dateFiffs = getDiffDates(data.dateFrom, data.dateTo);
   const dateFrom = dayjs(data.dateFrom).format('HH:mm');
@@ -55,7 +54,7 @@ function createEvent(data) {
   </button>
 </div></li>`;
 }
-/* eslint-enable */
+
 export default class EventWithOutContentView extends AbstractStatefulView {
   #onClickArrow = null;
   #onClickStar = null;
