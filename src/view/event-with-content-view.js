@@ -116,22 +116,30 @@ function createEventDetailsWrapper() {
   return '<section class="event__details"></section>';
 }
 
-function createEventSectionOffers(data) {
-  const offersList = data.offers.length
-    ? `<div class="event__available-offers">${data?.offers
-        .map(
-          (elem) => `<div class="event__offer-selector">
-<input ${elem.checked ? 'checked' : ''}
- class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-<label data-id="${
-            elem.id
-          }" class="event__offer-label" for="event-offer-luggage-1">
-  <span class="event__offer-title">${elem.title}</span>
-  &plus;&euro;&nbsp;
-  <span class="event__offer-price">${elem.price}</span>
-</label>
-</div>`
-        )
+function createEventSectionOffers(data, eventsModel) {
+  const correntTypeOffers = eventsModel.offers.find(
+    (el) => el.type === data.type
+  );
+
+  const offersList = correntTypeOffers.offers.length
+    ? `<div class="event__available-offers">${correntTypeOffers.offers
+        .map((elem) => {
+          const isChecked = data.offers.find(
+            (oneOfferOfData) => oneOfferOfData.id === elem.id
+          );
+
+          return `<div class="event__offer-selector">
+            <input ${isChecked ? 'checked' : ''}
+             class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
+            <label data-id="${
+              elem.id
+            }" class="event__offer-label" for="event-offer-luggage-1">
+              <span class="event__offer-title">${elem.title}</span>
+              &plus;&euro;&nbsp;
+              <span class="event__offer-price">${elem.price}</span>
+            </label>
+            </div>`;
+        })
         .join('')}</div>`
     : '';
 
@@ -139,7 +147,7 @@ function createEventSectionOffers(data) {
 
 
   ${
-    data.offers.length
+    correntTypeOffers.offers.length
       ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>'
       : ''
   }
@@ -201,21 +209,17 @@ export default class EventWithContentView extends AbstractStatefulView {
 
       const type = this.#modelEvents.offers[0].type;
 
-      const typeOffers = this.#modelEvents.offers.find(
-        (typeOffer) => typeOffer.type === type
-      );
-
       const anyEventsPlaceholder = {
         basePrice: '',
-        dateFrom: '19/03/19 00:00',
-        dateTo: '19/03/19 00:00',
+        dateFrom: dateFrom,
+        dateTo: new Date(),
         destination: {
           name: '',
           description: '',
           pictures: [],
         },
         isFavourite: false,
-        offers: [...typeOffers.offers],
+        offers: [],
         type: type,
       };
 
@@ -243,7 +247,7 @@ export default class EventWithContentView extends AbstractStatefulView {
     );
     const sectionWrapperElem = createElement(createEventDetailsWrapper());
     const eventSectionOffers = createElement(
-      createEventSectionOffers(this._state)
+      createEventSectionOffers(this._state, this.#modelEvents)
     );
     const eventSectionDestination = createElement(
       createContentEventSectionDestination(this._state)
@@ -337,32 +341,40 @@ export default class EventWithContentView extends AbstractStatefulView {
     if (this._state.isButtonNewEventView) {
       this.element.querySelector('.event__type-group').onchange = (evt) => {
         if (evt.target.tagName === INPUT) {
-          const typeOffers = this.#modelEvents.offers.find(
-            (typeOffer) => typeOffer.type === evt.target.value
+          const sum = this._state.offers.reduce(
+            (acc, el) => (acc += el.price),
+            0
           );
+
           this.updateElement({
             type: evt.target.value,
-            offers: typeOffers.offers,
+            offers: [],
+            basePrice: this._state.basePrice - sum,
           });
         }
       };
     } else {
       this.element.querySelector('.event__type-group').onchange = (evt) => {
         if (evt.target.tagName === INPUT) {
+          const sum = this._state.offers.reduce(
+            (acc, el) => (acc += el.price),
+            0
+          );
+
           this.updateElement({
             type: evt.target.value,
+            offers: [],
+            basePrice: this._state.basePrice - sum,
           });
         }
       };
     }
 
     this.element.querySelector('#event-price-1').onchange = (evt) => {
-      const sumOfCheckedOffers = this._state.offers.reduce((acc, el) => {
-        if (el.checked) {
-          acc += Number(el.price);
-        }
-        return acc;
-      }, 0);
+      const sumOfCheckedOffers = this._state.offers.reduce(
+        (acc, el) => (acc += el.price),
+        0
+      );
 
       if (evt.target.value > sumOfCheckedOffers) {
         this.updateElement({ basePrice: Number(evt.target.value) });
@@ -425,26 +437,36 @@ export default class EventWithContentView extends AbstractStatefulView {
               .textContent
           );
 
-          const offerToMutate = {
-            ...this._state.offers.find((el) => el.id === idOffer),
-          };
+          const correntTypeOffers = this.#modelEvents.offers.find(
+            (el) => el.type === this._state.type
+          );
 
-          const newOffersArr = this._state.offers.map((el) => {
-            if (el.id === idOffer) {
-              el.checked = !el.checked;
-            }
-            return el;
-          });
+          const isActiveOffer = this._state.offers.find(
+            (el) => el.id === idOffer
+          );
 
-          if (!offerToMutate.checked) {
+          if (isActiveOffer) {
+            const newOffersArr = this._state.offers.filter(
+              (elem) => elem.id !== idOffer
+            );
+
             this.updateElement({
-              basePrice: Number(this._state.basePrice) + price,
               offers: newOffersArr,
-            });
-          } else if (offerToMutate.checked) {
-            this.updateElement({
               basePrice: Number(this._state.basePrice) - price,
+            });
+          }
+
+          if (!isActiveOffer) {
+            const newOffer = correntTypeOffers.offers.find(
+              (el) => el.id === idOffer
+            );
+
+            const newOffersArr = [...this._state.offers];
+            newOffersArr.push(newOffer);
+
+            this.updateElement({
               offers: newOffersArr,
+              basePrice: Number(this._state.basePrice) + price,
             });
           }
         }
@@ -454,27 +476,36 @@ export default class EventWithContentView extends AbstractStatefulView {
           const price = Number(
             evt.target.querySelector('.event__offer-price').textContent
           );
+          const correntTypeOffers = this.#modelEvents.offers.find(
+            (el) => el.type === this._state.type
+          );
 
-          const offerToMutate = {
-            ...this._state.offers.find((el) => el.id === idOffer),
-          };
+          const isActiveOffer = this._state.offers.find(
+            (el) => el.id === idOffer
+          );
 
-          const newOffersArr = this._state.offers.map((el) => {
-            if (el.id === idOffer) {
-              el.checked = !el.checked;
-            }
-            return el;
-          });
+          if (isActiveOffer) {
+            const newOffersArr = this._state.offers.filter(
+              (elem) => elem.id !== idOffer
+            );
 
-          if (!offerToMutate.checked) {
             this.updateElement({
-              basePrice: Number(this._state.basePrice) + price,
               offers: newOffersArr,
-            });
-          } else if (offerToMutate.checked) {
-            this.updateElement({
               basePrice: Number(this._state.basePrice) - price,
+            });
+          }
+
+          if (!isActiveOffer) {
+            const newOffer = correntTypeOffers.offers.find(
+              (el) => el.id === idOffer
+            );
+
+            const newOffersArr = [...this._state.offers];
+            newOffersArr.push(newOffer);
+
+            this.updateElement({
               offers: newOffersArr,
+              basePrice: Number(this._state.basePrice) + price,
             });
           }
         }
