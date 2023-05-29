@@ -57,6 +57,7 @@ export const ELEMENTS_LIST = ['everything', 'future', 'present', 'past'];
 export const LABEL = 'LABEL';
 export const INPUT = 'INPUT';
 export const ESC = 'Escape';
+export const SPAN = 'SPAN';
 
 export const placeToRenderForOneElemPresenterElem =
   document.querySelector('.trip-events__list');

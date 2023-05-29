@@ -134,21 +134,6 @@ export default class MainRender {
     }
   };
 
-  #handleModeChange = () => {
-    this.#newEventPresenter.destroy();
-    this.#instsOfPresenters.forEach((elem) => {
-      elem.resetView();
-    });
-  };
-
-  #handleSortTypeChange = (sortType) => {
-    if (this.#sortType === sortType) {
-      return;
-    }
-    this.#sortType = sortType;
-    this.#handleModelEvent(UPDATE_TYPE.MINOR);
-  };
-
   #renderTrip() {
     this.#tripInfoViewComponent = new TripInfoView({
       eventsModel: this.#eventsModel,
@@ -247,4 +232,19 @@ export default class MainRender {
       this.#sortType = SORT_TYPES.day;
     }
   }
+
+  #handleModeChange = () => {
+    this.#newEventPresenter.destroy();
+    this.#instsOfPresenters.forEach((elem) => {
+      elem.resetView();
+    });
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#sortType === sortType) {
+      return;
+    }
+    this.#sortType = sortType;
+    this.#handleModelEvent(UPDATE_TYPE.MINOR);
+  };
 }

@@ -52,21 +52,6 @@ export default class NewEventPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleFormSubmit = (newEvent) => {
-    this.#handleDataChange(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MAJOR, newEvent);
-  };
-
-  #handleDeleteClick = () => {
-    this.destroy();
-  };
-
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === ESC) {
-      evt.preventDefault();
-      this.destroy();
-    }
-  };
-
   setSaving() {
     this.#eventWithContentView.updateElement({
       isDisabled: true,
@@ -85,4 +70,19 @@ export default class NewEventPresenter {
 
     this.#eventWithContentView.shake(resetFormState);
   }
+
+  #handleFormSubmit = (newEvent) => {
+    this.#handleDataChange(USER_ACTION.ADD_EVENT, UPDATE_TYPE.MAJOR, newEvent);
+  };
+
+  #handleDeleteClick = () => {
+    this.destroy();
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === ESC) {
+      evt.preventDefault();
+      this.destroy();
+    }
+  };
 }
