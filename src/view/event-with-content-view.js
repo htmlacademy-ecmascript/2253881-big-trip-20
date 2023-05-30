@@ -340,32 +340,15 @@ export default class EventWithContentView extends AbstractStatefulView {
 
     this.element.querySelector('.event__type-group').onchange = (evt) => {
       if (evt.target.tagName === INPUT) {
-        const sum = this._state.offers.reduce(
-          (acc, el) => (acc += el.price),
-          0
-        );
-
         this.updateElement({
           type: evt.target.value,
           offers: [],
-          basePrice: this._state.basePrice - sum,
         });
       }
     };
 
     this.element.querySelector('#event-price-1').onchange = (evt) => {
-      const sumOfCheckedOffers = this._state.offers.reduce(
-        (acc, el) => (acc += el.price),
-        0
-      );
-
-      if (evt.target.value > sumOfCheckedOffers) {
-        this.updateElement({ basePrice: Number(evt.target.value) });
-      } else {
-        this.updateElement({
-          basePrice: sumOfCheckedOffers > 0 ? sumOfCheckedOffers : 1,
-        });
-      }
+      this.updateElement({ basePrice: Number(evt.target.value) });
     };
 
     this.element.querySelector('#event-price-1').onfocus = () => {
@@ -415,11 +398,6 @@ export default class EventWithContentView extends AbstractStatefulView {
         if (evt.target.tagName === SPAN) {
           const idOffer = evt.target.parentElement.dataset.id;
 
-          const price = Number(
-            evt.target.parentElement.querySelector('.event__offer-price')
-              .textContent
-          );
-
           const correntTypeOffers = this.#modelEvents.offers.find(
             (el) => el.type === this._state.type
           );
@@ -435,7 +413,6 @@ export default class EventWithContentView extends AbstractStatefulView {
 
             this.updateElement({
               offers: newOffersArr,
-              basePrice: Number(this._state.basePrice) - price,
             });
           }
 
@@ -449,16 +426,12 @@ export default class EventWithContentView extends AbstractStatefulView {
 
             this.updateElement({
               offers: newOffersArr,
-              basePrice: Number(this._state.basePrice) + price,
             });
           }
         }
         if (evt.target.tagName === LABEL) {
           const idOffer = evt.target.dataset.id;
 
-          const price = Number(
-            evt.target.querySelector('.event__offer-price').textContent
-          );
           const correntTypeOffers = this.#modelEvents.offers.find(
             (el) => el.type === this._state.type
           );
@@ -474,7 +447,6 @@ export default class EventWithContentView extends AbstractStatefulView {
 
             this.updateElement({
               offers: newOffersArr,
-              basePrice: Number(this._state.basePrice) - price,
             });
           }
 
@@ -488,7 +460,6 @@ export default class EventWithContentView extends AbstractStatefulView {
 
             this.updateElement({
               offers: newOffersArr,
-              basePrice: Number(this._state.basePrice) + price,
             });
           }
         }
