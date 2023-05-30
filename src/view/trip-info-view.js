@@ -55,7 +55,7 @@ function createTripInfoView(events) {
       accumulator += sum;
       return accumulator;
     }, 0);
-    /* eslint-disable */
+
     return /*html*/ `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
 
@@ -65,13 +65,11 @@ function createTripInfoView(events) {
   </div>
 
   <p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">${
-      sumBase + totalOffersPrice
-    }</span>
+    Total: &euro;&nbsp;<span class="trip-info__cost-value">${sumBase + totalOffersPrice}</span>
   </p>
 </section>`;
   }
-  /* eslint-enable */
+
   return /*html*/ `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
 

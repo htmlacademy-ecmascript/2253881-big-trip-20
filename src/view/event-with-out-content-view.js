@@ -2,22 +2,18 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import { getDiffDates } from '../framework/utils';
 import dayjs from 'dayjs';
 
-/* eslint-disable */
+
 function createEvent(data) {
   const isFavourite = data.isFavourite ? 'event__favorite-btn--active' : '';
   const offersList = data.offers.length
-    ? data.offers
-        .map(
-          (elem) => /*html*/ `<li class="event__offer">
+    ? data.offers.map((elem) => /*html*/ `<li class="event__offer">
     <span class="event__offer-title">${elem.title}</span>
     &plus;&euro;
     <span class="event__offer-price">${elem.price}</span>
-  </li>`
-        )
-        .join('')
+  </li>`).join('')
     : '';
 
-  /* eslint-enable */
+
   const baseDate = dayjs(data.dateFrom).format('MMM DD');
   const dateFiffs = getDiffDates(data.dateFrom, data.dateTo);
   const dateFrom = dayjs(data.dateFrom).format('HH:mm');

@@ -97,15 +97,6 @@ export default class OneWayPointPresenter {
     remove(prevEventWithOutContentViewComponent);
   }
 
-  #isFavouriteChanging = () => {
-    const newEvent = { ...this.#elem, isFavourite: !this.#elem.isFavourite };
-    this.#handleModelDataChange(
-      USER_ACTION.UPDATE_EVENT,
-      UPDATE_TYPE.PATCH,
-      newEvent
-    );
-  };
-
   setSaving() {
     if (this.#status === MODE.openened) {
       this.#evtWithContent.updateElement({ isDisabled: true, isSaving: true });
@@ -137,6 +128,16 @@ export default class OneWayPointPresenter {
 
     this.#evtWithContent.shake(resetFormState);
   }
+
+  #isFavouriteChanging = () => {
+    const newEvent = { ...this.#elem, isFavourite: !this.#elem.isFavourite };
+    this.#handleModelDataChange(
+      USER_ACTION.UPDATE_EVENT,
+      UPDATE_TYPE.PATCH,
+      newEvent
+    );
+  };
+
 
   #escKeyDownHandlerWithContent = (evt) => {
     if (
