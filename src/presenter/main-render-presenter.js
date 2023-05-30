@@ -206,6 +206,7 @@ export default class MainRender {
     }
 
     this.#renderTrip();
+
     this.#renderSort();
     this.#renderAllEvents(this.events);
   }
@@ -225,7 +226,9 @@ export default class MainRender {
       remove(this.#noEventsComponent);
     }
     remove(this.#loadingComponent);
+
     remove(this.#tripInfoViewComponent);
+
     remove(this.#sortComponent);
     remove(this.#ulListComponent);
     if (resetSort) {
