@@ -338,37 +338,20 @@ export default class EventWithContentView extends AbstractStatefulView {
       };
     }
 
-    if (this._state.isButtonNewEventView) {
-      this.element.querySelector('.event__type-group').onchange = (evt) => {
-        if (evt.target.tagName === INPUT) {
-          const sum = this._state.offers.reduce(
-            (acc, el) => (acc += el.price),
-            0
-          );
+    this.element.querySelector('.event__type-group').onchange = (evt) => {
+      if (evt.target.tagName === INPUT) {
+        const sum = this._state.offers.reduce(
+          (acc, el) => (acc += el.price),
+          0
+        );
 
-          this.updateElement({
-            type: evt.target.value,
-            offers: [],
-            basePrice: this._state.basePrice - sum,
-          });
-        }
-      };
-    } else {
-      this.element.querySelector('.event__type-group').onchange = (evt) => {
-        if (evt.target.tagName === INPUT) {
-          const sum = this._state.offers.reduce(
-            (acc, el) => (acc += el.price),
-            0
-          );
-
-          this.updateElement({
-            type: evt.target.value,
-            offers: [],
-            basePrice: this._state.basePrice - sum,
-          });
-        }
-      };
-    }
+        this.updateElement({
+          type: evt.target.value,
+          offers: [],
+          basePrice: this._state.basePrice - sum,
+        });
+      }
+    };
 
     this.element.querySelector('#event-price-1').onchange = (evt) => {
       const sumOfCheckedOffers = this._state.offers.reduce(
