@@ -121,21 +121,20 @@ export default class EventsApiService extends ApiService {
   }
 
   adaptToServer(eventTosend) {
-    /* eslint-disable */
     const anyEvent = {
       ...eventTosend,
-      base_price: eventTosend.basePrice,
-      date_from:
+      'base_price': eventTosend.basePrice,
+      'date_from':
         eventTosend.dateFrom instanceof Date
           ? eventTosend.dateFrom.toISOString()
           : null,
-      date_to:
+      'date_to':
         eventTosend.dateTo instanceof Date
           ? eventTosend.dateTo.toISOString()
           : null,
-      is_favorite: eventTosend.isFavourite,
+      'is_favorite': eventTosend.isFavourite,
     };
-    /* eslint-enable */
+
     anyEvent.destination = anyEvent.destination.id;
 
     if (anyEvent.offers.length) {

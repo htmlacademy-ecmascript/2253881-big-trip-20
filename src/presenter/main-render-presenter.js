@@ -82,6 +82,25 @@ export default class MainRender {
     this.#newEventPresenter.mainRender();
   }
 
+  renderMain() {
+    this.#renderUlList();
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    if (!this.events.length) {
+      this.#renderNoEvents();
+      return;
+    }
+
+    this.#renderTrip();
+
+    this.#renderSort();
+    this.#renderAllEvents(this.events);
+  }
+
   #handleModelDataChange = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
     switch (actionType) {
@@ -192,23 +211,6 @@ export default class MainRender {
     }
   }
 
-  renderMain() {
-    this.#renderUlList();
-
-    if (this.#isLoading) {
-      this.#renderLoading();
-      return;
-    }
-
-    if (!this.events.length) {
-      this.#renderNoEvents();
-      return;
-    }
-
-    this.#renderTrip();
-    this.#renderSort();
-    this.#renderAllEvents(this.events);
-  }
 
   #resetEventsList() {
     this.#instsOfPresenters.forEach((elem) => {
@@ -225,7 +227,9 @@ export default class MainRender {
       remove(this.#noEventsComponent);
     }
     remove(this.#loadingComponent);
+
     remove(this.#tripInfoViewComponent);
+
     remove(this.#sortComponent);
     remove(this.#ulListComponent);
     if (resetSort) {

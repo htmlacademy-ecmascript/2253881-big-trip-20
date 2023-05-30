@@ -3,47 +3,60 @@ import dayjs from 'dayjs';
 import { getWeightForNullDate } from '../framework/utils';
 
 function createTripInfoView(events) {
-  const sortedByDateFromEvents = [...events].sort((a, b) => {
-    const isNull = getWeightForNullDate(a.dateFrom, b.dateFrom);
-    const diff = dayjs(a.dateFrom).diff(dayjs(b.dateFrom));
-    return isNull ?? diff;
-  });
+  if (events.length) {
+    const sortedByDateFromEvents = [...events].sort((a, b) => {
+      const isNull = getWeightForNullDate(a.dateFrom, b.dateFrom);
+      const diff = dayjs(a.dateFrom).diff(dayjs(b.dateFrom));
+      return isNull ?? diff;
+    });
 
-  const sortedByDateToEvents = [...events].sort((a, b) => {
-    const isNull = getWeightForNullDate(a.dateTo, b.dateTo);
-    const diff = dayjs(a.dateTo).diff(dayjs(b.dateTo));
-    return isNull ?? diff;
-  });
+    const sortedByDateToEvents = [...events].sort((a, b) => {
+      const isNull = getWeightForNullDate(a.dateTo, b.dateTo);
+      const diff = dayjs(a.dateTo).diff(dayjs(b.dateTo));
+      return isNull ?? diff;
+    });
 
-  const startDate = dayjs(sortedByDateFromEvents[0].dateFrom).format('MMM DD');
-
-  const isEqualMonths =
-    dayjs(sortedByDateFromEvents[0].dateFrom).format('MMM') ===
-    dayjs(sortedByDateToEvents[sortedByDateToEvents.length - 1].dateTo).format(
-      'MMM'
+    const startDate = dayjs(sortedByDateFromEvents[0].dateFrom).format(
+      'MMM DD'
     );
 
-  const endDate = dayjs(
-    sortedByDateToEvents[sortedByDateToEvents.length - 1].dateTo
-  ).format(`${isEqualMonths ? 'DD' : 'MMM DD'}`);
+    const isEqualMonths =
+      dayjs(sortedByDateFromEvents[0].dateFrom).format('MMM') ===
+      dayjs(
+        sortedByDateToEvents[sortedByDateToEvents.length - 1].dateTo
+      ).format('MMM');
 
-  let tripInfoPath;
+    const endDate = dayjs(
+      sortedByDateToEvents[sortedByDateToEvents.length - 1].dateTo
+    ).format(`${isEqualMonths ? 'DD' : 'MMM DD'}`);
 
-  if (sortedByDateFromEvents.length <= 3) {
-    tripInfoPath = sortedByDateFromEvents
-      .map((el) => el.destination.name)
-      .join(' &mdash; ');
-  } else {
-    tripInfoPath = `${
-      sortedByDateFromEvents[0].destination.name
-    } &mdash; .... &mdash; ${
-      sortedByDateFromEvents[sortedByDateFromEvents.length - 1].destination.name
-    }`;
-  }
+    let tripInfoPath;
 
-  const sum = events.reduce((acc, el) => (acc += el.basePrice), 0);
+    if (sortedByDateFromEvents.length <= 3) {
+      tripInfoPath = sortedByDateFromEvents
+        .map((el) => el.destination.name)
+        .join(' &mdash; ');
+    } else {
+      tripInfoPath = `${
+        sortedByDateFromEvents[0].destination.name
+      } &mdash; .... &mdash; ${
+        sortedByDateFromEvents[sortedByDateFromEvents.length - 1].destination
+          .name
+      }`;
+    }
 
-  return /*html*/ `<section class="trip-main__trip-info  trip-info">
+    const sumBase = events.reduce((acc, el) => (acc += el.basePrice), 0);
+
+    const totalOffersPrice = events.reduce((accumulator, currentValue) => {
+      const sum = currentValue.offers.reduce(
+        (acc, current) => (acc += current.price),
+        0
+      );
+      accumulator += sum;
+      return accumulator;
+    }, 0);
+
+    return /*html*/ `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
 
     <h1 class="trip-info__title">${tripInfoPath}</h1>
@@ -52,9 +65,23 @@ function createTripInfoView(events) {
   </div>
 
   <p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">${sum}</span>
+    Total: &euro;&nbsp;<span class="trip-info__cost-value">${sumBase + totalOffersPrice}</span>
   </p>
 </section>`;
+  }
+
+  return /*html*/ `<section class="trip-main__trip-info  trip-info">
+  <div class="trip-info__main">
+
+    <h1 class="trip-info__title"></h1>
+
+    <p class="trip-info__dates">&nbsp;&mdash;&nbsp;</p>
+  </div>
+
+  <p class="trip-info__cost">
+    Total: &euro;&nbsp;<span class="trip-info__cost-value"></span>
+  </p>
+  </section>`;
 }
 
 export default class TripInfoView extends AbstractView {

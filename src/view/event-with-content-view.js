@@ -22,18 +22,20 @@ function createContentHeader(data, destinations, offers) {
     : `<button class="event__rollup-btn" type="button">
       <span class="visually-hidden">Open event</span>
     </button>`;
-  /* eslint-disable */
+
+  const deleteCase = data.isDeleting ? 'Deleting...' : 'Delete';
+
   const eventTypesList = offers
     .map(
       (elem) => /*html*/ `<div class="event__type-item">
   <input ${
-    data.isDisabled ? 'disabled' : ''
-  } id="event-type-${elem.type.toLocaleLowerCase()}-1" ${
-        data.type === elem.type ? 'checked' : ''
-      } class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.type.toLocaleLowerCase()}">
+  data.isDisabled ? 'disabled' : ''
+} id="event-type-${elem.type.toLocaleLowerCase()}-1" ${
+  data.type === elem.type ? 'checked' : ''
+} class="event__type-input  visually-hidden" type="radio" name="event-type" value="${elem.type.toLocaleLowerCase()}">
   <label class="event__type-label  event__type-label--${elem.type.toLocaleLowerCase()}" for="event-type-${elem.type.toLocaleLowerCase()}-1">${
-        elem.type[0].toUpperCase() + elem.type.slice(1)
-      }</label>
+  elem.type[0].toUpperCase() + elem.type.slice(1)
+}</label>
 </div>`
     )
     .join('');
@@ -43,12 +45,12 @@ function createContentHeader(data, destinations, offers) {
     <label class="event__type  event__type-btn" for="event-type-toggle-1">
       <span class="visually-hidden">Choose event type</span>
       <img class="event__type-icon" width="17" height="17" src="img/icons/${
-        data.type
-      }.png" alt="Event type icon">
+  data.type
+}.png" alt="Event type icon">
     </label>
     <input ${
-      data.isDisabled ? 'disabled' : ''
-    } class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+  data.isDisabled ? 'disabled' : ''
+} class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
     <div class="event__type-list">
       <fieldset class="event__type-group">
@@ -63,10 +65,10 @@ function createContentHeader(data, destinations, offers) {
       ${data.type}
     </label>
     <input class="event__input ${
-      data.isDisabled ? 'disabled' : ''
-    }  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(
-    data.destination?.name
-  )}" list="destination-list-1">
+  data.isDisabled ? 'disabled' : ''
+}  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(
+  data.destination?.name
+)}" list="destination-list-1">
     <datalist id="destination-list-1">
     ${listOfDestinations}
     </datalist>
@@ -86,30 +88,27 @@ function createContentHeader(data, destinations, offers) {
       &euro;
     </label>
     <input ${
-      data.isDisabled ? 'disabled' : ''
-    } class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(
-    `${data.basePrice}`
-  )}">
+  data.isDisabled ? 'disabled' : ''
+} class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${he.encode(
+  `${data.basePrice}`
+)}">
   </div>
 
   <button ${
-    data.isDisabled ? 'disabled' : ''
-  } class="event__save-btn  btn  btn--blue" type="submit">${
-    data.isSaving ? 'Saving...' : 'Save'
-  }</button>
+  data.isDisabled ? 'disabled' : ''
+} class="event__save-btn  btn  btn--blue" type="submit">${
+  data.isSaving ? 'Saving...' : 'Save'
+}</button>
   <button class="event__reset-btn" ${
-    data.isDisabled ? 'disabled' : ''
-  } type="reset">${
-    data.isButtonNewEventView
-      ? 'Cancel'
-      : data.isDeleting
-      ? 'Deleting...'
-      : 'Delete'
-  }</button>
+  data.isDisabled ? 'disabled' : ''
+} type="reset">${
+  data.isButtonNewEventView
+    ? 'Cancel' : deleteCase
+}</button>
   ${isButtonNew}
 </header>`;
 
-  //eslint-enable
+
 }
 
 function createEventDetailsWrapper() {
@@ -123,41 +122,31 @@ function createEventSectionOffers(data, eventsModel) {
 
   const offersList = correntTypeOffers.offers.length
     ? `<div class="event__available-offers">${correntTypeOffers.offers
-        .map((elem) => {
-          const isChecked = data.offers.find(
-            (oneOfferOfData) => oneOfferOfData.id === elem.id
-          );
-
-          return `<div class="event__offer-selector">
+      .map((elem) => {
+        const isChecked = data.offers.find((oneOfferOfData) => oneOfferOfData.id === elem.id);
+        return `<div class="event__offer-selector">
             <input ${isChecked ? 'checked' : ''}
              class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-            <label data-id="${
-              elem.id
-            }" class="event__offer-label" for="event-offer-luggage-1">
+            <label data-id="${elem.id}" class="event__offer-label" for="event-offer-luggage-1">
               <span class="event__offer-title">${elem.title}</span>
               &plus;&euro;&nbsp;
               <span class="event__offer-price">${elem.price}</span>
             </label>
             </div>`;
-        })
-        .join('')}</div>`
+      }).join('')}</div>`
     : '';
 
   return `<section class="event__section  event__section--offers">
 
 
-  ${
-    correntTypeOffers.offers.length
-      ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>'
-      : ''
-  }
+  ${correntTypeOffers.offers.length ? '<h3 class="event__section-title  event__section-title--offers">Offers</h3>' : ''}
   ${offersList}
 </section>`;
 }
 
 function createContentEventSectionDestination(data) {
   const isDestination = data.destination.name
-    ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>`
+    ? '<h3 class="event__section-title  event__section-title--destination">Destination</h3>'
     : '';
   return `<section class="event__section  event__section--destination">
   ${isDestination}
@@ -165,23 +154,14 @@ function createContentEventSectionDestination(data) {
 
 
 
-  ${
-    data.destination.pictures.length
-      ? `<div class="event__photos-container"><div class="event__photos-tape">
-      ${data.destination.pictures
-        .map(
-          (elem) =>
-            `<img class="event__photo" src=${elem.src} alt="Event photo">`
-        )
-        .join('')}
-     </div>`
-      : ''
-  }
+  ${data.destination.pictures.length ? `<div class="event__photos-container"><div class="event__photos-tape">
+      ${data.destination.pictures.map((elem) => `<img class="event__photo" src=${elem.src} alt="Event photo">`).join('')}
+     </div>` : ''}
 
 
 </section>`;
 }
-/* eslint-enable */
+
 export default class EventWithContentView extends AbstractStatefulView {
   #onClickSubmit = null;
   #onClickArrow = null;
@@ -338,51 +318,17 @@ export default class EventWithContentView extends AbstractStatefulView {
       };
     }
 
-    if (this._state.isButtonNewEventView) {
-      this.element.querySelector('.event__type-group').onchange = (evt) => {
-        if (evt.target.tagName === INPUT) {
-          const sum = this._state.offers.reduce(
-            (acc, el) => (acc += el.price),
-            0
-          );
-
-          this.updateElement({
-            type: evt.target.value,
-            offers: [],
-            basePrice: this._state.basePrice - sum,
-          });
-        }
-      };
-    } else {
-      this.element.querySelector('.event__type-group').onchange = (evt) => {
-        if (evt.target.tagName === INPUT) {
-          const sum = this._state.offers.reduce(
-            (acc, el) => (acc += el.price),
-            0
-          );
-
-          this.updateElement({
-            type: evt.target.value,
-            offers: [],
-            basePrice: this._state.basePrice - sum,
-          });
-        }
-      };
-    }
-
-    this.element.querySelector('#event-price-1').onchange = (evt) => {
-      const sumOfCheckedOffers = this._state.offers.reduce(
-        (acc, el) => (acc += el.price),
-        0
-      );
-
-      if (evt.target.value > sumOfCheckedOffers) {
-        this.updateElement({ basePrice: Number(evt.target.value) });
-      } else {
+    this.element.querySelector('.event__type-group').onchange = (evt) => {
+      if (evt.target.tagName === INPUT) {
         this.updateElement({
-          basePrice: sumOfCheckedOffers > 0 ? sumOfCheckedOffers : 1,
+          type: evt.target.value,
+          offers: [],
         });
       }
+    };
+
+    this.element.querySelector('#event-price-1').onchange = (evt) => {
+      this.updateElement({ basePrice: Number(evt.target.value) });
     };
 
     this.element.querySelector('#event-price-1').onfocus = () => {
@@ -396,18 +342,12 @@ export default class EventWithContentView extends AbstractStatefulView {
     this.element.querySelector('#event-destination-1').onchange = (evt) => {
       const prevDestination = this._state.destination.name;
 
-      /* eslint-disable */
       const newDestination = this.#modelEvents.destinations.find(
         (el) => el.name === evt.target.value
       )
-        ? this.#modelEvents.destinations.find(
-            (el) => el.name === evt.target.value
-          )
-        : this.#modelEvents.destinations.find(
-            (el) => el.name === prevDestination
-          );
+        ? this.#modelEvents.destinations.find((el) => el.name === evt.target.value)
+        : this.#modelEvents.destinations.find((el) => el.name === prevDestination);
 
-      /* eslint-enable */
       this.updateElement({
         destination: newDestination,
       });
@@ -432,11 +372,6 @@ export default class EventWithContentView extends AbstractStatefulView {
         if (evt.target.tagName === SPAN) {
           const idOffer = evt.target.parentElement.dataset.id;
 
-          const price = Number(
-            evt.target.parentElement.querySelector('.event__offer-price')
-              .textContent
-          );
-
           const correntTypeOffers = this.#modelEvents.offers.find(
             (el) => el.type === this._state.type
           );
@@ -452,7 +387,6 @@ export default class EventWithContentView extends AbstractStatefulView {
 
             this.updateElement({
               offers: newOffersArr,
-              basePrice: Number(this._state.basePrice) - price,
             });
           }
 
@@ -466,16 +400,12 @@ export default class EventWithContentView extends AbstractStatefulView {
 
             this.updateElement({
               offers: newOffersArr,
-              basePrice: Number(this._state.basePrice) + price,
             });
           }
         }
         if (evt.target.tagName === LABEL) {
           const idOffer = evt.target.dataset.id;
 
-          const price = Number(
-            evt.target.querySelector('.event__offer-price').textContent
-          );
           const correntTypeOffers = this.#modelEvents.offers.find(
             (el) => el.type === this._state.type
           );
@@ -491,7 +421,6 @@ export default class EventWithContentView extends AbstractStatefulView {
 
             this.updateElement({
               offers: newOffersArr,
-              basePrice: Number(this._state.basePrice) - price,
             });
           }
 
@@ -505,7 +434,6 @@ export default class EventWithContentView extends AbstractStatefulView {
 
             this.updateElement({
               offers: newOffersArr,
-              basePrice: Number(this._state.basePrice) + price,
             });
           }
         }
