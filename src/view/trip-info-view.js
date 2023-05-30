@@ -45,8 +45,17 @@ function createTripInfoView(events) {
       }`;
     }
 
-    const sum = events.reduce((acc, el) => (acc += el.basePrice), 0);
+    const sumBase = events.reduce((acc, el) => (acc += el.basePrice), 0);
 
+    const totalOffersPrice = events.reduce((accumulator, currentValue) => {
+      const sum = currentValue.offers.reduce(
+        (acc, current) => (acc += current.price),
+        0
+      );
+      accumulator += sum;
+      return accumulator;
+    }, 0);
+    /* eslint-disable */
     return /*html*/ `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
 
@@ -56,11 +65,13 @@ function createTripInfoView(events) {
   </div>
 
   <p class="trip-info__cost">
-    Total: &euro;&nbsp;<span class="trip-info__cost-value">${sum}</span>
+    Total: &euro;&nbsp;<span class="trip-info__cost-value">${
+      sumBase + totalOffersPrice
+    }</span>
   </p>
 </section>`;
   }
-
+  /* eslint-enable */
   return /*html*/ `<section class="trip-main__trip-info  trip-info">
   <div class="trip-info__main">
 
