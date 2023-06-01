@@ -263,8 +263,7 @@ export default class EventWithContentView extends AbstractStatefulView {
         {
           enableTime: true,
           dateFormat: 'd/m/y H:i',
-          // eslint-disable-next-line
-          time_24hr: true,
+          'time_24hr': true,
           defaultDate: this._state.dateFrom,
           onChange: this.#dueDateChangeHandlerFrom,
         }
@@ -278,8 +277,7 @@ export default class EventWithContentView extends AbstractStatefulView {
           enableTime: true,
           dateFormat: 'd/m/y H:i',
           minDate: this._state.dateFrom,
-          // eslint-disable-next-line
-          time_24hr: true,
+          'time_24hr': true,
           defaultDate: this._state.dateTo,
           onChange: this.#dueDateChangeHandlerTo,
         }
